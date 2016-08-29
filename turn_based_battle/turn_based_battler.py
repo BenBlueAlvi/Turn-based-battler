@@ -282,6 +282,7 @@ class Skill(object):
 		if self.spec == "Shield":
 			user.acbattler.effects.append(forceshield)
 		if self.spec == "atkUp":
+			damage = 0
 			user.acbattler.str += 25
 			user.acbattler.int += 25
 			
@@ -1022,8 +1023,10 @@ while not done:
 			battling = False
 			print battle.acbattler.name + " WON!"
 			print log
-			Player.acbattler = Player.acbattler.buildNew()
-			battle.acbattler = battle.acbattler.buildNew()
+			Player.acbattler.hp = Player.acbattler.maxhp
+			Player.acbattler.effects = []
+			battle.acbattler.hp = battle.acbattler.maxhp
+			battle.acbattler.effects = []
 			battle.power = 0
 			Player.power = 0
 			
@@ -1032,8 +1035,10 @@ while not done:
 			battling = False
 			print Player.acbattler.name + " WON!"
 			print log
-			Player.acbattler = Player.acbattler.buildNew()
-			battle.acbattler = battle.acbattler.buildNew()
+			Player.acbattler.hp = Player.acbattler.maxhp
+			Player.acbattler.effects = []
+			battle.acbattler.hp = battle.acbattler.maxhp
+			battle.acbattler.effects = []
 			battle.power = 0
 			Player.power = 0
 			
