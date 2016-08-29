@@ -283,7 +283,7 @@ class Skill(object):
 			user.acbattler.effects.append(forceshield)
 		if self.spec == "atkUp":
 			user.acbattler.str += 25
-			uer.acbattler.int += 25
+			user.acbattler.int += 25
 			
 		if self.spec == "division":
 			damage = target.acbattler.hp/5
