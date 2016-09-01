@@ -114,10 +114,11 @@ turn = 0
 class Effect(object):
 	def __init__(self, effect):
 		self.effect = effect
+		self.endeffect = 0
 		
 	def update(self, target):
 		if self.effect == "burn":
-			damage = target.hp / 7
+			damage = 25 + random.randint(1, 25)
 			target.hp -= damage
 			printb(target.name + " is on fire!   " + target.name + " takes " + str(damage) + " damage")
 			self.endeffect = random.randint(1,3)
@@ -146,7 +147,7 @@ class Effect(object):
 		if self.effect == "defend":
 			target.con += target.con
 			printb(target.name + " is defending!")
-			self.endeffect = random.randint(1,2)
+			self.endeffect += 1
 			if self.endeffect == 2:
 				target.effects.remove(self)
 				target.con = target.basecon
@@ -195,6 +196,16 @@ class Effect(object):
 				printb(target.name + " is no longer blocking attacks!")
 				target.con = target.basecon
 				
+				
+		if self.effect == "poison":
+			damage = target.hp / 10
+			target.hp -= damage
+			printb(target.name + " is poisoned!   " + target.name + " takes " + str(damage) + " damage")
+			self.endeffect = random.randint(1,4)
+			if self.endeffect == 2:
+				printb(target.name + " is no longer poisoned!")
+				target.effects.remove(self)
+				
 		
 			
 		else:
@@ -209,6 +220,7 @@ forceshield = Effect("forceshield")
 confusion = Effect("confusion")
 immortal = Effect("immortal")
 block = Effect("block")
+poison = Effect("poison")
 
 		
 
@@ -256,6 +268,8 @@ class Skill(object):
 		if random.randint(1,30) + user.acbattler.crit >= 30:
 			damage *= 2
 			message += " CRITICAL HIT!"
+			if not len(self.effects) == 0:
+				target.acbattler.effects.append(self.effects[1])
 		
 		
 		if not len(self.effects) == 0:
@@ -314,6 +328,7 @@ class Skill(object):
 			if i == "recover":
 				damage = 0
 				user.acbattler.hp += user.acbattler.maxhp / 4
+				
 			if i == "stare":
 		
 				target.acbattler.con /=2
@@ -325,6 +340,9 @@ class Skill(object):
 	
 				damage = math.floor(((Decimal(target.acbattler.marks) / Decimal(10)) + 1) * Decimal(damage))
 			
+			if i == "endeffect":
+				
+				user.acbattler.effects = []
 		
 			
 			
@@ -387,14 +405,18 @@ cleave = Skill("Cleave", fighting, True, 10, 20, -2, 2, 2, [2, bleed], [""])
 revenge = Skill("Revenge", dark, False, 0, 0, 10, 0, 5, [], ["revenge"])
 #----------------------------------------------------------------------
 obsidianBlast = Skill("Obsidian Blast", fire, False, 20, 10, -3, 0, 5, [1, burn] ,[""])
-recover = Skill("Recover", magic, False, 0, 0, 10, 0, 7, [], ["recover"])
+recover = Skill("Recover", magic, False, 0, 0, 10, 0, 7, [], ["recover", "endeffect"])
 psionicRadiance = Skill("Psionic Radiance", physic, False, 30, 10, -2, 3, 3, [], [""])
 #------------------------------------------------------------------------
-stare = Skill("Stare", physic, False, 10, 10, -2, 0, 1, [], ["stare"])
-blink = Skill("Blink", physic, False, 5, 5, 1, 0, 0, [], ["mark"])
+stare = Skill("Stare", physic, False, 30, 10, -2, 15, 5, [], [""])
+blink = Skill("Blink", physic, True, 5, 5, 1, 0, 0, [], ["mark"])
 creepyAtk = Skill("Creep Attack", physic, False, 5, 5, 1, 0, 0, [], ["creepyAtk"])
-inhale = Skill("Inhale", air, False, 0, 0, 3, 0, 0, [], ["defend"])
-observe = Skill("Observe", unknown, False, 0, 0, 3, 0, 0, [], ["mark", "mark", "mark", "mark", "mark", "mark"])
+inhale = Skill("Inhale", air, False, 0, 0, 3, 0, 0, [], ["defend", "mark"])
+observe = Skill("Observe", unknown, False, 0, 0, 3, 0, 1, [], ["mark", "mark", "mark", "mark", "mark", "mark"])
+exhale = Skill("Exhale", air, False, 5, 10, 3, 0, 0, [], ["mark"])
+#------------------------------------------------------------------------
+sneeze = Skill("Sneeze", acid, False, 14, 6, 6, 0, 1, [2, poison], [""])
+
 
 
 
@@ -437,8 +459,8 @@ NOT = Char("???", [unknown], "???", "???", "???", "???", "???", "???", "???", "?
 
 Mage = Char("Meigis", [normal, chaos], 500, 5, 15, 5, 15, 4, 0, 1, 0, [basicAtk, fireBall, waterSpout, airBlast, earthShot, defend], "Assets/battlers/Mage.png", [5,0])
 Mouther = Char("Mouther", [earth], 500, 20, 0, 10, 5, 4, 0, 1, 0, [basicAtk, defend], "Assets/battlers/Mouther.png", [4,0])
-NotScaryGhost = Char("Not Scary Ghost", [ghost], 1000, 0, 0, 10, 75, 2, 0, 1, 0, [], "Assets/battlers/Not_Scary_Ghost.png", [2, 23])
-Creep = Char("Creepy Bald Guy", [physic, unknown], 750, 10, 10, 15, 50, 0, 0, 1, 0, [blink, stare, inhale, observe, creepyAtk], "Assets/battlers/Creepy_Bald_Guy.png", [1, 7])
+NotScaryGhost = Char("Not Scary Ghost", [ghost], 1000, 0, 0, 10, 75, 2, 0, 1, 0, [basicAtk, sneeze, forceShield, recover], "Assets/battlers/Not_Scary_Ghost.png", [2, 14])
+Creep = Char("Creepy Bald Guy", [physic, unknown], 750, 10, 10, 15, 50, 0, 0, 1, 0, [creepyAtk, blink, stare, inhale, exhale, observe], "Assets/battlers/Creepy_Bald_Guy.png", [1, 7])
 
 Nic = Char("Nic", [chaos], 500, 15, 50, 10, 25, 4, 0, 1, 0, [basicAtk, magicMute, shardSwarm, powerUp, defend], "Assets/battlers/nic.png", [5,8])
 
@@ -458,7 +480,7 @@ NO = NOT.buildNew()
 
 
 		
-unlockedchars = [Nue.buildNew(), Scarlet.buildNew(), Mage.buildNew(), Mouther.buildNew(), Nic.buildNew(), Siv.buildNew(), Coo33.buildNew(), CoosomeJoe.buildNew(), Epic.buildNew(), Alpha.buildNew(), Durric.buildNew(), Creep.buildNew()]			
+unlockedchars = [Nue.buildNew(), Scarlet.buildNew(), Mage.buildNew(), Mouther.buildNew(), Nic.buildNew(), Siv.buildNew(), Coo33.buildNew(), CoosomeJoe.buildNew(), Epic.buildNew(), Alpha.buildNew(), Durric.buildNew(), Creep.buildNew(), NotScaryGhost.buildNew()]			
 
 class Player(object):
 	def __init__(self, name):
@@ -519,6 +541,7 @@ def dispSkills(player):
 		if x > 1:
 			x = 0
 			y += 1
+		
 		gScreen.blit(i.text, [330+ 6 + x*175, y*30 + 370 + 5])
 		if i.cost <= player.power:
 			gScreen.blit(i.type.img, [330 + x*175, y*30 + 370])
@@ -538,7 +561,7 @@ def dispSkills(player):
 	
 	
 	pygame.draw.rect(gScreen, GREEN, [21,371,player.acbattler.hp * Decimal(0.278),28])
-	pygame.draw.rect(gScreen, BLUE, [10, 430, player.power, 28])
+	pygame.draw.rect(gScreen, BLUE, [10, 430, player.power * 2, 28])
 	gScreen.blit(font.render("HP: " + str(player.acbattler.hp), True, (0,0,255)), [75, 376])
 	gScreen.blit(font.render("Power: " + str(player.power), True, (255,255,255)), [75, 426])
 	gScreen.blit(font.render(player.acbattler.name + "'s turn", True, (255,255,255)), [75, 476])
@@ -996,7 +1019,7 @@ while not done:
 	
 	#player
 	#animation:
-		print battle.acbattler.marks
+	
 	
 		gScreen.fill(WHITE)
 		
