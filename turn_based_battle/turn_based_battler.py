@@ -61,6 +61,7 @@ lockedchar = pygame.image.load("assets/battlers/locked.png")
 lockedskill = pygame.image.load("assets/moveboxes/locked.png")
 selector1 = pygame.image.load("assets/ui/selector1.png")
 selector2 = pygame.image.load("assets/ui/selector2.png")
+selector2 = pygame.image.load("assets/ui/selector3.png")
 
 hasprinted = False
 log = []
@@ -425,7 +426,7 @@ sneeze = Skill("Sneeze", acid, False, 14, 6, 6, 0, 1, [2, poison], [""])
 
 
 class Char(object):
-	def __init__(self, name, types, hp, str, int, con, mag, agil, crit, lvl, xp, skills, image, cords):
+	def __init__(self, name, types, hp, str, int, con, mag, agil, crit, lvl, xp, skills, image, cords, menuImg):
 		self.name = name
 		self.hp = hp
 		self.str = str
@@ -450,32 +451,34 @@ class Char(object):
 		self.crit = crit
 		self.basecrit = crit
 		self.marks = 0
+		self.power = 0
+		self.menuImg = menuImg
 		
 		
 	def buildNew(self):
-		newchar = Char(self.name, self.types, self.hp, self.str, self.int, self.con, self.mag, self.agil, self.crit, self.lvl, self.xp, self.skills, pygame.transform.scale(pygame.image.load(self.image), [50, 50]), self.cords)
+		newchar = Char(self.name, self.types, self.hp, self.str, self.int, self.con, self.mag, self.agil, self.crit, self.lvl, self.xp, self.skills, pygame.transform.scale(pygame.image.load(self.image), [50, 50]), self.cords, pygame.transform.scale(pygame.image.load(self.image), [42, 42]))
 		newchar.img = pygame.image.load(self.image)
 		return newchar
 		
-NOT = Char("???", [unknown], "???", "???", "???", "???", "???", "???", "???", "???", "???", [], "Assets/battlers/locked.png", [-1,0])
+NOT = Char("???", [unknown], "???", "???", "???", "???", "???", "???", "???", "???", "???", [], "Assets/battlers/locked.png", [-1,0], "")
 
-Mage = Char("Meigis", [normal, chaos], 500, 5, 15, 5, 15, 4, 0, 1, 0, [basicAtk, fireBall, waterSpout, airBlast, earthShot, defend], "Assets/battlers/Mage.png", [5,0])
-Mouther = Char("Mouther", [earth], 500, 20, 0, 10, 5, 4, 0, 1, 0, [basicAtk, defend], "Assets/battlers/Mouther.png", [4,0])
-NotScaryGhost = Char("Not Scary Ghost", [ghost], 1000, 0, 0, 10, 75, 2, 0, 1, 0, [basicAtk, sneeze, forceShield, recover], "Assets/battlers/Not_Scary_Ghost.png", [2, 14])
-Creep = Char("Creepy Bald Guy", [physic, unknown], 750, 10, 10, 15, 50, 0, 0, 1, 0, [creepyAtk, blink, stare, inhale, exhale, observe], "Assets/battlers/Creepy_Bald_Guy.png", [1, 7])
+Mage = Char("Meigis", [normal, chaos], 500, 5, 15, 5, 15, 4, 0, 1, 0, [basicAtk, fireBall, waterSpout, airBlast, earthShot, defend], "Assets/battlers/Mage.png", [5,0], "")
+Mouther = Char("Mouther", [earth], 500, 20, 0, 10, 5, 4, 0, 1, 0, [basicAtk, defend], "Assets/battlers/Mouther.png", [4,0], "")
+NotScaryGhost = Char("Not Scary Ghost", [ghost], 1000, 0, 0, 10, 75, 2, 0, 1, 0, [basicAtk, sneeze, forceShield, recover], "Assets/battlers/Not_Scary_Ghost.png", [2, 14], "")
+Creep = Char("Creepy Bald Guy", [physic, unknown], 750, 10, 10, 15, 50, 0, 0, 1, 0, [creepyAtk, blink, stare, inhale, exhale, observe], "Assets/battlers/Creepy_Bald_Guy.png", [1, 7], "")
 
-Nic = Char("Nic", [chaos], 500, 15, 50, 10, 25, 4, 0, 1, 0, [basicAtk, magicMute, shardSwarm, powerUp, defend], "Assets/battlers/nic.png", [5,8])
+Nic = Char("Nic", [chaos], 500, 15, 50, 10, 25, 4, 0, 1, 0, [basicAtk, magicMute, shardSwarm, powerUp, defend], "Assets/battlers/nic.png", [5,8], "")
 
-Scarlet = Char("Scarlet", [dark, blood], 100, 20, 20, 5, 20, 6, 0, 1, 0, [basicAtk, scar, vampire, destroy, lifePact, defend], "Assets/battlers/vamp.png", [1,0])
-Nue = Char("Nue", [astral, dark], 300, 25, 40, 10, 50, 4, 15, 1, 0, [basicAtk, meteorStorm, planAhead, forceShield, powerDrain, stab, meditate, defend], "Assets/battlers/8bitnue.png", [4,7])
+Scarlet = Char("Scarlet", [dark, blood], 100, 20, 20, 5, 20, 6, 0, 1, 0, [basicAtk, scar, vampire, destroy, lifePact, defend], "Assets/battlers/vamp.png", [1,0], "")
+Nue = Char("Nue", [astral, dark], 300, 25, 40, 10, 50, 4, 15, 1, 0, [basicAtk, meteorStorm, planAhead, forceShield, powerDrain, stab, meditate, defend], "Assets/battlers/8bitnue.png", [4,7], "")
 
-Epic = Char("Epic", [tech], 1000, 25, 50, 35, 45, 7, 10, 1, 0, [basicAtk,energiBeam, wellspring, defend], "Assets/battlers/epic.png", [7,7])
+Epic = Char("Epic", [tech], 1000, 25, 50, 35, 45, 7, 10, 1, 0, [basicAtk,energiBeam, wellspring, defend], "Assets/battlers/epic.png", [7,7], "")
 
-Coo33 = Char("Coo33", [dark, blood], 250, 50, 0, 30, 0, 10, 10, 1, 0, [basicAtk, slash, bite, kick, dodge, rip, consumeFlesh, defend], "Assets/battlers/Coo33.png", [3,3])
-Alpha = Char("Alpha", [normal, earth, fighting], 500, 50, -50, 30, 5, 5, 0, 1, 0, [basicAtk, slash, cleave, bladeFlash, revenge, mend, defend], "Assets/battlers/alpha.png", [8,4])
-Siv = Char("Siv", [normal, earth, dark, physic, chaos, magic], 250, 0, 50, 0, 38, 5, 7, 1, 0, [basicAtk, chaosBolt, setFire, forceShield, chaosBeam, meditate, lifePact, shroud], "Assets/battlers/siv.png", [4,2])
-CoosomeJoe = Char("Coosome Joe", [light, tech], 500, 25, 25, 25, 25, 5, 2, 1, 0, [basicAtk, bludgeon, erase, create, confuse, planAhead, mend, defend], "Assets/battlers/Coosome.png", [3, 7])
-Durric = Char("Durric", [earth, light, fighting, physic], 1000, 25, 25, 75, 25, 0, 0, 1, 0, [basicAtk, forceShield, cleave, obsidianBlast, recover, psionicRadiance, mend, defend], "Assets/battlers/Durric.png", [4, 4])
+Coo33 = Char("Coo33", [dark, blood], 250, 50, 0, 30, 0, 10, 10, 1, 0, [basicAtk, slash, bite, kick, dodge, rip, consumeFlesh, defend], "Assets/battlers/Coo33.png", [3,3], "")
+Alpha = Char("Alpha", [normal, earth, fighting], 500, 50, -50, 30, 5, 5, 0, 1, 0, [basicAtk, slash, cleave, bladeFlash, revenge, mend, defend], "Assets/battlers/alpha.png", [8,4], "")
+Siv = Char("Siv", [normal, earth, dark, physic, chaos, magic], 250, 0, 50, 0, 38, 5, 7, 1, 0, [basicAtk, chaosBolt, setFire, forceShield, chaosBeam, meditate, lifePact, shroud], "Assets/battlers/siv.png", [4,2], "")
+CoosomeJoe = Char("Coosome Joe", [light, tech], 500, 25, 25, 25, 25, 5, 2, 1, 0, [basicAtk, bludgeon, erase, create, confuse, planAhead, mend, defend], "Assets/battlers/Coosome.png", [3, 7], "")
+Durric = Char("Durric", [earth, light, fighting, physic], 1000, 25, 25, 75, 25, 0, 0, 1, 0, [basicAtk, forceShield, cleave, obsidianBlast, recover, psionicRadiance, mend, defend], "Assets/battlers/Durric.png", [4, 4], "")
 
 NO = NOT.buildNew()	
 		
@@ -496,37 +499,16 @@ class Player(object):
 		self.resolved = True
 		self.x = 0
 		self.y = 0
-		self.power = 0
+		self.x1 = 0
+		self.y1 = 0
+		self.x3 = 0
+		self.y3 = 0
 		self.turn = True
 		self.powergiven = False
 		self.effectResolved = False
 	
-Player = Player("1")
-
-
-
-
-
-
-class Battle(object):
-	def __init__(self):
-		self.acbattler = "NUL?!??!"
-		self.battlers = []
-		
-		self.wins = 0
-		self.losses = 0
-		self.goskill = "hoi"
-		self.ready = False
-		self.resolved = True
-		self.x = 0
-		self.y = 0
-		self.power = 0
-		self.turn = False
-		self.powergiven = False
-		self.effectResolved = False
-
-battle = Battle()
-battle.acbattler = NOT.buildNew()
+player1 = Player("1")
+player2 = Player("2")
 
 
 done = False
@@ -538,14 +520,14 @@ def dispSkills(player):
 	x = 0
 	y = 0
 
-	for i in player.acbattler.skills:
+	for i in player1.acbattler.skills:
 		
 		if x > 1:
 			x = 0
 			y += 1
 		
 		gScreen.blit(i.text, [330+ 6 + x*175, y*30 + 370 + 5])
-		if i.cost <= player.power:
+		if i.cost <= player1.power:
 			gScreen.blit(i.type.img, [330 + x*175, y*30 + 370])
 		
 		else:
@@ -562,11 +544,11 @@ def dispSkills(player):
 		
 	
 	
-	pygame.draw.rect(gScreen, GREEN, [21,371,player.acbattler.hp * Decimal(0.278),28])
-	pygame.draw.rect(gScreen, BLUE, [10, 430, player.power * 2, 28])
-	gScreen.blit(font.render("HP: " + str(player.acbattler.hp), True, (0,0,255)), [75, 376])
-	gScreen.blit(font.render("Power: " + str(player.power), True, (255,255,255)), [75, 426])
-	gScreen.blit(font.render(player.acbattler.name + "'s turn", True, (255,255,255)), [75, 476])
+	pygame.draw.rect(gScreen, GREEN, [21,371,player1.acbattler.hp * Decimal(0.278),28])
+	pygame.draw.rect(gScreen, BLUE, [10, 430, player1.power * 2, 28])
+	gScreen.blit(font.render("HP: " + str(player1.acbattler.hp), True, (0,0,255)), [75, 376])
+	gScreen.blit(font.render("Power: " + str(player1.power), True, (255,255,255)), [75, 426])
+	gScreen.blit(font.render(player1.acbattler.name + "'s turn", True, (255,255,255)), [75, 476])
 	
 
 
@@ -597,7 +579,14 @@ dispchar2 = NO
 	
 battling = False
 
+
+def CharSelect(player):
+	
+
 while not done:
+	
+	thisplayer = player1
+	
 	
 	for event in pygame.event.get(): 
 		if event.type == pygame.QUIT: 
@@ -610,30 +599,44 @@ while not done:
 			
 		elif event.type == pygame.KEYDOWN:
 				if event.key == K_UP:
-					battle.y -= 1
+					thisplayer.y3 -= 1
 					
 				if event.key == K_DOWN:
-					battle.y += 1
+					thisplayer.y3 += 1
 					
 				if event.key == K_LEFT:
-					battle.x -= 1
+					thisplayer.x3 -= 1
 				
 					
 				if event.key == K_RIGHT:
-					battle.x += 1
+					thisplayer.x3 += 1
 					
 				if event.key == K_w:
-					Player.y -= 1
+					thisplayer.y1 -= 1
 					
 				if event.key == K_s:
-					Player.y += 1
+					thisplayer.y1 += 1
 					
 				if event.key == K_a:
-					Player.x -= 1
+					thisplayer.x1 -= 1
 				
 					
 				if event.key == K_d:
-					Player.x += 1
+					thisplayer1.x1 += 1
+					
+					
+				if event.key == K_i:
+					thisplayer.y2 -= 1
+					
+				if event.key == K_k:
+					thisplayer.y2 += 1
+					
+				if event.key == K_j:
+					thisplayer.x2 -= 1
+				
+					
+				if event.key == K_l:
+					player1.x2 += 1
 			
 			
 	mouse_pos = pygame.mouse.get_pos()
@@ -646,23 +649,18 @@ while not done:
 			y += 1
 		
 		for f in unlockedchars:
-			if Player.x == f.cords[0] and Player.y == f.cords[1]:
+			if thisplayer.x == f.cords[0] and thisplayer.y == f.cords[1]:
 				
 				dispchar = f
 				
-				Player.acbattler = f
+				thisplayer.battlers[0] = f
 				break
 				
 				
 			else:
 				dispchar = NO
-				Player.acbattler = NO
-				
-			
-			
-				
-		
-		
+				thisplayer.battlers[0] = NO
+
 		
 		x += 1
 		
@@ -676,39 +674,45 @@ while not done:
 			y += 1
 		
 		for f in unlockedchars:
-			if battle.x == f.cords[0] and battle.y == f.cords[1]:
+			if thisplayer.x2 == f.cords[0] and thisplayer.y2 == f.cords[1]:
 				
 				dispchar2 = f
 				
-				battle.acbattler = f
+				thisplayer.battlers[1] = f
+				break
+	
+			else:
+				dispchar2 = NO
+				player1.battlers[1] = NO
+
+		x += 1
+		
+	y = 0
+	x = 0
+	for i in range(384):
+		
+		if x > 23:
+			x = 0
+			y += 1
+		for f in unlockedchars:
+			if thisplayer.x3 == f.cords[0] and thisplayer.y3 == f.cords[1]:
+				
+				dispchar2 = f
+				
+				thisplayer.battlers[2] = f
 				break
 				
 				
 			else:
 				dispchar2 = NO
-				battle.acbattler = NO
-				
-			
-			
-				
-		
-		
-		
+				thisplayer.battlers[2] = NO
+
 		x += 1
-		
-	
-	
-	
-	
+
 	if hitDetect(mouse_pos, mouse_pos, [529, 434], [698, 498]):
 		if mouse_down:
-			battling = True
-			Player.acbattler.hp = Player.acbattler.maxhp
-			battle.acbattler.hp = battle.acbattler.maxhp
-			battle.power = 0
-			Player.power = 0
-			Player.acbattler.effects = []
-			battle.acbattler.effects = []		
+			thisplayer = player2
+		
 			time.sleep(1)
 	
 	
@@ -739,32 +743,27 @@ while not done:
 		
 		x += 1
 			
-	gScreen.blit(selector1, [Player.x*22 + 1, Player.y*22 + 1])
-	gScreen.blit(selector2, [battle.x*22 + 1, battle.y*22 + 1])
+	gScreen.blit(selector1, [player1.x*22 + 1, player1.y*22 + 1])
+	gScreen.blit(selector2, [player2.x*22 + 1, player2.y*22 + 1])
+	gScreen.blit(selector3, [player2.x*22 + 1, player2.y*22 + 1])
 	
 
-		
-	gScreen.blit(Player.acbattler.image, [536, 370])
-	gScreen.blit(dispchar2.image, [644, 370])
+	for i in range(len(thisplayer.battlers)):
 	
-	gScreen.blit(Player.acbattler.image, [3, 365])
-	gScreen.blit(font.render(Player.acbattler.name, True, BLACK), [63, 365])
-	atypes = ""
-	for i in Player.acbattler.types:
-		atypes += i.name + " "
-	gScreen.blit(font.render(atypes, True, BLACK), [63, 385])
-	gScreen.blit(font.render("Str: " + str(Player.acbattler.str) + "   Con: " + str(Player.acbattler.con) + "   Int: " + str(Player.acbattler.int) + "   Mdf: " + str(Player.acbattler.mag) + "   Agil: " + str(Player.acbattler.agil) + "   Crit: " + str(Player.acbattler.crit), True, BLACK), [63, 405])
+		localbattler = thisplayer.battlers[i]
+	
+		gScreen.blit(dispchar2.image, [644, 370])
+	
+		gScreen.blit(localbattler.image, [4, i * 47 + 359])
+		gScreen.blit(font.render(localbattler.name, True, BLACK), [56, i * 47 + 359])
+		atypes = ""
+		for f in localbattler.types:
+			atypes += f.name + " "
+		gScreen.blit(font.render(atypes, True, BLACK), [63, 385])
+		gScreen.blit(font.render("Str: " + str(localbattler.str) + "   Con: " + str(localbattler.con) + "   Int: " + str(localbattler.int) + "   Mdf: " + str(localbattler.mag) + "   Agil: " + str(localbattler.agil) + "   Crit: " + str(localbattler.crit), True, BLACK), [63, 405])
 	
 	
 
-	gScreen.blit(battle.acbattler.image, [3, 438])
-	gScreen.blit(font.render(battle.acbattler.name, True, BLACK), [63, 438])
-	btypes = ""
-	for i in battle.acbattler.types:
-		btypes += i.name + " "
-		
-	gScreen.blit(font.render(btypes, True, BLACK), [63, 458])	
-	gScreen.blit(font.render("Str: " + str(battle.acbattler.str) + "   Con: " + str(battle.acbattler.con) + "   Int: " + str(battle.acbattler.int) + "   Mdf: " + str(battle.acbattler.mag) + "   Agil: " + str(battle.acbattler.agil) + "   Crit: " + str(battle.acbattler.crit), True, BLACK), [63, 478])
 
 	
 	if mouse_down:
@@ -792,7 +791,7 @@ while not done:
 		# --- Game logic should go here
 		mouse_pos = pygame.mouse.get_pos()
 	
-		if Player.acbattler.hp <= 0:
+		if player1.acbattler.hp <= 0:
 			gameover = True
 			pygame.mixer.music.fadeout(1000)
 		#health-=0.01
@@ -800,7 +799,7 @@ while not done:
 	
 	
 	
-		hp = font.render("hp: "+ str(Player.acbattler.hp) + "/100",True,BLUE)
+		hp = font.render("hp: "+ str(player1.acbattler.hp) + "/100",True,BLUE)
 	
 	
 	
@@ -812,32 +811,32 @@ while not done:
 				
 	
 	
-		if Player.resolved and battle.resolved:
-			Player.ready = False
-			Player.turn = True
-			battle.ready = False
+		if player1.resolved and player2.resolved:
+			player1.ready = False
+			player1.turn = True
+			player2.ready = False
 			turn += 1
-			if not Player.powergiven:
-				Player.power += 1
-				for i in Player.acbattler.effects:
-					i.update(Player.acbattler)
-				Player.powergiven = True
+			if not player1.powergiven:
+				player1.power += 1
+				for i in player1.acbattler.effects:
+					i.update(player1.acbattler)
+				player1.powergiven = True
 			
-			if not battle.powergiven:
-				battle.power += 1
-				for i in battle.acbattler.effects:
-					i.update(battle.acbattler)
-				battle.powergiven = True
+			if not player2.powergiven:
+				player2.power += 1
+				for i in player2.acbattler.effects:
+					i.update(player2.acbattler)
+				player2.powergiven = True
 			
 			
 				
 			
 			
 			
-		if Player.turn:	
+		if player1.turn:	
 			x = 0
 			y = 0
-			for i in Player.acbattler.skills:
+			for i in player1.acbattler.skills:
 		
 				if x > 1:
 					x = 0
@@ -847,51 +846,51 @@ while not done:
 					if mouse_down:
 						if True:
 							if x == 0 and y ==0:
-								if Player.acbattler.skills[0].cost <= Player.power:
-									Player.goskill = Player.acbattler.skills[0]
+								if player1.acbattler.skills[0].cost <= player1.power:
+									player1.goskill = player1.acbattler.skills[0]
 								else:
-									Player.goskill = basicAtk
+									player1.goskill = basicAtk
 							elif x == 1 and y == 0:
-								if Player.acbattler.skills[1].cost <= Player.power:
-									Player.goskill = Player.acbattler.skills[1]
+								if player1.acbattler.skills[1].cost <= player1.power:
+									player1.goskill = player1.acbattler.skills[1]
 								else:
-									Player.goskill = basicAtk
+									player1.goskill = basicAtk
 							elif x == 0 and y == 1:
-								if Player.acbattler.skills[2].cost <= Player.power:
-									Player.goskill = Player.acbattler.skills[2]
+								if player1.acbattler.skills[2].cost <= player1.power:
+									player1.goskill = player1.acbattler.skills[2]
 								else:
-									Player.goskill = basicAtk
+									player1.goskill = basicAtk
 							elif x == 1 and y == 1:
-								if Player.acbattler.skills[3].cost <= Player.power:
-									Player.goskill = Player.acbattler.skills[3]
+								if player1.acbattler.skills[3].cost <= player1.power:
+									player1.goskill = player1.acbattler.skills[3]
 								else:
-									Player.goskill = basicAtk
+									player1.goskill = basicAtk
 							elif x == 0 and y == 2:
-								if Player.acbattler.skills[4].cost <= Player.power:
-									Player.goskill = Player.acbattler.skills[4]
+								if player1.acbattler.skills[4].cost <= player1.power:
+									player1.goskill = player1.acbattler.skills[4]
 								else:
-									Player.goskill = basicAtk
+									player1.goskill = basicAtk
 							elif x == 1 and y == 2:
-								if Player.acbattler.skills[5].cost <= Player.power:
-									Player.goskill = Player.acbattler.skills[5]
+								if player1.acbattler.skills[5].cost <= player1.power:
+									player1.goskill = player1.acbattler.skills[5]
 								else:
-									Player.goskill = basicAtk
+									player1.goskill = basicAtk
 							elif x == 0 and y == 3:
-								if Player.acbattler.skills[6].cost <= Player.power:
-									Player.goskill = Player.acbattler.skills[6]
+								if player1.acbattler.skills[6].cost <= player1.power:
+									player1.goskill = player1.acbattler.skills[6]
 								else:
-									Player.goskill = basicAtk
+									player1.goskill = basicAtk
 							elif x == 1 and y == 3:
-								if Player.acbattler.skills[7].cost <= Player.power:
-									Player.goskill = Player.acbattler.skills[7]
+								if player1.acbattler.skills[7].cost <= player1.power:
+									player1.goskill = player1.acbattler.skills[7]
 								else:
-									Player.goskill = basicAtk
+									player1.goskill = basicAtk
 									
 									
 							mouse_down = False
-							Player.ready = True
-							Player.resolved = False
-							Player.turn = False
+							player1.ready = True
+							player1.resolved = False
+							player1.turn = False
 							print "skill picked"
 					
 						#except:
@@ -903,8 +902,8 @@ while not done:
 				x += 1
 				
 		
-		if battle.turn:
-			for i in battle.acbattler.skills:
+		if player2.turn:
+			for i in player2.acbattler.skills:
 		
 				if x > 1:
 					x = 0
@@ -914,51 +913,51 @@ while not done:
 					if mouse_down:
 						if True:
 							if x == 0 and y ==0:
-								if battle.acbattler.skills[0].cost <= battle.power:
-									battle.goskill = battle.acbattler.skills[0]
+								if player2.acbattler.skills[0].cost <= player2.power:
+									player2.goskill = player2.acbattler.skills[0]
 								else:
-									battle.goskill = basicAtk
+									player2.goskill = basicAtk
 							elif x == 1 and y == 0:
-								if battle.acbattler.skills[1].cost <= battle.power:
-									battle.goskill = battle.acbattler.skills[1]
+								if player2.acbattler.skills[1].cost <= player2.power:
+									player2.goskill = player2.acbattler.skills[1]
 								else:
-									battle.goskill = basicAtk
+									player2.goskill = basicAtk
 							elif x == 0 and y == 1:
-								if battle.acbattler.skills[2].cost <= battle.power:
-									battle.goskill = battle.acbattler.skills[2]
+								if player2.acbattler.skills[2].cost <= player2.power:
+									player2.goskill = player2.acbattler.skills[2]
 								else:
-									battle.goskill = basicAtk
+									player2.goskill = basicAtk
 							elif x == 1 and y == 1:
-								if battle.acbattler.skills[3].cost <= battle.power:
-									battle.goskill = battle.acbattler.skills[3]
+								if player2.acbattler.skills[3].cost <= player2.power:
+									player2.goskill = player2.acbattler.skills[3]
 								else:
-									battle.goskill = basicAtk
+									player2.goskill = basicAtk
 							elif x == 0 and y == 2:
-								if battle.acbattler.skills[4].cost <= battle.power:
-									battle.goskill = battle.acbattler.skills[4]
+								if player2.acbattler.skills[4].cost <= player2.power:
+									player2.goskill = player2.acbattler.skills[4]
 								else:
-									battle.goskill = basicAtk
+									player2.goskill = basicAtk
 							elif x == 1 and y == 2:
-								if battle.acbattler.skills[5].cost <= battle.power:
-									battle.goskill = battle.acbattler.skills[5]
+								if player2.acbattler.skills[5].cost <= player2.power:
+									player2.goskill = player2.acbattler.skills[5]
 								else:
-									battle.goskill = basicAtk
+									player2.goskill = basicAtk
 							elif x == 0 and y == 3:
-								if battle.acbattler.skills[6].cost <= battle.power:
-									battle.goskill = battle.acbattler.skills[6]
+								if player2.acbattler.skills[6].cost <= player2.power:
+									player2.goskill = player2.acbattler.skills[6]
 								else:
-									battle.goskill = basicAtk
+									player2.goskill = basicAtk
 							elif x == 1 and y == 3:
-								if battle.acbattler.skills[7].cost <= battle.power:
-									battle.goskill = battle.acbattler.skills[7]
+								if player2.acbattler.skills[7].cost <= player2.power:
+									player2.goskill = player2.acbattler.skills[7]
 								else:
-									battle.goskill = basicAtk
+									player2.goskill = basicAtk
 									
 									
 							mouse_down = False
-							battle.ready = True
-							battle.resolved = False
-							battle.turn = False
+							player2.ready = True
+							player2.resolved = False
+							player2.turn = False
 							print "skill picked"
 					
 						#except:
@@ -969,50 +968,50 @@ while not done:
 	
 				x += 1
 			
-		if not Player.turn and not battle.ready:
-			battle.turn = True
+		if not player1.turn and not player2.ready:
+			player2.turn = True
 	
 	
 	
-		if not Player.resolved and not battle.resolved and Player.ready and battle.ready:
-			if Player.acbattler.agil + Player.goskill.spd >= battle.acbattler.agil + battle.goskill.spd:
+		if not player1.resolved and not player2.resolved and player1.ready and player2.ready:
+			if player1.acbattler.agil + player1.goskill.spd >= player2.acbattler.agil + player2.goskill.spd:
 				player_turn = True
 			else:
 				player_turn = False
 	
-		if Player.ready and battle.ready:
+		if player1.ready and player2.ready:
 			
 			if player_turn:
-				if Player.acbattler.hp > 0:
-					Player.goskill.use(Player, battle)
+				if player1.acbattler.hp > 0:
+					player1.goskill.use(player1, player2)
 					
-					Player.power -= Player.goskill.cost
-					Player.resolved = True
-					Player.powergiven = False
+					player1.power -= player1.goskill.cost
+					player1.resolved = True
+					player1.powergiven = False
 				
 			
 	
 			if not player_turn:
-				if battle.acbattler.hp > 0:
-					battle.goskill.use(battle, Player)
-					battle.power -= battle.goskill.cost
-					battle.resolved = True
-					battle.powergiven = False
+				if player2.acbattler.hp > 0:
+					player2.goskill.use(player2, player1)
+					player2.power -= player2.goskill.cost
+					player2.resolved = True
+					player2.powergiven = False
 				
 			
 			
 	
-		if Player.resolved:
+		if player1.resolved:
 			player_turn = False
-		if battle.resolved:
+		if player2.resolved:
 			player_turn = True
 	
 		
 		
-		if Player.power > 100:
-			Player.power = 100
-		if battle.power > 100:
-			battle.power = 100
+		if player1.power > 100:
+			player1.power = 100
+		if player2.power > 100:
+			player2.power = 100
 		
     # --- Drawing code should go here
 	
@@ -1025,11 +1024,11 @@ while not done:
 	
 		gScreen.fill(WHITE)
 		
-		pygame.draw.rect(gScreen, RED, [50,125,Player.acbattler.hp / 20,5])
-		gScreen.blit(Player.acbattler.image,[50, 150])
+		pygame.draw.rect(gScreen, RED, [50,125,player1.acbattler.hp / 20,5])
+		gScreen.blit(player1.acbattler.image,[50, 150])
 		
-		pygame.draw.rect(gScreen, RED, [600,125,battle.acbattler.hp / 20,5])
-		gScreen.blit(battle.acbattler.image,[600, 150])
+		pygame.draw.rect(gScreen, RED, [600,125,player2.acbattler.hp / 20,5])
+		gScreen.blit(player2.acbattler.image,[600, 150])
 	
 		
 		pygame.draw.rect(gScreen, BLACK, [0,350,700,150])
@@ -1047,43 +1046,43 @@ while not done:
 		y = 0
 
 			
-		if Player.turn:
+		if player1.turn:
 			
-			dispSkills(Player)
-		elif battle.turn:
-			dispSkills(battle)
+			dispSkills(player1)
+		elif player2.turn:
+			dispSkills(player2)
 	
 		if mouse_down:
 			gScreen.blit(mouse_pointer2,mouse_pos)
 		else:
 			gScreen.blit(mouse_pointer,mouse_pos)
-		if Player.acbattler.hp <= 0:
+		if player1.acbattler.hp <= 0:
 			
 			battling = False
-			print battle.acbattler.name + " WON!"
+			print player2.acbattler.name + " WON!"
 			print log
-			Player.acbattler.hp = Player.acbattler.maxhp
-			Player.acbattler.effects = []
-			battle.acbattler.hp = battle.acbattler.maxhp
-			battle.acbattler.effects = []
-			battle.power = 0
-			Player.power = 0
+			player1.acbattler.hp = player1.acbattler.maxhp
+			player1.acbattler.effects = []
+			player2.acbattler.hp = player2.acbattler.maxhp
+			player2.acbattler.effects = []
+			player2.power = 0
+			player1.power = 0
 			
 			log = []
-		elif battle.acbattler.hp <= 0:
+		elif player2.acbattler.hp <= 0:
 			battling = False
-			print Player.acbattler.name + " WON!"
+			print player1.acbattler.name + " WON!"
 			print log
-			Player.acbattler.hp = Player.acbattler.maxhp
-			Player.acbattler.effects = []
-			battle.acbattler.hp = battle.acbattler.maxhp
-			battle.acbattler.effects = []
-			battle.power = 0
-			Player.power = 0
+			player1.acbattler.hp = player1.acbattler.maxhp
+			player1.acbattler.effects = []
+			player2.acbattler.hp = player2.acbattler.maxhp
+			player2.acbattler.effects = []
+			player2.power = 0
+			player1.power = 0
 			
 			log = []
 		
-		if Player.ready and battle.ready:
+		if player1.ready and player2.ready:
 			pygame.draw.rect(gScreen, BLACK, [0,350,700,150])
 	
  
