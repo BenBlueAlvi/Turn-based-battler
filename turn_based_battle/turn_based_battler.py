@@ -1,3 +1,5 @@
+
+
 import pygame
 import random
 import time
@@ -83,9 +85,11 @@ def printb(text):
 	global log
 	log.append(text)
 	newtext = font.render(text,True,BLACK)
+	
 	time.sleep(1)
 	if hasprinted:
 		disptext = newtext
+
 		
 		
 		
@@ -253,23 +257,23 @@ class Skill(object):
 		
 		
 	def use(self, user, target):
-		print user.power
+		
 		message = ""
 		if self.phys:
-			damage = (user.acbattler.str + self.atk+ random.randint(0, self.var)) - target.acbattler.con
+			damage = (user.str + self.atk+ random.randint(0, self.var)) - target.con
 			
 		else:
-			damage = (user.acbattler.int + self.atk + random.randint(0, self.var)) - target.acbattler.mag
+			damage = (user.int + self.atk + random.randint(0, self.var)) - target.mag
 			
 		
 		
-		for i in target.acbattler.types:
+		for i in target.types:
 				
 			if self.type.name in i.weks:
 				damage *= 2
 				message = " It's super effective!"
 				
-		for i in target.acbattler.types:
+		for i in target.types:
 			
 				
 			if self.type.name in i.strs:
@@ -278,92 +282,92 @@ class Skill(object):
 		
 		
 		
-		if random.randint(1,30) + user.acbattler.crit >= 30:
+		if random.randint(1,30) + user.crit >= 30:
 			damage *= 2
 			message += " CRITICAL HIT!"
 			if not len(self.effects) == 0:
-				target.acbattler.effects.append(self.effects[1])
+				target.effects.append(self.effects[1])
 		
 		
 		if not len(self.effects) == 0:
 			if random.randint(1,self.effects[0]) == 1:
-				target.acbattler.effects.append(self.effects[1])
+				target.effects.append(self.effects[1])
 				
 		for i in self.spec:
 		
 			if i == "vampire":
-				user.acbattler.hp += damage
+				user.hp += damage
 			
 			if i == "defend":
 				damage = 0
-				user.acbattler.effects.append(defense)
+				user.effects.append(defense)
 			if i == "powerup":
 				damage = 0
 				target.power += 10
 			if i == "lifepact":
 				damage = user.acbattler.hp / 2 + user.acbattler.int
-				user.acbattler.hp /=2
+				user.hp /=2
 			if i == "meditate":
 				damage = 0
-				user.acbattler.hp += 25
+				user.hp += 25
 				user.power += 5
 				print "hi"
 			if i == "fullmana":
 				damage = (user.power * user.acbattler.int) / 3
 				user.power = 0
 			if i == "shroud":
-				user.acbattler.con += 6
-				user.acbattler.mag += 6
+				user.con += 6
+				user.mag += 6
 			if i == "Shield":
-				user.acbattler.effects.append(forceshield)
+				user.effects.append(forceshield)
 			if i == "atkUp":
 				damage = 0
-				user.acbattler.str += 25
-				user.acbattler.int += 25
+				user.str += 25
+				user.int += 25
 			
 			if i == "division":
-				damage = target.acbattler.hp/5
+				damage = target.hp/5
 			if i == "immortal":
-				user.acbattler.effects.append(immortal)
+				user.effects.append(immortal)
 			if i == "heal":
 				damage = 0
-				user.acbattler.hp += user.acbattler.int * 3
+				user.hp += user.acbattler.int * 3
 			if i == "block":
 				damage = 0
-				user.acbattler.effects.append(block)
+				user.effects.append(block)
 			if i == "powerdrain":
 				damage = 0 
 				user.power += target.power
 				target.power = 0
 			
 			if i == "revenge":
-				damage = user.acbattler.maxhp - user.acbattler.hp
+				damage = user.maxhp - user.acbattler.hp
 			if i == "recover":
 				damage = 0
-				user.acbattler.hp += user.acbattler.maxhp / 4
+				user.hp += user.maxhp / 4
 				
 			if i == "stare":
 		
-				target.acbattler.con /=2
-				target.acbattler.mag /=2
+				target.con /=2
+				target.mag /=2
 			if i == "mark":
 		
-				target.acbattler.marks += 1
+				target.marks += 1
 			if i == "creepyAtk":
 	
-				damage = math.floor(((Decimal(target.acbattler.marks) / Decimal(10)) + 1) * Decimal(damage))
+				damage = math.floor(((Decimal(target.marks) / Decimal(10)) + 1) * Decimal(damage))
 			
 			if i == "endeffect":
 				
-				user.acbattler.effects = []
+				user.effects = []
 		
 			
 			
 			
 		if damage < 0:
 			damage = 0
-		target.acbattler.hp -= damage
-		printb(user.acbattler.name + " uses " + self.name + " and deals " + str(damage) + " damage!" + message)
+		target.hp -= damage
+		printb(user.name + " uses " + self.name + " and deals " + str(damage) + " damage!" + message)
 		
 		
 				
@@ -474,10 +478,12 @@ class Char(object):
 		newchar.img = pygame.image.load(self.image)
 		return newchar
 		
-NOT = Char("???", [unknown], "???", "???", "???", "???", "???", "???", "???", "???", "???", [], "Assets/battlers/locked.png", [-1,0], "")
+NOT = Char("???", [unknown], 0, 0, 0, 0, 0, 0, 0, 0, 0, [], "Assets/battlers/locked.png", [-1,0], "")
 
 Mage = Char("Meigis", [normal, chaos], 500, 5, 15, 5, 15, 4, 0, 1, 0, [basicAtk, fireBall, waterSpout, airBlast, earthShot, defend], "Assets/battlers/Mage.png", [5,0], "")
+
 Mouther = Char("Mouther", [earth], 500, 20, 0, 10, 5, 4, 0, 1, 0, [basicAtk, defend], "Assets/battlers/Mouther.png", [4,0], "")
+
 NotScaryGhost = Char("Not Scary Ghost", [ghost], 1000, 0, 0, 10, 75, 2, 0, 1, 0, [basicAtk, sneeze, forceShield, recover], "Assets/battlers/Not_Scary_Ghost.png", [2, 14], "")
 Creep = Char("Creepy Bald Guy", [physic, unknown], 750, 10, 10, 15, 50, 0, 0, 1, 0, [creepyAtk, blink, stare, inhale, exhale, observe], "Assets/battlers/Creepy_Bald_Guy.png", [1, 7], "")
 
@@ -534,7 +540,7 @@ def dispSkills(player):
 	x = 0
 	y = 0
 
-	for i in player.acbattler.skills:
+	for i in player.skills:
 		
 		if x > 1:
 			x = 0
@@ -558,11 +564,11 @@ def dispSkills(player):
 		
 	
 	
-	pygame.draw.rect(gScreen, GREEN, [21,371,player1.acbattler.hp * Decimal(0.278),28])
-	pygame.draw.rect(gScreen, BLUE, [10, 430, player1.power * 2, 28])
-	gScreen.blit(font.render("HP: " + str(player1.acbattler.hp), True, (0,0,255)), [75, 376])
-	gScreen.blit(font.render("Power: " + str(player1.power), True, (255,255,255)), [75, 426])
-	gScreen.blit(font.render(player1.acbattler.name + "'s turn", True, (255,255,255)), [75, 476])
+	pygame.draw.rect(gScreen, GREEN, [21,371,player.hp * Decimal(0.278),28])
+	pygame.draw.rect(gScreen, BLUE, [10, 430, player.power * 2, 28])
+	gScreen.blit(font.render("HP: " + str(player.hp), True, (0,0,255)), [75, 376])
+	gScreen.blit(font.render("Power: " + str(player.power), True, (255,255,255)), [75, 426])
+	gScreen.blit(font.render(player.name + "'s turn", True, (255,255,255)), [75, 476])
 	
 
 
@@ -725,9 +731,12 @@ while not done:
 
 	if hitDetect(mouse_pos, mouse_pos, [529, 434], [698, 498]):
 		if thisplayer == player2:
-			battling = True
+			if mouse_down:
+				battling = True
+				ready = False
 			
-			thesebattlers += player1.battlers + player2.battlers
+				thesebattlers += player1.battlers + player2.battlers
+				
 		if mouse_down:
 			thisplayer = player2
 			mouse_down = False
@@ -795,13 +804,28 @@ while not done:
 	
 	thebattler = 0
 	powergiven = False
+	pickenm = False
+	increment = 0
 	
-	
+#--------------------------------------------------------------------------------------------------------------------------------------------------		
+#--------------------------------------------------------------------------------------------------------------------------------------------------	
+#--------------------------------------------------------------------------------------------------------------------------------------------------	
+#--------------------------------------------------------------------------------------------------------------------------------------------------	
+#--------------------------------------------------------------------------------------------------------------------------------------------------	
+#--------------------------------------------------------------------------------------------------------------------------------------------------	
+#--------------------------------------------------------------------------------------------------------------------------------------------------	
 #--------------------------------------------------------------------------------------------------------------------------------------------------	
 	
 	while battling:
-		thisbattler = thesebattlers[thebattler]
-		pickenm = False
+	
+	
+		gScreen.fill(WHITE)
+		try:
+			thisbattler = thesebattlers[thebattler]
+		except:
+			pass
+			pass
+		
 		for event in pygame.event.get(): 
 			if event.type == pygame.QUIT: 
 				done = True 
@@ -837,26 +861,8 @@ while not done:
 		
 				
 	
-	#------------------lAst SEction to be done------------------
-		if player1.resolved and player2.resolved:
-			player1.ready = False
-			player1.turn = True
-			player2.ready = False
-			turn += 1
-			if not player1.powergiven:
-				player1.power += 1
-				for i in player1.acbattler.effects:
-					i.update(player1.acbattler)
-				player1.powergiven = True
-			
-			if not player2.powergiven:
-				player2.power += 1
-				for i in player2.acbattler.effects:
-					i.update(player2.acbattler)
-				player2.powergiven = True
-			
-		for i in thesebattlers:
-			i.power += 1
+	
+	
 				
 			
 			
@@ -871,6 +877,7 @@ while not done:
 
 			if hitDetect(mouse_pos, mouse_pos,[330 + x*175, y*30 + 370], [330 + x*175 + 165, y*30 + 370 + 25]):
 				if mouse_down:
+					mouse_down = False
 					if True:
 						selected = False
 						if x == 0 and y ==0:
@@ -878,75 +885,81 @@ while not done:
 								thisbattler.goskill = thisbattler.skills[0]
 								selected = True
 							
-						elif x == 1 and y == 0:
+						if x == 1 and y == 0:
 							if thisbattler.skills[1].cost <= thisbattler.power:
-								thisbattler.goskill = thisbattler.skills[0]
+								thisbattler.goskill = thisbattler.skills[1]
 								selected = True
 								
-						elif x == 0 and y == 1:
+						if x == 0 and y == 1:
 							if thisbattler.skills[2].cost <= thisbattler.power:
-								thisbattler.goskill = thisbattler.skills[0]
+								thisbattler.goskill = thisbattler.skills[2]
 								selected = True
-						elif x == 1 and y == 1:
+						if x == 1 and y == 1:
 							if thisbattler.skills[3].cost <= thisbattler.power:
-								thisbattler.goskill = thisbattler.skills[0]
+								thisbattler.goskill = thisbattler.skills[3]
 								selected = True
-						elif x == 0 and y == 2:
+						if x == 0 and y == 2:
 							if thisbattler.skills[4].cost <= thisbattler.power:
-								thisbattler.goskill = thisbattler.skills[0]
+								thisbattler.goskill = thisbattler.skills[4]
 								selected = True
-						elif x == 1 and y == 2:
+						if x == 1 and y == 2:
 							if thisbattler.skills[5].cost <= thisbattler.power:
-								thisbattler.goskill = thisbattler.skills[0]
+								thisbattler.goskill = thisbattler.skills[5]
 								selected = True
-						elif x == 0 and y == 3:
+						if x == 0 and y == 3:
 							if thisbattler.skills[6].cost <= thisbattler.power:
-								thisbattler.goskill = thisbattler.skills[0]
+								thisbattler.goskill = thisbattler.skills[6]
 								selected = True
-						elif x == 1 and y == 3:
+						if x == 1 and y == 3:
 							if thisbattler.skills[7].cost <= thisbattler.power:
-								thisbattler.goskill = thisbattler.skills[0]
+								thisbattler.goskill = thisbattler.skills[7]
 								selected = True
 								
 						if selected:
 							mouse_down = False
-							print "skill picked"
+							print "skill picked:", thisbattler.goskill.name
 							pickenm = True
-			x = 0
-			y = 0					
-			if pickenm:
-				for i in thesebattlers:
-					if x > 1:
-						x = 0
-						y += 1
-						
-					if hitDetect(mouse_pos, mouse_pos, (x *550 + 50, y * 100 + 50), (x * 550 + 50 + 50, y* 100 + 50 + 50)):
-						if mouse_down:
-							if x == 0 and y == 0:
-								i.target = thesebattlers[0]
-								ready = True
-							if x == 1 and y == 0:
-								i.target = thesebattlers[1]
-								ready = True
-							if x == 0 and y == 1:
-								i.target = thesebattlers[2]
-								ready = True
-							if x == 1 and y == 1:
-								i.target = thesebattlers[3]
-								ready = True
-							if x == 0 and y == 2:
-								i.target = thesebattlers[4]
-								ready = True
-							if x == 1 and y == 2:
-								i.target = thesebattlers[5]
-								ready = True
+							
+			
+			x += 1
+			
+		x = 0
+		y = 0					
+		if pickenm:
+			for i in thesebattlers:
+				if x > 1:
+					x = 0
+					y += 1
 					
-					if ready:
-						ready = False
-						thebattler += 1
-					
-					
-					x += 1
+				if hitDetect(mouse_pos, mouse_pos, (x *550 + 50, y * 100 + 50), (x * 550 + 50 + 50, y* 100 + 50 + 50)):
+				
+					if mouse_down:
+						if x == 0 and y == 0:
+							thisbattler.target = thesebattlers[0]
+							ready = True
+						if x == 1 and y == 0:
+							thisbattler.target = thesebattlers[1]
+							ready = True
+						if x == 0 and y == 1:
+							thisbattler.target = thesebattlers[2]
+							ready = True
+						if x == 1 and y == 1:
+							thisbattler.target = thesebattlers[3]
+							ready = True
+						if x == 0 and y == 2:
+							thisbattler.target = thesebattlers[4]
+							ready = True
+						if x == 1 and y == 2:
+							thisbattler.target = thesebattlers[5]
+							ready = True
+					mouse_down = False
+				
+				if ready:
+					ready = False
+					thebattler += 1
+					print thisbattler.goskill.spd, thisbattler.target
+					pickenm = False
+				x += 1
 								
 								
 						#except:
@@ -965,29 +978,36 @@ while not done:
 	
 		
 		agillist = []
+		for i in thesebattlers:
+			agillist.append(i)
 		if thebattler == len(thesebattlers):
-			thebattler = 0
+			
 			
 			#sorting
-			for i in range(len(thesebattlers)):
-				for j in range(len(thesebattlers)-1-i):
-					if thesebattlers[j].agil + thesebattlers[j].goskill.spd  > thesebattlers[j+1].agil + thesebattlers[j+1].goskill.spd:
-						thesebattlers[j], thesebattlers[j+1] = thesebattlers[j+1], thesebattlers[j] 
+			for i in range(len(agillist)):
+				for j in range(len(agillist)-1-i):
+					if agillist[j].agil + agillist[j].goskill.spd  > agillist[j+1].agil + agillist[j+1].goskill.spd:
+						agillist[j], agillist[j+1] = agillist[j+1], agillist[j] 
 						
 			
 			
 			
 			
+			agillist[increment].goskill.use(agillist[increment],agillist[increment].target)
+			increment += 1
+			if increment > len(thesebattlers) - 1:
+				increment = 0
+				thebattler = 0
+				
 			for i in thesebattlers:
-				i.goskill.use(i,i.target)
+				i.power += 1
+				for f in i.effects:
+					f.update(i)
 
 	
 		
 		
-		if player1.power > 100:
-			player1.power = 100
-		if player2.power > 100:
-			player2.power = 100
+	
 		
     # --- Drawing code should go here
 	
@@ -998,7 +1018,7 @@ while not done:
 	#animation:
 	
 	
-		gScreen.fill(WHITE)
+		
 	
 		x = 0
 		y = 0
@@ -1008,7 +1028,7 @@ while not done:
 				y += 1
 			
 			gScreen.blit(i.image,[x * 550 + 50, y * 100 + 50])
-			pygame.draw.rect(gScreen, RED, [600,125,i.hp / 20,5])
+			pygame.draw.rect(gScreen, RED, [x* 550 + 50, y* 100 + 25,int(i.hp) / 20,5])
 				
 				
 			x += 1
@@ -1032,7 +1052,7 @@ while not done:
 			
 		
 			
-		dispSkills(thesebattlers[thebattler])
+		dispSkills(thisbattler)
 		
 	
 		if mouse_down:
@@ -1043,7 +1063,7 @@ while not done:
 			if i.hp <= 0:
 				thesebattlers.remove(i)
 				printb(i.name + " died!")
-			i = i.buildNew()
+			#reset character here
 			
 			
 		
