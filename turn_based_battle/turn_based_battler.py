@@ -223,10 +223,41 @@ class Effect(object):
 				printb(target.name + " is no longer poisoned!")
 				target.effects.remove(self)
 				
+		if self.effect == "rebuff":
+			
+			printb(target.name + " is encouraged!")
+			target.str = target.str * 1.4
+			target.int = target.int * 1.4
+			if self.endeffect == 1:
+				printb(target.name + " is no longer encouraged. :(")
+				target.effects.remove(self)
+			self.endeffect += 1
+			
+		if self.effect == "meditate":
+			
+			printb(target.name + " is meditating!")
+			target.power += 3
+			target.con -= 10
+			target.mag += 5
+			if self.endeffect == 1:
+				printb(target.name + " is no longer meditating!")
+				target.effects.remove(self)
+			self.endeffect += 1
+				
+		
+		if self.effect == "death":
+			pass
+			#Death stufff here
+			
 		
 			
 		else:
 			pass
+			
+	def buildNew(self):
+		neweff = Effect(self.effect)
+		return neweff
+		
 				
 			
 burn = Effect("burn")
@@ -238,6 +269,9 @@ confusion = Effect("confusion")
 immortal = Effect("immortal")
 block = Effect("block")
 poison = Effect("poison")
+rebuff = Effect("rebuff")
+meditate = Effect("meditate")
+death = Effect("death")
 
 		
 
@@ -300,26 +334,22 @@ class Skill(object):
 			
 			if i == "defend":
 				damage = 0
-				user.effects.append(defense)
+				user.effects.append(defense.buildNew())
 			if i == "powerup":
 				damage = 0
 				target.power += 10
 			if i == "lifepact":
-				damage = user.acbattler.hp / 2 + user.acbattler.int
+				damage = user.hp / 2 + user.int
 				user.hp /=2
-			if i == "meditate":
-				damage = 0
-				user.hp += 25
-				user.power += 5
-				print "hi"
+			
 			if i == "fullmana":
-				damage = (user.power * user.acbattler.int) / 3
+				damage = (user.power * user.int) / 3
 				user.power = 0
 			if i == "shroud":
 				user.con += 6
 				user.mag += 6
 			if i == "Shield":
-				user.effects.append(forceshield)
+				user.effects.append(forceshield.buildNew())
 			if i == "atkUp":
 				damage = 0
 				user.str += 25
@@ -328,38 +358,50 @@ class Skill(object):
 			if i == "division":
 				damage = target.hp/5
 			if i == "immortal":
-				user.effects.append(immortal)
+				user.effects.append(immortal.buildNew())
 			if i == "heal":
 				damage = 0
-				user.hp += user.acbattler.int * 3
+				target.hp += target.int * 3
 			if i == "block":
 				damage = 0
-				user.effects.append(block)
+				user.effects.append(block.buildNew())
 			if i == "powerdrain":
 				damage = 0 
 				user.power += target.power
 				target.power = 0
 			
 			if i == "revenge":
-				damage = user.maxhp - user.acbattler.hp
+				damage = user.maxhp - user.hp
 			if i == "recover":
 				damage = 0
-				user.hp += user.maxhp / 4
+				target.hp += target.maxhp / 4
 				
 			if i == "stare":
 		
 				target.con /=2
 				target.mag /=2
 			if i == "mark":
-		
+				
 				target.marks += 1
 			if i == "creepyAtk":
 	
-				damage = math.floor(((Decimal(target.marks) / Decimal(10)) + 1) * Decimal(damage))
+				damage = target.marks * target.marks
 			
 			if i == "endeffect":
 				
 				user.effects = []
+			if i == "nodam":
+				damage = 0
+			if i == "removeEff":
+				target.effects = []
+			if i == "removeUff":
+				target.con = target.basecon
+				target.mag = target.basemag
+				target.int = target.baseint
+				target.str = target.basestr
+				target.crit = target.basecrit
+				target.agil = target.baseagil
+			
 		
 			
 			
@@ -367,11 +409,12 @@ class Skill(object):
 		if damage < 0:
 			damage = 0
 		target.hp -= damage
-		printb(user.name + " uses " + self.name + " and deals " + str(damage) + " damage!" + message)
+		if user.hp > 0:
+			printb(user.name + " uses " + self.name + " and deals " + str(damage) + " damage!" + message)
 		
 		
 				
-
+nothing = Skill("nothing", normal, True, 0, 0, 0, 0, 0, [], ["nodam"])
 basicAtk = Skill("Basic Attack", normal, True, 5, 5, 1, 0, 0, [], [""])
 fireBall = Skill("Fire ball", fire, False, 7, 3, -1, 0, 2, [1, burn], [""])
 waterSpout = Skill("Water Spout", water, False, 2, 10, -1, 0, 2, [], [""])
@@ -385,14 +428,14 @@ magicMute = Skill("Magic Mute", chaos, False, 0, 0, -2, 0, 5, [1,magicmute], [""
 powerUp = Skill("Power Up", chaos, False, 0, 0, 10, 0, 2, [], ["powerup"])
 magicAbsorb = Skill("Magic Absorb", chaos, False, 0, 0, 5, 0, 3, [], ["magicabsorb"])
 destroy = Skill("Destroy", chaos, False, 100, 100, -100, 15, 7, [], [""])
-vampire = Skill("Vampire", blood, False, 20, 10, 5, 20, 2, [], ["vampire"])
-meteorStorm = Skill("Meteor Storm", astral, False, 100, 50, -100, 0, 10, [2, burn], [""])
+vampire = Skill("Vampire", blood, False, 20, 10, 5, 20, 2, [], ["vampire", "vampire"])
+meteorStorm = Skill("Meteor Storm", astral, False, 100, 50, -100, 0, 7, [2, burn], [""])
 block = Skill("Block", fighting, True, 0, 0, 10, 0, 1, [], ["block"])
 powerDrain = Skill("Power Drain", astral, False, 25, 25, -10, 0, 2, [], ["powerdrain"])
 #-----------------------------------------------------------
 
 slash = Skill("Slash", normal, True, 10, 10, 3, 5, 0, [], [""])
-bite = Skill("Bite", normal, True, 20, 5, 0, 0, 2, [3,bleed], [""])
+bite = Skill("Bite", normal, True, 20, 5, 0, 5, 2, [3,bleed], [""])
 kick = Skill("Kick", fighting, True, 15, 10, 4, 0, 1, [], [""])
 dodge = Skill("Dodge", fighting, True, 0, 0, 10, 0, 2, [], [""])
 rip = Skill("Rip", dark, True, 20, 10, -1, 0, 4, [1,bleed], [""])
@@ -401,10 +444,10 @@ consumeFlesh = Skill("Consume Flesh", blood, True, 30, 5, -5, 0, 3, [2,bleed], [
 #----------------------------------------------------------------
 chaosBolt = Skill("Chaos Bolt", chaos, False, 10, 20, 1, 0, 1, [], [""])
 setFire = Skill("Set Fire", fire, False, 5, 20, -1, 0, 3, [3,burn], [""])
-forceShield = Skill("Force Shield", magic, False, 0, 0, -2, 0, 2, [], ["shield"])
+forceShield = Skill("Force Shield", magic, False, 0, 0, -2, 0, 2, [], ["shield", "nodam"])
 summon = Skill("Summon", magic, False, 0, 0, -4, 0, 4, [], [""])
 chaosBeam = Skill("Chaos Beam", chaos, False, 0, 0, -10, 0, 2, [], ["fullmana"])
-meditate = Skill("Meditate", magic, False, 0, 0, 0, 0, -1, [], ["meditate"])
+meditate = Skill("Meditate", magic, False, 0, 0, 0, 0, -1, ["meditate"], ["nodam"])
 lifePact = Skill("Life Pact", blood, False, 0, 0, -2, 0, 4, [], ["lifepact"])
 shroud = Skill("Shroud", dark, False, 0, 0, 10, 0, 2, [], ["shroud"])
 #-------------------------------------------------------------------
@@ -414,7 +457,7 @@ confuse = Skill("Confuse", physic, False, 0, 0, 10, 0, 2, [1,confusion], [""])
 planAhead = Skill("Plan Ahead", tech, False, 0, 0, -10, 0, 2, [], ["atkUp"])
 erase =Skill("Erase", unknown, False, 0, 0, -10, 0, 5, [], ["division"])
 create = Skill("Create", unknown, False, 0,0, -10, 0, 5, [], ["immortal"])
-mend = Skill("Mend", magic, False, 0,0, 1, 0, 5, [], ["heal"])
+mend = Skill("Mend", magic, False, 0,0, 1, 0, 3, [], ["heal"])
 #------------------------------------------------------------------
 energiBeam = Skill("Energy Beam", tech, False, 77, 10, -3, 0, 5, [], [""]) 
 wellspring = Skill("Wellspring", tech, False, 0, 0, 3, 0, -10, [], [""])
@@ -423,7 +466,7 @@ bladeFlash = Skill("Blade Flash", fighting, True, 6, 5, 10, 2, 1, [], [""])
 cleave = Skill("Cleave", fighting, True, 10, 20, -2, 2, 2, [2, bleed], [""])
 revenge = Skill("Revenge", dark, False, 0, 0, 10, 0, 5, [], ["revenge"])
 #----------------------------------------------------------------------
-obsidianBlast = Skill("Obsidian Blast", fire, False, 20, 10, -3, 0, 5, [1, burn] ,[""])
+obsidianBlast = Skill("Obsidian Blast", fire, False, 30, 10, -3, 0, 5, [1, burn] ,[""])
 recover = Skill("Recover", magic, False, 0, 0, 10, 0, 7, [], ["recover", "endeffect"])
 psionicRadiance = Skill("Psionic Radiance", physic, False, 30, 10, -2, 3, 3, [], [""])
 #------------------------------------------------------------------------
@@ -431,11 +474,13 @@ stare = Skill("Stare", physic, False, 30, 10, -2, 15, 5, [], [""])
 blink = Skill("Blink", physic, True, 5, 5, 1, 0, 0, [], ["mark"])
 creepyAtk = Skill("Creep Attack", physic, False, 5, 5, 1, 0, 0, [], ["creepyAtk"])
 inhale = Skill("Inhale", air, False, 0, 0, 3, 0, 0, [], ["defend", "mark"])
-observe = Skill("Observe", unknown, False, 0, 0, 3, 0, 1, [], ["mark", "mark", "mark", "mark", "mark", "mark"])
+observe = Skill("Observe", unknown, False, 0, 0, 3, 0, 1, [], ["mark", "mark", "mark", "mark", "mark", "mark", "nodam"])
 exhale = Skill("Exhale", air, False, 5, 10, 3, 0, 0, [], ["mark"])
 #------------------------------------------------------------------------
 sneeze = Skill("Sneeze", acid, False, 14, 6, 6, 0, 1, [2, poison], [""])
 
+eggon = Skill("Egg On", normal, True, 0, 0, 10, 0, 2, [1, rebuff], [""])
+rebuke = Skill("Rebuke", normal, True, 0, 0, 10, 0, 1, [], ["removeEff", "removeUff"])
 
 
 
@@ -471,6 +516,7 @@ class Char(object):
 		self.menuImg = menuImg
 		self.goskill = "hoi"
 		self.target = "nul"
+		self.updated = False
 		
 		
 	def buildNew(self):
@@ -478,11 +524,16 @@ class Char(object):
 		newchar.img = pygame.image.load(self.image)
 		return newchar
 		
+	def reBuild(self):
+		newchar = Char(self.name, self.types, self.hp, self.str, self.int, self.con, self.mag, self.agil, self.crit, self.lvl, self.xp, self.skills, self.image, self.cords, self.menuImg)
+		newchar.img = self.image
+		return newchar
+		
 NOT = Char("???", [unknown], 0, 0, 0, 0, 0, 0, 0, 0, 0, [], "Assets/battlers/locked.png", [-1,0], "")
 
 Mage = Char("Meigis", [normal, chaos], 500, 5, 15, 5, 15, 4, 0, 1, 0, [basicAtk, fireBall, waterSpout, airBlast, earthShot, defend], "Assets/battlers/Mage.png", [5,0], "")
 
-Mouther = Char("Mouther", [earth], 500, 20, 0, 10, 5, 4, 0, 1, 0, [basicAtk, defend], "Assets/battlers/Mouther.png", [4,0], "")
+Mouther = Char("Mouther", [earth], 500, 20, 0, 10, 5, 4, 0, 1, 0, [basicAtk, bite, consumeFlesh, defend], "Assets/battlers/Mouther.png", [4,0], "")
 
 NotScaryGhost = Char("Not Scary Ghost", [ghost], 1000, 0, 0, 10, 75, 2, 0, 1, 0, [basicAtk, sneeze, forceShield, recover], "Assets/battlers/Not_Scary_Ghost.png", [2, 14], "")
 Creep = Char("Creepy Bald Guy", [physic, unknown], 750, 10, 10, 15, 50, 0, 0, 1, 0, [creepyAtk, blink, stare, inhale, exhale, observe], "Assets/battlers/Creepy_Bald_Guy.png", [1, 7], "")
@@ -494,18 +545,19 @@ Nue = Char("Nue", [astral, dark], 300, 25, 40, 10, 50, 4, 15, 1, 0, [basicAtk, m
 
 Epic = Char("Epic", [tech], 1000, 25, 50, 35, 45, 7, 10, 1, 0, [basicAtk,energiBeam, wellspring, defend], "Assets/battlers/epic.png", [7,7], "")
 
-Coo33 = Char("Coo33", [dark, blood], 250, 50, 0, 30, 0, 10, 10, 1, 0, [basicAtk, slash, bite, kick, dodge, rip, consumeFlesh, defend], "Assets/battlers/Coo33.png", [3,3], "")
+Coo33 = Char("Coo33", [dark, blood], 250, 50, 0, 30, 0, 10, 10, 5, 0, [basicAtk, slash, bite, kick, dodge, rip, consumeFlesh, defend], "Assets/battlers/Coo33.png", [3,3], "")
 Alpha = Char("Alpha", [normal, earth, fighting], 500, 50, -50, 30, 5, 5, 0, 1, 0, [basicAtk, slash, cleave, bladeFlash, revenge, mend, defend], "Assets/battlers/alpha.png", [8,4], "")
 Siv = Char("Siv", [normal, earth, dark, physic, chaos, magic], 250, 0, 50, 0, 38, 5, 7, 1, 0, [basicAtk, chaosBolt, setFire, forceShield, chaosBeam, meditate, lifePact, shroud], "Assets/battlers/siv.png", [4,2], "")
 CoosomeJoe = Char("Coosome Joe", [light, tech], 500, 25, 25, 25, 25, 5, 2, 1, 0, [basicAtk, bludgeon, erase, create, confuse, planAhead, mend, defend], "Assets/battlers/Coosome.png", [3, 7], "")
 Durric = Char("Durric", [earth, light, fighting, physic], 1000, 25, 25, 75, 25, 0, 0, 1, 0, [basicAtk, forceShield, cleave, obsidianBlast, recover, psionicRadiance, mend, defend], "Assets/battlers/Durric.png", [4, 4], "")
+Catsome = Char("Catsome", [light, ghost, physic], 1000, 10, 35, 10, 15, 5, 5, 1, 0, [slash, bite, eggon, rebuke, mend, recover], "Assets/battlers/catsome.png", [6,9], "")
 
 NO = NOT.buildNew()	
 		
 
 
 		
-unlockedchars = [Nue.buildNew(), Scarlet.buildNew(), Mage.buildNew(), Mouther.buildNew(), Nic.buildNew(), Siv.buildNew(), Coo33.buildNew(), CoosomeJoe.buildNew(), Epic.buildNew(), Alpha.buildNew(), Durric.buildNew(), Creep.buildNew(), NotScaryGhost.buildNew()]			
+unlockedchars = [Nue.buildNew(), Scarlet.buildNew(), Mage.buildNew(), Mouther.buildNew(), Nic.buildNew(), Siv.buildNew(), Coo33.buildNew(), CoosomeJoe.buildNew(), Epic.buildNew(), Alpha.buildNew(), Durric.buildNew(), Creep.buildNew(), NotScaryGhost.buildNew(), Catsome.buildNew()]			
 
 class Player(object):
 	def __init__(self, name):
@@ -564,7 +616,7 @@ def dispSkills(player):
 		
 	
 	
-	pygame.draw.rect(gScreen, GREEN, [21,371,player.hp * Decimal(0.278),28])
+	pygame.draw.rect(gScreen, GREEN, [21,371,player.hp / 278,28])
 	pygame.draw.rect(gScreen, BLUE, [10, 430, player.power * 2, 28])
 	gScreen.blit(font.render("HP: " + str(player.hp), True, (0,0,255)), [75, 376])
 	gScreen.blit(font.render("Power: " + str(player.power), True, (255,255,255)), [75, 426])
@@ -673,7 +725,7 @@ while not done:
 				
 				dispchar = f
 				
-				thisplayer.battlers[0] = f
+				thisplayer.battlers[0] = f.reBuild()
 				break
 				
 				
@@ -698,7 +750,7 @@ while not done:
 				
 				dispchar2 = f
 				
-				thisplayer.battlers[1] = f
+				thisplayer.battlers[1] = f.reBuild()
 				break
 	
 			else:
@@ -719,7 +771,7 @@ while not done:
 				
 				dispchar2 = f
 				
-				thisplayer.battlers[2] = f
+				thisplayer.battlers[2] = f.reBuild()
 				break
 				
 				
@@ -824,8 +876,8 @@ while not done:
 			thisbattler = thesebattlers[thebattler]
 		except:
 			pass
-			pass
-		
+			
+	
 		for event in pygame.event.get(): 
 			if event.type == pygame.QUIT: 
 				done = True 
@@ -842,21 +894,23 @@ while not done:
 		# --- Game logic should go here
 		mouse_pos = pygame.mouse.get_pos()
 	
-		if player1.acbattler.hp <= 0:
-			gameover = True
-			pygame.mixer.music.fadeout(1000)
+	
 		#health-=0.01
 	
 	
 	
 	
-		hp = font.render("hp: "+ str(player1.acbattler.hp) + "/100",True,BLUE)
+
 	
 	
 	
 	
 	
-	
+		if not thisbattler.updated:
+			for i in thisbattler.effects:
+				i.update(thisbattler)
+			thisbattler.power += 1
+			thisbattler.updated = True
 	
 		
 				
@@ -868,100 +922,106 @@ while not done:
 			
 			
 		
+		if thisbattler.hp > 0:
+			for i in thisbattler.skills:
 
-		for i in thisbattler.skills:
-
-			if x > 1:
-				x = 0
-				y += 1
-
-			if hitDetect(mouse_pos, mouse_pos,[330 + x*175, y*30 + 370], [330 + x*175 + 165, y*30 + 370 + 25]):
-				if mouse_down:
-					mouse_down = False
-					if True:
-						selected = False
-						if x == 0 and y ==0:
-							if thisbattler.skills[0].cost <= thisbattler.power:
-								thisbattler.goskill = thisbattler.skills[0]
-								selected = True
-							
-						if x == 1 and y == 0:
-							if thisbattler.skills[1].cost <= thisbattler.power:
-								thisbattler.goskill = thisbattler.skills[1]
-								selected = True
-								
-						if x == 0 and y == 1:
-							if thisbattler.skills[2].cost <= thisbattler.power:
-								thisbattler.goskill = thisbattler.skills[2]
-								selected = True
-						if x == 1 and y == 1:
-							if thisbattler.skills[3].cost <= thisbattler.power:
-								thisbattler.goskill = thisbattler.skills[3]
-								selected = True
-						if x == 0 and y == 2:
-							if thisbattler.skills[4].cost <= thisbattler.power:
-								thisbattler.goskill = thisbattler.skills[4]
-								selected = True
-						if x == 1 and y == 2:
-							if thisbattler.skills[5].cost <= thisbattler.power:
-								thisbattler.goskill = thisbattler.skills[5]
-								selected = True
-						if x == 0 and y == 3:
-							if thisbattler.skills[6].cost <= thisbattler.power:
-								thisbattler.goskill = thisbattler.skills[6]
-								selected = True
-						if x == 1 and y == 3:
-							if thisbattler.skills[7].cost <= thisbattler.power:
-								thisbattler.goskill = thisbattler.skills[7]
-								selected = True
-								
-						if selected:
-							mouse_down = False
-							print "skill picked:", thisbattler.goskill.name
-							pickenm = True
-							
-			
-			x += 1
-			
-		x = 0
-		y = 0					
-		if pickenm:
-			for i in thesebattlers:
 				if x > 1:
 					x = 0
 					y += 1
-					
-				if hitDetect(mouse_pos, mouse_pos, (x *550 + 50, y * 100 + 50), (x * 550 + 50 + 50, y* 100 + 50 + 50)):
-				
+
+				if hitDetect(mouse_pos, mouse_pos,[330 + x*175, y*30 + 370], [330 + x*175 + 165, y*30 + 370 + 25]):
 					if mouse_down:
-						if x == 0 and y == 0:
-							thisbattler.target = thesebattlers[0]
-							ready = True
-						if x == 1 and y == 0:
-							thisbattler.target = thesebattlers[1]
-							ready = True
-						if x == 0 and y == 1:
-							thisbattler.target = thesebattlers[2]
-							ready = True
-						if x == 1 and y == 1:
-							thisbattler.target = thesebattlers[3]
-							ready = True
-						if x == 0 and y == 2:
-							thisbattler.target = thesebattlers[4]
-							ready = True
-						if x == 1 and y == 2:
-							thisbattler.target = thesebattlers[5]
-							ready = True
-					mouse_down = False
+						mouse_down = False
+						if True:
+							selected = False
+							if x == 0 and y ==0:
+								if thisbattler.skills[0].cost <= thisbattler.power:
+									thisbattler.goskill = thisbattler.skills[0]
+									selected = True
+								
+							if x == 1 and y == 0:
+								if thisbattler.skills[1].cost <= thisbattler.power:
+									thisbattler.goskill = thisbattler.skills[1]
+									selected = True
+									
+							if x == 0 and y == 1:
+								if thisbattler.skills[2].cost <= thisbattler.power:
+									thisbattler.goskill = thisbattler.skills[2]
+									selected = True
+							if x == 1 and y == 1:
+								if thisbattler.skills[3].cost <= thisbattler.power:
+									thisbattler.goskill = thisbattler.skills[3]
+									selected = True
+							if x == 0 and y == 2:
+								if thisbattler.skills[4].cost <= thisbattler.power:
+									thisbattler.goskill = thisbattler.skills[4]
+									selected = True
+							if x == 1 and y == 2:
+								if thisbattler.skills[5].cost <= thisbattler.power:
+									thisbattler.goskill = thisbattler.skills[5]
+									selected = True
+							if x == 0 and y == 3:
+								if thisbattler.skills[6].cost <= thisbattler.power:
+									thisbattler.goskill = thisbattler.skills[6]
+									selected = True
+							if x == 1 and y == 3:
+								if thisbattler.skills[7].cost <= thisbattler.power:
+									thisbattler.goskill = thisbattler.skills[7]
+									selected = True
+									
+							if selected:
+								mouse_down = False
+								print "skill picked:", thisbattler.goskill.name
+								pickenm = True
+								
 				
-				if ready:
-					ready = False
-					thebattler += 1
-					print thisbattler.goskill.spd, thisbattler.target
-					pickenm = False
 				x += 1
-								
-								
+			
+			x = 0
+			y = 0					
+			if pickenm:
+				for i in thesebattlers:
+					if y > 2:
+						y = 0
+						x += 1
+						
+					if hitDetect(mouse_pos, mouse_pos, (x *550 + 50, y * 100 + 50), (x * 550 + 50 + 50, y* 100 + 50 + 50)):
+					
+						if mouse_down:
+							if x == 0 and y == 0:
+								thisbattler.target = thesebattlers[0]
+								ready = True
+							if x == 0 and y == 1:
+								thisbattler.target = thesebattlers[1]
+								ready = True
+							if x == 0 and y == 2:
+								thisbattler.target = thesebattlers[2]
+								ready = True
+							if x == 1 and y == 0:
+								thisbattler.target = thesebattlers[3]
+								ready = True
+							if x == 1 and y == 1:
+								thisbattler.target = thesebattlers[4]
+								ready = True
+							if x == 1 and y == 2:
+								thisbattler.target = thesebattlers[5]
+								ready = True
+						mouse_down = False
+					
+					if ready:
+						ready = False
+						thebattler += 1
+						print thisbattler.goskill.spd, thisbattler.target
+						pickenm = False
+					y += 1
+									
+		
+
+		else:
+			thisbattler.goskill = nothing
+			thebattler += 1
+			pickenm = False
+			ready = False
 						#except:
 							#printb("Skill locked!")
 					
@@ -980,7 +1040,7 @@ while not done:
 		agillist = []
 		for i in thesebattlers:
 			agillist.append(i)
-		if thebattler == len(thesebattlers):
+		if thebattler >= len(thesebattlers):
 			
 			
 			#sorting
@@ -994,15 +1054,14 @@ while not done:
 			
 			
 			agillist[increment].goskill.use(agillist[increment],agillist[increment].target)
+			agillist[increment].power -= agillist[increment].goskill.cost
 			increment += 1
 			if increment > len(thesebattlers) - 1:
 				increment = 0
 				thebattler = 0
 				
-			for i in thesebattlers:
-				i.power += 1
-				for f in i.effects:
-					f.update(i)
+				for i in thesebattlers:
+					i.updated = False
 
 	
 		
@@ -1023,15 +1082,15 @@ while not done:
 		x = 0
 		y = 0
 		for i in thesebattlers:	
-			if x > 1:
-				x = 0
-				y += 1
+			if y > 2:
+				y = 0
+				x += 1
 			
 			gScreen.blit(i.image,[x * 550 + 50, y * 100 + 50])
 			pygame.draw.rect(gScreen, RED, [x* 550 + 50, y* 100 + 25,int(i.hp) / 20,5])
 				
 				
-			x += 1
+			y += 1
 			
 	
 		
@@ -1051,8 +1110,8 @@ while not done:
 
 			
 		
-			
-		dispSkills(thisbattler)
+		if thisbattler.hp > 0:
+			dispSkills(thisbattler)
 		
 	
 		if mouse_down:
@@ -1061,9 +1120,29 @@ while not done:
 			gScreen.blit(mouse_pointer,mouse_pos)
 		for i in thesebattlers:
 			if i.hp <= 0:
-				thesebattlers.remove(i)
-				printb(i.name + " died!")
+				i.effects.append(death)
+				
 			#reset character here
+			
+		for i in player1.battlers:
+			if i.hp <= 0:
+				player1.battlers.remove(i)
+				
+		for i in player2.battlers:
+			if i.hp <= 0:
+				player2.battlers.remove(i)
+				
+		if len(player1.battlers) == 0:
+			printb("Player 2 WINS!")
+			print "Player 2 Wins"
+			player1.battlers.append(NO, NO, NO)
+			break
+			
+		elif len(player2.battlers) == 0:
+			printb("Player 1 WINS!")
+			print "Player 1 Wins"
+			player2.battlers.append(NO, NO, NO)
+			break
 			
 			
 		
