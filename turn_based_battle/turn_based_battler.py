@@ -263,7 +263,7 @@ class Effect(object):
 burn = Effect("burn")
 magicmute = Effect("magicmute")
 defense = Effect("defend")
-bleed = Effect("Bleed")
+bleed = Effect("bleed")
 forceshield = Effect("forceshield")
 confusion = Effect("confusion")
 immortal = Effect("immortal")
@@ -896,32 +896,12 @@ while not done:
 	
 	
 		#health-=0.01
-	
-	
-	
-	
-
-	
-	
-	
-	
-	
 		if not thisbattler.updated:
 			for i in thisbattler.effects:
 				i.update(thisbattler)
 			thisbattler.power += 1
 			thisbattler.updated = True
 	
-		
-				
-	
-	
-	
-				
-			
-			
-			
-		
 		if thisbattler.hp > 0:
 			for i in thisbattler.skills:
 
@@ -973,8 +953,6 @@ while not done:
 								mouse_down = False
 								print "skill picked:", thisbattler.goskill.name
 								pickenm = True
-								
-				
 				x += 1
 			
 			x = 0
@@ -1022,20 +1000,6 @@ while not done:
 			thebattler += 1
 			pickenm = False
 			ready = False
-						#except:
-							#printb("Skill locked!")
-					
-	
-		
-	
-				
-				
-		
-	
-						#except:
-							#printb("Skill locked!")
-					
-	
 		
 		agillist = []
 		for i in thesebattlers:
@@ -1049,10 +1013,6 @@ while not done:
 					if agillist[j].agil + agillist[j].goskill.spd  > agillist[j+1].agil + agillist[j+1].goskill.spd:
 						agillist[j], agillist[j+1] = agillist[j+1], agillist[j] 
 						
-			
-			
-			
-			
 			agillist[increment].goskill.use(agillist[increment],agillist[increment].target)
 			agillist[increment].power -= agillist[increment].goskill.cost
 			increment += 1
@@ -1063,21 +1023,10 @@ while not done:
 				for i in thesebattlers:
 					i.updated = False
 
-	
-		
-		
-	
-		
     # --- Drawing code should go here
-	
- 
-    
 	
 	#player
 	#animation:
-	
-	
-		
 	
 		x = 0
 		y = 0
