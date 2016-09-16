@@ -86,7 +86,7 @@ def printb(text):
 	log.append(text)
 	newtext = font.render(text,True,BLACK)
 	
-	time.sleep(0.5)
+	time.sleep(1)
 	if hasprinted:
 		disptext = newtext
 
@@ -123,7 +123,7 @@ magic = Type("Magic", ["Fighting", "Astral"], ["Chaos"])
 astral = Type("Astral", ["Chaos"], ["Ghost", "Tech"])
 
 
-physic = Type("Physic",["Normal"], ["Fighting"])
+physic = Type("Physic",["Normal", "astral"], ["Fighting"])
 tech = Type("Tech", ["Electric", "Acid", "Astral"], ["Earth", "Chaos"])
 unknown = Type("Unknown", ["none"], ["none"])
 chaos = Type("Chaos", ["Tech"], ["Physic"])
@@ -162,28 +162,27 @@ class Effect(object):
 		
 				
 		if self.effect == "defend":
-			target.con += target.con
+			target.con = target.basecon * target.basecon
 			printb(target.name + " is defending!")
 			self.endeffect += 1
 			if self.endeffect == 2:
 				target.effects.remove(self)
-				target.con = target.basecon
 				printb(target.name + " is no longer defending!")
+				resetStats(target)
 				
 		if self.effect == "forceshield":
-			target.con *= 3
-			target.int *= 3
+			target.con = target.basecon * 3
+			target.mag = target.basemag * 3
 			printb(target.name + " has a shield up!")
 			self.endeffect = random.randint(1,2)
 			if self.endeffect == 2:
 				target.effects.remove(self)
-				target.con = target.basecon
-				target.mag = target.basemag
-				printb(target.name + " no longer shield up!")
+				printb(target.name + " no longer has a shield up!")
+				resetStats(target)
 				
 		if self.effect == "confusion":
-			target.con /= 2
-			target.mag /= 2
+			target.con = target.basecon / 2
+			target.mag = target.basemag / 2
 			printb(target.name + " is confused!")
 			self.endeffect = random.randint(1,2)
 			if self.endeffect == 2:
@@ -191,6 +190,7 @@ class Effect(object):
 				target.con = target.basecon
 				target.mag = target.basemag
 				printb(target.name + " is no longer confused!")
+				resetStats(target)
 				
 		if self.effect == "immortal":
 			target.con = 100000000
@@ -199,9 +199,9 @@ class Effect(object):
 			self.endeffect = random.randint(1,2)
 			if self.endeffect == 2:
 				target.effects.remove(self)
-				target.con = target.basecon
-				target.mag = target.basemag
+				
 				printb(target.name + " is no longer invincible!")
+				resetStats(target)
 				
 		if self.effect == "block":
 			target.con = 100000000
@@ -211,7 +211,7 @@ class Effect(object):
 			if self.endeffect == 2:
 				target.effects.remove(self)
 				printb(target.name + " is no longer blocking attacks!")
-				target.con = target.basecon
+				resetStats(target)
 				
 				
 		if self.effect == "poison":
@@ -226,11 +226,12 @@ class Effect(object):
 		if self.effect == "rebuff":
 			
 			printb(target.name + " is encouraged!")
-			target.str = target.str * 1.4
-			target.int = target.int * 1.4
+			target.str += target.basestr * 1.4
+			target.int += target.baseint * 1.4
 			if self.endeffect == 1:
 				printb(target.name + " is no longer encouraged. :(")
 				target.effects.remove(self)
+				resetStats(target)
 			self.endeffect += 1
 			
 		if self.effect == "meditate":
@@ -242,8 +243,34 @@ class Effect(object):
 			if self.endeffect == 1:
 				printb(target.name + " is no longer meditating!")
 				target.effects.remove(self)
+				resetStats(target)
 			self.endeffect += 1
 				
+		if self.effect == "planAhead":
+		
+			printb(target.name + " is scheming!")
+			target.hitChance += 15
+			target.crit += 2
+			target.int += target.int / 10
+			target.str += target.str / 10
+			if self.endeffect == 1:
+				printb(target.name + " is no longer scheming!")
+				target.effects.remove(self)
+				resetStats(target)
+			self.endeffect += 1
+		
+		if self.effect == "dodgeUp":
+			printb(target.name + " is prepared!")
+			target.dodgeChance = target.basedodgeChance + 25
+			if self.endeffect == 1:
+				printb(target.name + " is no longer prepared!")
+				target.effects.remove(self)
+				resetStats(target)
+			self.endeffect += 1
+		
+		
+			
+		
 		
 		if self.effect == "death":
 			pass
@@ -253,6 +280,14 @@ class Effect(object):
 			
 		else:
 			pass
+	def resetStats(self, target):
+		target.con = target.basecon
+		target.mag = target.basemag
+		target.str = target.basestr
+		target.int = target.baseint
+		target.crit = target.basecrit
+		target.dodgeChance = target.basedodgeChance
+		target.agil = target.baseagil
 			
 	def buildNew(self):
 		neweff = Effect(self.effect)
@@ -271,6 +306,8 @@ block = Effect("block")
 poison = Effect("poison")
 rebuff = Effect("rebuff")
 meditatef = Effect("meditate")
+planAheadf = Effect("planAhead")
+dodgeUp = Effect("dodgeUp")
 death = Effect("death")
 
 		
@@ -294,10 +331,11 @@ class Skill(object):
 	def use(self, user, target):
 		
 		message = ""
-		print self.name
-		hit = Decimal(self.hitChance[0]/self.hitChance[1]) * Decimal(target.dodgeChance[0]/target.dodgeChance[1]) * Decimal(100)
+
+
+		hit = self.hitChance - target.dodgeChance
 		
-		if random.randint(1,100) > int(hit) or "trueHit" in self.spec:
+		if random.randint(1,100) < hit or "trueHit" in self.spec:
 			
 		
 			if self.phys:
@@ -359,9 +397,7 @@ class Skill(object):
 					user.effects.append(forceshield.buildNew())
 				if i == "atkUp":
 					damage = 0
-					user.str += 25
-					user.int += 25
-				
+					user.effects.append(planAheadf)
 				if i == "division":
 					damage = target.hp/5
 				if i == "immortal":
@@ -418,10 +454,13 @@ class Skill(object):
 					target.power += (user.power/4)
 				if i == "meditate":
 					user.effects.append(meditatef)
+				if i == "dodgeUp":
+					user.effects.append(dodgeUp)
+				
 				
 				
 			if user.hp > 0:
-				printb(user.name + " uses " + self.name + " and deals " + str(damage) + " damage!" + message)
+				printb(user.name + " uses " + self.name + " and deals " + str(damage) + " damage to " + target.name + message)
 				
 		else:
 			damage = 0
@@ -437,80 +476,80 @@ class Skill(object):
 		
 		
 				
-nothing = Skill("nothing", normal, True, 0, 0, 0, 0, [1,1], 0, [], ["nodam", "trueHit"])
-basicAtk = Skill("Basic Attack", normal, True, 5, 5, 1, 0,[9,10], 0, [], [""])
-fireBall = Skill("Fire ball", fire, False, 7, 3, -1, 0,[9,10], 2, [1, burn], [""])
-waterSpout = Skill("Water Spout", water, False, 2, 10, -1, 0,[9,10], 2, [], [""])
-airBlast = Skill("Air Blast", air, False, 7, 1, 2, 0,[11,12], 2, [], [""])
-earthShot = Skill("Earth Shot", earth, False, 12, 4, -5, 0,[9,10], 2, [], [""])
-defend = Skill("Defend", normal, True, 0, 0, 0, 0,[1,1], 0, [], ["defend", "trueHit"])
-scar = Skill("Scar", dark, True, 30, 5, 2, 0,[15,16], 1, [3,bleed], ["vampire"])
-nuke = Skill("Nuke", fire, True, 200, 100, -4, 0,[1,1], 20, [], ["trueHit"])
-shardSwarm = Skill("Shard Swarm", chaos, False, 20, 30, 4, 0,[9,10], 10, [], [""])
-magicMute = Skill("Magic Mute", chaos, False, 0, 0, -2, 0,[1,1], 5, [1,magicmute], ["trueHit"])
-powerUp = Skill("Power Up", chaos, False, 0, 0, 10, 0,[1,1], 2, [], ["powerup", "trueHit"])
-magicAbsorb = Skill("Magic Absorb", chaos, False, 0, 0, 5, 0,[1,1], 3, [], ["magicabsorb", "trueHit"])
-destroy = Skill("Destroy", chaos, False, 100, 100, -100, 15,[1,1], 7, [], [""])
-vampire = Skill("Vampire", blood, False, 20, 10, 5, 20,[9,10], 2, [], ["vampire", "vampire"])
-meteorStorm = Skill("Meteor Storm", astral, False, 100, 50, -100, 0,[1,2], 7, [2, burn], [""])
-block = Skill("Block", fighting, True, 0, 0, 10, 0,[1,1], 1, [], ["block", "trueHit"])
-powerDrain = Skill("Power Drain", astral, False, 25, 25, -10, 0,[1,1], 2, [], ["powerdrain", "trueHit"])
+nothing = Skill("nothing", normal, True, 0, 0, 0, 0, 100, 0, [], ["nodam", "trueHit"])
+basicAtk = Skill("Basic Attack", normal, True, 5, 5, 1, 0,90, 0, [], [""])
+fireBall = Skill("Fire ball", fire, False, 7, 3, -1, 0,90, 2, [1, burn], [""])
+waterSpout = Skill("Water Spout", water, False, 2, 10, -1, 0,90, 2, [], [""])
+airBlast = Skill("Air Blast", air, False, 7, 1, 2, 0,95, 2, [], [""])
+earthShot = Skill("Earth Shot", earth, False, 12, 4, -5, 0,90, 2, [], [""])
+defend = Skill("Defend", normal, True, 0, 0, 0, 0,100, 0, [], ["defend", "trueHit"])
+scar = Skill("Scar", dark, True, 30, 5, 2, 0,97, 1, [3,bleed], ["vampire"])
+nuke = Skill("Nuke", fire, True, 200, 100, -4, 0,100, 20, [], ["trueHit", "hitAll"])
+shardSwarm = Skill("Shard Swarm", chaos, False, 20, 30, 4, 0,90, 10, [], [""])
+magicMute = Skill("Magic Mute", chaos, False, 0, 0, -2, 0,100, 5, [1,magicmute], ["trueHit"])
+powerUp = Skill("Power Up", chaos, False, 0, 0, 10, 0,100, 2, [], ["powerup", "trueHit"])
+magicAbsorb = Skill("Magic Absorb", chaos, False, 0, 0, 5, 0,100, 3, [], ["trueHit"])
+destroy = Skill("Destroy", chaos, False, 100, 100, -100, 15,100, 7, [], [""])
+vampire = Skill("Vampire", blood, False, 20, 10, 5, 20,90, 2, [], ["vampire", "vampire"])
+meteorStorm = Skill("Meteor Storm", astral, False, 100, 50, -100, 0,50, 7, [2, burn], [""])
+block = Skill("Block", fighting, True, 0, 0, 10, 0,100, 1, [], ["block", "trueHit"])
+powerDrain = Skill("Power Drain", astral, False, 25, 25, -10, 0,100, 2, [], ["powerdrain", "trueHit"])
 #-----------------------------------------------------------
 
-slash = Skill("Slash", normal, True, 10, 10, 3, 5,[9,10], 0, [], [""])
-bite = Skill("Bite", normal, True, 20, 5, 0, 5,[8,9], 2, [3,bleed], [""])
-kick = Skill("Kick", fighting, True, 15, 10, 4, 0,[9,10], 1, [], [""])
-dodge = Skill("Dodge", fighting, True, 0, 0, 10, 0,[1,1], 2, [], ["trueHit"])
-rip = Skill("Rip", dark, True, 20, 10, -1, 0,[9,10], 4, [1,bleed], [""])
-consumeFlesh = Skill("Consume Flesh", blood, True, 30, 5, -5, 0,[9,10], 3, [2,bleed], ["vampire"])
+slash = Skill("Slash", normal, True, 10, 10, 3, 5,90, 0, [], [""])
+bite = Skill("Bite", normal, True, 20, 5, 0, 5,92, 2, [3,bleed], [""])
+kick = Skill("Kick", fighting, True, 15, 10, 4, 0,90, 1, [], [""])
+dodge = Skill("Dodge", fighting, True, 0, 0, 10, 0,100, 2, [], ["trueHit", "dodgeUp"])
+rip = Skill("Rip", dark, True, 20, 10, -1, 0,90, 4, [1,bleed], [""])
+consumeFlesh = Skill("Consume Flesh", blood, True, 30, 5, -5, 0,90, 3, [2,bleed], ["vampire"])
 
 #----------------------------------------------------------------
-chaosBolt = Skill("Chaos Bolt", chaos, False, 10, 20, 1, 0,[8,10], 1, [], [""])
-setFire = Skill("Set Fire", fire, False, 5, 20, -1, 0,[9,10], 3, [3,burn], [""])
-forceShield = Skill("Force Shield", magic, False, 0, 0, -2, 0,[1,1], 2, [], ["shield", "nodam", "trueHit"])
-summon = Skill("Summon", magic, False, 0, 0, -4, 0,[1,1], 4, [], ["trueHit"])
-chaosBeam = Skill("Chaos Beam", chaos, False, 20, 20, -10, 0,[9,11], 0, [], ["fullmana"])
-meditate = Skill("Meditate", magic, False, 0, 0, 0, 0,[1,1], -1, [], ["nodam", "trueHit", "meditate"])
-lifePact = Skill("Life Pact", blood, False, 0, 0, -2, 0,[1,1], 4, [], ["lifepact", "trueHit"])
-shroud = Skill("Shroud", dark, False, 0, 0, 10, 0,[1,1], 2, [], ["shroud", "trueHit"])
+chaosBolt = Skill("Chaos Bolt", chaos, False, 10, 20, 1, 0,90, 1, [], [""])
+setFire = Skill("Set Fire", fire, False, 5, 20, -1, 0,90, 3, [3,burn], ["hitAll"])
+forceShield = Skill("Force Shield", magic, False, 0, 0, -2, 0,100, 2, [], ["shield", "nodam", "trueHit"])
+summon = Skill("Summon", magic, False, 0, 0, -4, 0,100, 4, [], ["trueHit"])
+chaosBeam = Skill("Chaos Beam", chaos, False, 20, 20, -10, 0,94, 0, [], ["fullmana"])
+meditate = Skill("Meditate", magic, False, 0, 0, 0, 0,100, -1, [], ["nodam", "trueHit", "meditate"])
+lifePact = Skill("Life Pact", blood, False, 0, 0, -2, 0,100, 4, [], ["lifepact", "trueHit"])
+shroud = Skill("Shroud", dark, False, 0, 0, 10, 0,100, 2, [], ["shroud", "trueHit"])
 #-------------------------------------------------------------------
-bludgeon = Skill("Bludgeon", fighting, True, 10, 2, -1, 0,[9,10], 0, [], [""])
-stab = Skill("Stab", fighting, True, 5, 7, 2, 0,[1,1], 0, [], [""])
-confuse = Skill("Confuse", physic, False, 0, 0, 10, 0,[8,10], 2, [1,confusion], [""])
-planAhead = Skill("Plan Ahead", tech, False, 0, 0, -10, 0,[1,1], 2, [], ["atkUp", "trueHit"])
-erase =Skill("Erase", unknown, False, 0, 0, -10, 0,[1,1], 5, [], ["division"])
-create = Skill("Create", unknown, False, 0,0, -10, 0,[1,1], 5, [], ["immortal", "trueHit"])
-mend = Skill("Mend", magic, False, 0,0, 1, 0,[1,1], 3, [], ["heal", "trueHit"])
+bludgeon = Skill("Bludgeon", fighting, True, 10, 2, -1, 0,90, 0, [], [""])
+stab = Skill("Stab", fighting, True, 5, 7, 2, 0,100, 0, [], [""])
+confuse = Skill("Confuse", physic, False, 0, 0, 10, 0,80, 2, [1,confusion], [""])
+planAhead = Skill("Plan Ahead", tech, False, 0, 0, -10, 0,100, 2, [], ["atkUp", "trueHit"])
+erase =Skill("Erase", unknown, False, 0, 0, -10, 0,100, 5, [], ["division"])
+create = Skill("Create", unknown, False, 0,0, -10, 0,100, 5, [], ["immortal", "trueHit"])
+mend = Skill("Mend", magic, False, 0,0, 1, 0,100, 3, [], ["heal", "trueHit"])
 #------------------------------------------------------------------
-energiBeam = Skill("Energy Beam", tech, False, 77, 10, -3, 0,[9,10], 5, [], [""]) 
-wellspring = Skill("Wellspring", tech, False, 0, 0, 3, 0,[1,1], -10, [], ["trueHit"])
+energiBeam = Skill("Energy Beam", tech, False, 77, 10, -3, 0,90, 5, [], [""]) 
+wellspring = Skill("Wellspring", tech, False, 0, 0, 3, 0,100, -10, [], ["trueHit"])
 #-----------------------------------------------------------------
-bladeFlash = Skill("Blade Flash", fighting, True, 6, 5, 10, 2,[9,10], 1, [], [""])
-cleave = Skill("Cleave", fighting, True, 20, 20, -2, 2,[9,10], 2, [2, bleed], [""])
-revenge = Skill("Revenge", dark, False, 0, 0, 10, 0,[1,1], 5, [], ["revenge"])
+bladeFlash = Skill("Blade Flash", fighting, True, 6, 5, 10, 2,90, 1, [], [""])
+cleave = Skill("Cleave", fighting, True, 20, 20, -2, 2,90, 2, [2, bleed], [""])
+revenge = Skill("Revenge", dark, False, 0, 0, 10, 0,100, 5, [], ["revenge"])
 #----------------------------------------------------------------------
-obsidianBlast = Skill("Obsidian Blast", fire, False, 30, 10, -3, 0,[9,10], 5, [1, burn] ,[""])
-recover = Skill("Recover", magic, False, 0, 0, 10, 0,[1,1], 7, [], ["recover", "endeffect", "trueHit"])
-psionicRadiance = Skill("Psionic Radiance", physic, False, 30, 10, -2, 3,[1,1], 3, [], [""])
+obsidianBlast = Skill("Obsidian Blast", fire, False, 30, 10, -3, 0,90, 5, [1, burn] ,[""])
+recover = Skill("Recover", magic, False, 0, 0, 10, 0,100, 7, [], ["recover", "endeffect", "trueHit"])
+psionicRadiance = Skill("Psionic Radiance", physic, False, 30, 10, -2, 3,100, 3, [], [""])
 #------------------------------------------------------------------------
-stare = Skill("Stare", physic, False, 30, 10, -2, 15,[1,1], 5, [], [""])
-blink = Skill("Blink", physic, True, 5, 5, 1, 0,[1,1], 0, [], ["mark"])
-creepyAtk = Skill("Creep Attack", physic, False, 5, 5, 1, 0,[9,10], 0, [], ["creepyAtk"])
-inhale = Skill("Inhale", air, False, 0, 0, 3, 0,[1,1], 0, [], ["defend", "mark"])
-observe = Skill("Observe", unknown, False, 0, 0, 3, 0,[1,1], 1, [], ["mark", "mark", "mark", "mark", "mark", "mark", "nodam"])
-exhale = Skill("Exhale", air, False, 5, 10, 3, 0,[9,10], 0, [], ["mark"])
+stare = Skill("Stare", physic, False, 30, 10, -2, 15,100, 5, [], [""])
+blink = Skill("Blink", physic, True, 5, 5, 1, 0,100, 0, [], ["mark"])
+creepyAtk = Skill("Creep Attack", physic, False, 5, 5, 1, 0,90, 0, [], ["creepyAtk"])
+inhale = Skill("Inhale", air, False, 0, 0, 3, 0,100, 0, [], ["defend", "mark"])
+observe = Skill("Observe", unknown, False, 0, 0, 3, 0,100, 1, [], ["mark", "mark", "mark", "mark", "mark", "mark", "nodam"])
+exhale = Skill("Exhale", air, False, 5, 10, 3, 0,90, 0, [], ["mark"])
 #------------------------------------------------------------------------
-sneeze = Skill("Sneeze", acid, False, 14, 6, 6, 0,[9,10], 1, [2, poison], [""])
+sneeze = Skill("Sneeze", acid, False, 14, 6, 6, 0,90, 1, [2, poison], [""])
 
-eggon = Skill("Egg On", normal, True, 0, 0, 10, 0,[1,1], 2, [1, rebuff], ["trueHit"])
-rebuke = Skill("Rebuke", normal, True, 0, 0, 10, 0,[1,1], 1, [], ["removeEff", "removeUff", "trueHit"])
+eggon = Skill("Egg On", normal, True, 0, 0, 10, 0,100, 2, [1, rebuff], ["trueHit"])
+rebuke = Skill("Rebuke", normal, True, 0, 0, 10, 0,100, 1, [], ["removeEff", "removeUff", "trueHit"])
 
-blast = Skill("Blast", tech, False, 20, 20, 5, 8, [10,11], 2, [2, burn], [""])
-fission = Skill("Fission", fire, False, 1, 40, -1, 0, [9,10], 0, [], ["powerDown", "fullmana"])
-fusion = Skill("Fusion", fire, False, 1, 40, -1, 0, [9,10], 1, [], ["powerUp"])
+blast = Skill("Blast", tech, False, 20, 20, 5, 8, 95, 2, [2, burn], [""])
+fission = Skill("Fission", fire, False, 20, 40, -1, 0, 90, 0, [], ["powerDown", "fullmana"])
+fusion = Skill("Fusion", fire, False, 1, 40, -1, 0, 90, 1, [], ["powerUp"])
 
-lifeTransfer = Skill("Life Transfer", blood, False, 0, 0, 10, 0,[1,1], 2, [], ["lifeTransfer", "nodam"])
-powerTransfer = Skill("Power Transfer", tech, False, 0, 0, 10, 0, [1,1], 0, [], ["powerTransfer", "nodam"])
+lifeTransfer = Skill("Life Transfer", blood, False, 0, 0, 10, 0,100, 2, [], ["lifeTransfer", "nodam"])
+powerTransfer = Skill("Power Transfer", tech, False, 0, 0, 10, 0, 100, 0, [], ["powerTransfer", "nodam"])
 
 
 
@@ -548,7 +587,7 @@ class Char(object):
 		self.power = 0
 		self.menuImg = menuImg
 		self.goskill = "hoi"
-		self.target = "nul"
+		self.target = ["nul"]
 		self.updated = False
 		
 		
@@ -562,33 +601,33 @@ class Char(object):
 		newchar.img = self.image
 		return newchar
 		
-NOT = Char("???", [unknown], 0, 0, 0, 0, 0, 0, 0, [0,0], 0, 0, [], "", "Assets/battlers/locked.png", [-1,0], "")
+NOT = Char("???", [unknown], 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, [], "", "Assets/battlers/locked.png", [-1,0], "")
 
-Mage = Char("Meigis", [normal, chaos], 500, 5, 15, 5, 15, 4, 0, [1,10], 1, 0, [basicAtk, fireBall, waterSpout, airBlast, earthShot, defend], "", "Assets/battlers/Mage.png", [5,0], "")
+Mage = Char("Meigis", [normal, chaos], 500, 5, 15, 5, 15, 4, 0, 10, 1, 0, [basicAtk, fireBall, waterSpout, airBlast, earthShot, defend], "", "Assets/battlers/Mage.png", [5,0], "")
 
-Mouther = Char("Mouther", [earth], 500, 20, 0, 10, 5, 4, 0, [1,10], 1, 0, [basicAtk, bite, consumeFlesh, defend], "", "Assets/battlers/Mouther.png", [4,0], "")
+Mouther = Char("Mouther", [earth], 500, 20, 0, 10, 5, 4, 0, 10, 1, 0, [basicAtk, bite, consumeFlesh, defend], "", "Assets/battlers/Mouther.png", [4,0], "")
 
-NotScaryGhost = Char("Not Scary Ghost", [ghost], 1000, 0, 0, 10, 75, 2, 0, [1,10], 1, 0, [basicAtk, sneeze, forceShield, recover], "", "Assets/battlers/Not_Scary_Ghost.png", [2, 14], "")
-Creep = Char("Creepy Bald Guy", [physic, unknown], 750, 10, 10, 15, 50, 0, 0, [1,10], 1, 0, [creepyAtk, blink, stare, inhale, exhale, observe], "", "Assets/battlers/Creepy_Bald_Guy.png", [1, 7], "")
+NotScaryGhost = Char("Not Scary Ghost", [ghost], 1000, 0, 0, 10, 75, 2, 0, 10, 1, 0, [basicAtk, sneeze, forceShield, recover], "", "Assets/battlers/Not_Scary_Ghost.png", [2, 14], "")
+Creep = Char("Creepy Bald Guy", [physic, unknown], 750, 10, 10, 15, 50, 0, 0, 0, 1, 0, [creepyAtk, blink, stare, inhale, exhale, observe], "", "Assets/battlers/Creepy_Bald_Guy.png", [1, 7], "")
 
-Nic = Char("Nic", [chaos], 500, 15, 50, 10, 25, 4, 0, [1,10], 1, 0, [basicAtk, magicMute, shardSwarm, powerUp, defend], "", "Assets/battlers/nic.png", [5,8], "")
+Nic = Char("Nic", [chaos], 500, 15, 50, 10, 25, 4, 0, 10, 1, 0, [basicAtk, magicMute, shardSwarm, powerUp, defend], "", "Assets/battlers/nic.png", [5,8], "")
 
 
 
-Scarlet = Char("Scarlet", [dark, blood], 100, 20, 20, 5, 20, 6, 0, [1,10], 1, 0, [basicAtk, scar, vampire, destroy, lifePact, defend], "", "Assets/battlers/vamp.png", [1,0], "")
+Scarlet = Char("Scarlet", [dark, blood], 100, 20, 20, 5, 20, 6, 0, 10, 1, 0, [basicAtk, scar, vampire, destroy, lifePact, defend], "", "Assets/battlers/vamp.png", [1,0], "")
 
-Flan = Char("Flan", [dark,blood], 200, 35, 30, 10, 20, 7, 10, [2,10], 1, 0, [slash, rip, scar, vampire, destroy, lifePact, setFire, lifeTransfer], "Watch them burn", "Assets/battlers/flandre.png", [5,7], "")
-Nue = Char("Nue", [astral, dark], 300, 25, 40, 10, 50, 4, 15, [1,10], 1, 0, [basicAtk, meteorStorm, planAhead, forceShield, powerDrain, stab, meditate, defend], "", "Assets/battlers/nue.png", [4,7], "")
-Okuu = Char("Okuu", [fire, tech], 500, 15, 50, 30, 10, 1, 5, [1,20], 1, 0, [bludgeon, blast, fusion, fission, nuke, forceShield, recover], "", "Assets/battlers/reiji.png", [3,7], "")
+Flan = Char("Flan", [dark,blood], 200, 35, 30, 10, 20, 7, 10, 20, 1, 0, [slash, rip, scar, vampire, destroy, lifePact, setFire, lifeTransfer], "Watch them burn", "Assets/battlers/flandre.png", [5,7], "")
+Nue = Char("Nue", [astral, dark], 300, 25, 40, 10, 50, 4, 15, 10, 1, 0, [basicAtk, meteorStorm, powerTransfer, forceShield, powerDrain, stab, meditate, defend], "", "Assets/battlers/nue.png", [4,7], "")
+Okuu = Char("Okuu", [fire, tech], 500, 15, 50, 30, 10, 1, 5, 5, 1, 0, [bludgeon, blast, fusion, fission, nuke, forceShield, recover], "", "Assets/battlers/reiji.png", [3,7], "")
 
-Epic = Char("Epic", [tech], 1000, 25, 50, 35, 45, 7, 10, [1,10], 1, 0, [basicAtk,energiBeam, wellspring, defend], "", "Assets/battlers/epic.png", [7,8], "")
+Epic = Char("Epic", [tech], 1000, 25, 50, 35, 45, 7, 10, 10, 1, 0, [basicAtk,energiBeam, wellspring, defend], "", "Assets/battlers/epic.png", [7,8], "")
 
-Coo33 = Char("Coo33", [dark, blood], 250, 50, 0, 30, 0, 10, 10, [1,10], 5, 0, [basicAtk, slash, bite, kick, dodge, rip, consumeFlesh, defend], "", "Assets/battlers/Coo33.png", [3,3], "")
-Alpha = Char("Alpha", [normal, earth, fighting], 500, 50, -50, 30, 5, 5, 0, [1,10], 1, 0, [basicAtk, slash, cleave, bladeFlash, revenge, mend, defend], "", "Assets/battlers/alpha.png", [8,4], "")
-Siv = Char("Siv", [normal, earth, dark, physic, chaos, magic], 250, 0, 50, 0, 38, 5, 7, [1,10], 1, 0, [basicAtk, chaosBolt, setFire, forceShield, chaosBeam, meditate, lifePact, shroud], "", "Assets/battlers/siv.png", [4,2], "")
-CoosomeJoe = Char("Coosome Joe", [light, tech], 500, 25, 25, 25, 25, 5, 2, [1,10], 1, 0, [basicAtk, bludgeon, erase, create, confuse, planAhead, mend, defend], "", "Assets/battlers/Coosome.png",  [3, 8], "")
-Durric = Char("Durric", [earth, light, fighting, physic], 1000, 25, 25, 75, 25, 0, 0, [1,90], 1, 0, [basicAtk, forceShield, cleave, obsidianBlast, recover, psionicRadiance, mend, defend], "", "Assets/battlers/Durric.png", [4, 4], "")
-Catsome = Char("Catsome", [light, ghost, physic], 1000, 10, 35, 10, 15, 5, 5, [1,10], 1, 0, [slash, bite, eggon, rebuke, mend, recover], "", "Assets/battlers/catsome.png",[6,9], "")
+Coo33 = Char("Coo33", [dark, blood], 250, 50, 0, 30, 0, 10, 10, 10, 5, 0, [basicAtk, slash, bite, kick, dodge, rip, consumeFlesh, defend], "", "Assets/battlers/Coo33.png", [3,3], "")
+Alpha = Char("Alpha", [normal, earth, fighting], 500, 50, -50, 30, 5, 5, 0, 10, 1, 0, [basicAtk, slash, cleave, bladeFlash, revenge, mend, defend], "", "Assets/battlers/alpha.png", [8,4], "")
+Siv = Char("Siv", [normal, earth, dark, physic, chaos, magic], 250, 0, 50, 0, 38, 5, 7, 10, 1, 0, [basicAtk, chaosBolt, setFire, forceShield, chaosBeam, meditate, lifePact, shroud], "", "Assets/battlers/siv.png", [4,2], "")
+CoosomeJoe = Char("Coosome Joe", [light, tech], 500, 25, 25, 25, 25, 5, 2, 10, 1, 0, [basicAtk, bludgeon, erase, create, confuse, planAhead, mend, defend], "", "Assets/battlers/Coosome.png",  [3, 8], "")
+Durric = Char("Durric", [earth, light, fighting, physic], 1000, 25, 25, 75, 25, 0, 0, 1, 1, 0, [basicAtk, forceShield, cleave, obsidianBlast, recover, psionicRadiance, mend, defend], "", "Assets/battlers/Durric.png", [4, 4], "")
+Catsome = Char("Catsome", [light, ghost, physic], 1000, 10, 35, 10, 15, 5, 5, 10, 1, 0, [slash, bite, eggon, rebuke, mend, recover], "", "Assets/battlers/catsome.png",[6,9], "")
 
 NO = NOT.buildNew()	
 		
@@ -1005,27 +1044,34 @@ while not done:
 					
 						if mouse_down:
 							if x == 0 and y == 0:
-								thisbattler.target = thesebattlers[0]
+								thisbattler.target[0] = thesebattlers[0]
 								ready = True
 							if x == 0 and y == 1:
-								thisbattler.target = thesebattlers[1]
+								thisbattler.target[0] = thesebattlers[1]
 								ready = True
 							if x == 0 and y == 2:
-								thisbattler.target = thesebattlers[2]
+								thisbattler.target[0] = thesebattlers[2]
 								ready = True
 							if x == 1 and y == 0:
-								thisbattler.target = thesebattlers[3]
+								thisbattler.target[0] = thesebattlers[3]
 								ready = True
 							if x == 1 and y == 1:
-								thisbattler.target = thesebattlers[4]
+								thisbattler.target[0] = thesebattlers[4]
 								ready = True
 							if x == 1 and y == 2:
-								thisbattler.target = thesebattlers[5]
+								thisbattler.target[0] = thesebattlers[5]
 								ready = True
 						mouse_down = False
 					
 					if ready:
 						ready = False
+						if "hitAll" in  thisbattler.goskill.spec:
+							
+							if thisbattler in player1.battlers:
+								thisbattler.target = player2.battlers
+							elif thisbattler in player2.battlers:
+								thisbattler.target = player1.battlers
+						
 						thebattler += 1
 						
 						pickenm = False
@@ -1050,8 +1096,10 @@ while not done:
 				for j in range(len(agillist)-1-i):
 					if agillist[j].agil + agillist[j].goskill.spd  > agillist[j+1].agil + agillist[j+1].goskill.spd:
 						agillist[j], agillist[j+1] = agillist[j+1], agillist[j] 
-						
-			agillist[increment].goskill.use(agillist[increment],agillist[increment].target)
+			for i in agillist[increment].target:
+				print i.name
+				agillist[increment].goskill.use(agillist[increment],i)
+			agillist[increment].target = ["nul"]
 			agillist[increment].power -= agillist[increment].goskill.cost
 			increment += 1
 			if increment > len(thesebattlers) - 1:
