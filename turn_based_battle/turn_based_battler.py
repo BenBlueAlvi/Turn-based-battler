@@ -86,7 +86,7 @@ def printb(text):
 	log.append(text)
 	newtext = font.render(text,True,BLACK)
 	
-	time.sleep(1)
+	time.sleep(0.5)
 	if hasprinted:
 		disptext = newtext
 
@@ -294,7 +294,7 @@ class Skill(object):
 	def use(self, user, target):
 		
 		message = ""
-		
+		print self.name
 		hit = Decimal(self.hitChance[0]/self.hitChance[1]) * Decimal(target.dodgeChance[0]/target.dodgeChance[1]) * Decimal(100)
 		
 		if random.randint(1,100) > int(hit) or "trueHit" in self.spec:
@@ -330,7 +330,6 @@ class Skill(object):
 				if not len(self.effects) == 0:
 					target.effects.append(self.effects[1])
 			
-			print self.effects
 			if not len(self.effects) == 0:
 				if random.randint(1,self.effects[0]) == 1:
 					target.effects.append(self.effects[1])
@@ -413,6 +412,10 @@ class Skill(object):
 				if i == "lifeTransfer":
 					user.hp -= user.hp/4
 					target.hp += (user.hp/4) * 2
+					
+				if i == "powerTransfer":
+					user.power -= user.power/4
+					target.power += (user.power/4)
 				if i == "meditate":
 					user.effects.append(meditatef)
 				
@@ -434,7 +437,7 @@ class Skill(object):
 		
 		
 				
-nothing = Skill("nothing", normal, True, 0, 0, 0, 0, [0,0], 0, [], ["nodam"])
+nothing = Skill("nothing", normal, True, 0, 0, 0, 0, [1,1], 0, [], ["nodam", "trueHit"])
 basicAtk = Skill("Basic Attack", normal, True, 5, 5, 1, 0,[9,10], 0, [], [""])
 fireBall = Skill("Fire ball", fire, False, 7, 3, -1, 0,[9,10], 2, [1, burn], [""])
 waterSpout = Skill("Water Spout", water, False, 2, 10, -1, 0,[9,10], 2, [], [""])
@@ -507,6 +510,7 @@ fission = Skill("Fission", fire, False, 1, 40, -1, 0, [9,10], 0, [], ["powerDown
 fusion = Skill("Fusion", fire, False, 1, 40, -1, 0, [9,10], 1, [], ["powerUp"])
 
 lifeTransfer = Skill("Life Transfer", blood, False, 0, 0, 10, 0,[1,1], 2, [], ["lifeTransfer", "nodam"])
+powerTransfer = Skill("Power Transfer", tech, False, 0, 0, 10, 0, [1,1], 0, [], ["powerTransfer", "nodam"])
 
 
 
@@ -867,13 +871,13 @@ while not done:
 	
 		gScreen.blit(dispchar2.image, [644, 370])
 	
-		gScreen.blit(localbattler.image, [4, i * 47 + 359])
+		gScreen.blit(localbattler.menuImg, [4, i * 47 + 359])
 		gScreen.blit(font.render(localbattler.name, True, BLACK), [56, i * 47 + 359])
 		atypes = ""
 		for f in localbattler.types:
 			atypes += f.name + " "
-		gScreen.blit(font.render(atypes, True, BLACK), [63, 385])
-		gScreen.blit(font.render("Str: " + str(localbattler.str) + "   Con: " + str(localbattler.con) + "   Int: " + str(localbattler.int) + "   Mdf: " + str(localbattler.mag) + "   Agil: " + str(localbattler.agil) + "   Crit: " + str(localbattler.crit), True, BLACK), [63, 405])
+		gScreen.blit(font.render(atypes, True, BLACK), [56, i * 47 + 375])
+		gScreen.blit(font.render("Str: " + str(localbattler.str) + "   Con: " + str(localbattler.con) + "   Int: " + str(localbattler.int) + "   Mdf: " + str(localbattler.mag) + "   Agil: " + str(localbattler.agil) + "   Crit: " + str(localbattler.crit), True, BLACK), [56, i * 47 + 391])
 	
 	
 
@@ -1023,7 +1027,7 @@ while not done:
 					if ready:
 						ready = False
 						thebattler += 1
-						print thisbattler.goskill.spd, thisbattler.target
+						
 						pickenm = False
 					y += 1
 									
@@ -1118,13 +1122,13 @@ while not done:
 		if len(player1.battlers) == 0:
 			printb("Player 2 WINS!")
 			print "Player 2 Wins"
-			player1.battlers.append(NO, NO, NO)
+			player1.battlers.append([NO, NO, NO])
 			break
 			
 		elif len(player2.battlers) == 0:
 			printb("Player 1 WINS!")
 			print "Player 1 Wins"
-			player2.battlers.append(NO, NO, NO)
+			player2.battlers.append([NO, NO, NO])
 			break
 			
 			
