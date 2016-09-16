@@ -276,7 +276,7 @@ death = Effect("death")
 		
 
 class Skill(object):
-	def __init__(self, name, type, phys, atk, var, spd, crit, cost, effects, spec):
+	def __init__(self, name, type, phys, atk, var, spd, crit, hitChance, cost, effects, spec):
 		self.name = name
 		self.type = type
 		self.atk = atk
@@ -286,6 +286,7 @@ class Skill(object):
 		self.cost = cost
 		self.spec = spec
 		self.crit = crit
+		self.hitChance = hitChance
 		self.effects = effects
 		self.text = font.render(name, True, WHITE)
 		
@@ -293,201 +294,212 @@ class Skill(object):
 	def use(self, user, target):
 		
 		message = ""
-		if self.phys:
-			damage = (user.str + self.atk+ random.randint(0, self.var)) - target.con
+		
+		
+		
+		if random.randint(1,100) > int(Decimal(self.hitChance[0]/self.hitChance[1]) * Decimal(target.dodgeChance[0]/target.dodgeChance[1]) * Decimal(100)) or "trueHit" in self.spec:
 			
-		else:
-			damage = (user.int + self.atk + random.randint(0, self.var)) - target.mag
+		
+			if self.phys:
+				damage = (user.str + self.atk+ random.randint(0, self.var)) - target.con
+			
+			else:
+				damage = (user.int + self.atk + random.randint(0, self.var)) - target.mag
+		
 			
 		
 		
-		for i in target.types:
+			for i in target.types:
+					
+				if self.type.name in i.weks:
+					damage *= 2
+					message = " It's super effective!"
+					
+			for i in target.types:
 				
-			if self.type.name in i.weks:
+					
+				if self.type.name in i.strs:
+					damage /= 2
+					message = " It's not very effective!"
+			
+			
+			
+			if random.randint(1,30) + user.crit >= 30:
 				damage *= 2
-				message = " It's super effective!"
-				
-		for i in target.types:
+				message += " CRITICAL HIT!"
+				if not len(self.effects) == 0:
+					target.effects.append(self.effects[1])
 			
-				
-			if self.type.name in i.strs:
-				damage /= 2
-				message = " It's not very effective!"
-		
-		
-		
-		if random.randint(1,30) + user.crit >= 30:
-			damage *= 2
-			message += " CRITICAL HIT!"
+			
 			if not len(self.effects) == 0:
-				target.effects.append(self.effects[1])
-		
-		
-		if not len(self.effects) == 0:
-			if random.randint(1,self.effects[0]) == 1:
-				target.effects.append(self.effects[1])
+				if random.randint(1,self.effects[0]) == 1:
+					target.effects.append(self.effects[1])
+					
+			for i in self.spec:
+			
+				if i == "vampire":
+					user.hp += damage
 				
-		for i in self.spec:
-		
-			if i == "vampire":
-				user.hp += damage
-			
-			if i == "defend":
-				damage = 0
-				user.effects.append(defense.buildNew())
-			if i == "powerup":
-				damage = 0
-				target.power += 10
-			if i == "lifepact":
-				damage = user.hp / 2 + user.int
-				user.hp /=2
-			
-			if i == "fullmana":
-				damage = (user.power * user.int) / 3
-				user.power = 0
-			if i == "shroud":
-				user.con += 6
-				user.mag += 6
-			if i == "Shield":
-				user.effects.append(forceshield.buildNew())
-			if i == "atkUp":
-				damage = 0
-				user.str += 25
-				user.int += 25
-			
-			if i == "division":
-				damage = target.hp/5
-			if i == "immortal":
-				user.effects.append(immortal.buildNew())
-			if i == "heal":
-				damage = 0
-				target.hp += target.int * 3
-			if i == "block":
-				damage = 0
-				user.effects.append(block.buildNew())
-			if i == "powerdrain":
-				damage = 0 
-				user.power += target.power
-				target.power = 0
-			
-			if i == "revenge":
-				damage = user.maxhp - user.hp
-			if i == "recover":
-				damage = 0
-				target.hp += target.maxhp / 4
+				if i == "defend":
+					damage = 0
+					user.effects.append(defense.buildNew())
+				if i == "powerup":
+					damage = 0
+					target.power += 10
+				if i == "lifepact":
+					damage = user.hp / 2 + user.int
+					user.hp /=2
 				
-			if i == "stare":
-		
-				target.con /=2
-				target.mag /=2
-			if i == "mark":
+				if i == "fullmana":
+					damage = (user.power * user.int) / 3
+					user.power = 0
+				if i == "shroud":
+					user.con += 6
+					user.mag += 6
+				if i == "Shield":
+					user.effects.append(forceshield.buildNew())
+				if i == "atkUp":
+					damage = 0
+					user.str += 25
+					user.int += 25
 				
-				target.marks += 1
-			if i == "creepyAtk":
-	
-				damage = target.marks * target.marks
-			
-			if i == "endeffect":
+				if i == "division":
+					damage = target.hp/5
+				if i == "immortal":
+					user.effects.append(immortal.buildNew())
+				if i == "heal":
+					damage = 0
+					target.hp += target.int * 3
+				if i == "block":
+					damage = 0
+					user.effects.append(block.buildNew())
+				if i == "powerdrain":
+					damage = 0 
+					user.power += target.power
+					target.power = 0
 				
-				user.effects = []
-			if i == "nodam":
-				damage = 0
-			if i == "removeEff":
-				target.effects = []
-			if i == "removeUff":
-				target.con = target.basecon
-				target.mag = target.basemag
-				target.int = target.baseint
-				target.str = target.basestr
-				target.crit = target.basecrit
-				target.agil = target.baseagil
+				if i == "revenge":
+					damage = user.maxhp - user.hp
+				if i == "recover":
+					damage = 0
+					target.hp += target.maxhp / 4
+					
+				if i == "stare":
 			
+					target.con /=2
+					target.mag /=2
+				if i == "mark":
+					
+					target.marks += 1
+				if i == "creepyAtk":
 		
-			
-			
-			
+					damage = target.marks * target.marks
+				
+				if i == "endeffect":
+					
+					user.effects = []
+				if i == "nodam":
+					damage = 0
+				if i == "removeEff":
+					target.effects = []
+				if i == "removeUff":
+					target.con = target.basecon
+					target.mag = target.basemag
+					target.int = target.baseint
+					target.str = target.basestr
+					target.crit = target.basecrit
+					target.agil = target.baseagil
+			if user.hp > 0:
+				printb(user.name + " uses " + self.name + " and deals " + str(damage) + " damage!" + message)
+				
+		else:
+			damage = 0
+			printb(user.name + " missed!")
+				
+				
+				
+				
 		if damage < 0:
 			damage = 0
 		target.hp -= damage
-		if user.hp > 0:
-			printb(user.name + " uses " + self.name + " and deals " + str(damage) + " damage!" + message)
+		
 		
 		
 				
-nothing = Skill("nothing", normal, True, 0, 0, 0, 0, 0, [], ["nodam"])
-basicAtk = Skill("Basic Attack", normal, True, 5, 5, 1, 0, 0, [], [""])
-fireBall = Skill("Fire ball", fire, False, 7, 3, -1, 0, 2, [1, burn], [""])
-waterSpout = Skill("Water Spout", water, False, 2, 10, -1, 0, 2, [], [""])
-airBlast = Skill("Air Blast", air, False, 7, 1, 2, 0, 2, [], [""])
-earthShot = Skill("Earth Shot", earth, False, 12, 4, -5, 0, 2, [], [""])
-defend = Skill("Defend", normal, True, 0, 0, 0, 0, 0, [], ["defend"])
-scar = Skill("Scar", dark, True, 30, 5, 2, 0, 1, [3,bleed], ["vampire"])
-nuke = Skill("Nuke", fire, True, 35, 10, -4, 0, 20, [], [""])
-shardSwarm = Skill("Shard Swarm", chaos, False, 20, 30, 4, 0, 10, [], [""])
-magicMute = Skill("Magic Mute", chaos, False, 0, 0, -2, 0, 5, [1,magicmute], [""])
-powerUp = Skill("Power Up", chaos, False, 0, 0, 10, 0, 2, [], ["powerup"])
-magicAbsorb = Skill("Magic Absorb", chaos, False, 0, 0, 5, 0, 3, [], ["magicabsorb"])
-destroy = Skill("Destroy", chaos, False, 100, 100, -100, 15, 7, [], [""])
-vampire = Skill("Vampire", blood, False, 20, 10, 5, 20, 2, [], ["vampire", "vampire"])
-meteorStorm = Skill("Meteor Storm", astral, False, 100, 50, -100, 0, 7, [2, burn], [""])
-block = Skill("Block", fighting, True, 0, 0, 10, 0, 1, [], ["block"])
-powerDrain = Skill("Power Drain", astral, False, 25, 25, -10, 0, 2, [], ["powerdrain"])
+nothing = Skill("nothing", normal, True, 0, 0, 0, 0, 0,[0,0], [], ["nodam"])
+basicAtk = Skill("Basic Attack", normal, True, 5, 5, 1, 0,[9,10], 0, [], [""])
+fireBall = Skill("Fire ball", fire, False, 7, 3, -1, 0,[9,10], 2, [1, burn], [""])
+waterSpout = Skill("Water Spout", water, False, 2, 10, -1, 0,[9,10], 2, [], [""])
+airBlast = Skill("Air Blast", air, False, 7, 1, 2, 0,[11,12], 2, [], [""])
+earthShot = Skill("Earth Shot", earth, False, 12, 4, -5, 0,[9,10], 2, [], [""])
+defend = Skill("Defend", normal, True, 0, 0, 0, 0,[1,1], 0, [], ["defend", "trueHit"])
+scar = Skill("Scar", dark, True, 30, 5, 2, 0,[15,16], 1, [3,bleed], ["vampire"])
+nuke = Skill("Nuke", fire, True, 35, 10, -4, 0,[1,1], 20, [], [""])
+shardSwarm = Skill("Shard Swarm", chaos, False, 20, 30, 4, 0,[9,10], 10, [], [""])
+magicMute = Skill("Magic Mute", chaos, False, 0, 0, -2, 0,[1,1], 5, [1,magicmute], ["trueHit"])
+powerUp = Skill("Power Up", chaos, False, 0, 0, 10, 0,[1,1], 2, [], ["powerup", "trueHit"])
+magicAbsorb = Skill("Magic Absorb", chaos, False, 0, 0, 5, 0,[1,1], 3, [], ["magicabsorb", "trueHit"])
+destroy = Skill("Destroy", chaos, False, 100, 100, -100, 15,[1,1], 7, [], [""])
+vampire = Skill("Vampire", blood, False, 20, 10, 5, 20,[9,10], 2, [], ["vampire", "vampire"])
+meteorStorm = Skill("Meteor Storm", astral, False, 100, 50, -100, 0,[1,2], 7, [2, burn], [""])
+block = Skill("Block", fighting, True, 0, 0, 10, 0,[1,1], 1, [], ["block", "trueHit"])
+powerDrain = Skill("Power Drain", astral, False, 25, 25, -10, 0,[1,1], 2, [], ["powerdrain", "trueHit"])
 #-----------------------------------------------------------
 
-slash = Skill("Slash", normal, True, 10, 10, 3, 5, 0, [], [""])
-bite = Skill("Bite", normal, True, 20, 5, 0, 5, 2, [3,bleed], [""])
-kick = Skill("Kick", fighting, True, 15, 10, 4, 0, 1, [], [""])
-dodge = Skill("Dodge", fighting, True, 0, 0, 10, 0, 2, [], [""])
-rip = Skill("Rip", dark, True, 20, 10, -1, 0, 4, [1,bleed], [""])
-consumeFlesh = Skill("Consume Flesh", blood, True, 30, 5, -5, 0, 3, [2,bleed], ["vampire"])
+slash = Skill("Slash", normal, True, 10, 10, 3, 5,[9,10], 0, [], [""])
+bite = Skill("Bite", normal, True, 20, 5, 0, 5,[8,9], 2, [3,bleed], [""])
+kick = Skill("Kick", fighting, True, 15, 10, 4, 0,[9,10], 1, [], [""])
+dodge = Skill("Dodge", fighting, True, 0, 0, 10, 0,[1,1], 2, [], ["trueHit"])
+rip = Skill("Rip", dark, True, 20, 10, -1, 0,[9,10], 4, [1,bleed], [""])
+consumeFlesh = Skill("Consume Flesh", blood, True, 30, 5, -5, 0,[9,10], 3, [2,bleed], ["vampire"])
 
 #----------------------------------------------------------------
-chaosBolt = Skill("Chaos Bolt", chaos, False, 10, 20, 1, 0, 1, [], [""])
-setFire = Skill("Set Fire", fire, False, 5, 20, -1, 0, 3, [3,burn], [""])
-forceShield = Skill("Force Shield", magic, False, 0, 0, -2, 0, 2, [], ["shield", "nodam"])
-summon = Skill("Summon", magic, False, 0, 0, -4, 0, 4, [], [""])
-chaosBeam = Skill("Chaos Beam", chaos, False, 0, 0, -10, 0, 2, [], ["fullmana"])
-meditate = Skill("Meditate", magic, False, 0, 0, 0, 0, -1, ["meditate"], ["nodam"])
-lifePact = Skill("Life Pact", blood, False, 0, 0, -2, 0, 4, [], ["lifepact"])
-shroud = Skill("Shroud", dark, False, 0, 0, 10, 0, 2, [], ["shroud"])
+chaosBolt = Skill("Chaos Bolt", chaos, False, 10, 20, 1, 0,[8,10], 1, [], [""])
+setFire = Skill("Set Fire", fire, False, 5, 20, -1, 0,[9,10], 3, [3,burn], [""])
+forceShield = Skill("Force Shield", magic, False, 0, 0, -2, 0,[1,1], 2, [], ["shield", "nodam", "trueHit"])
+summon = Skill("Summon", magic, False, 0, 0, -4, 0,[1,1], 4, [], ["trueHit"])
+chaosBeam = Skill("Chaos Beam", chaos, False, 0, 0, -10, 0,[9,11], 2, [], ["fullmana"])
+meditate = Skill("Meditate", magic, False, 0, 0, 0, 0,[1,1], -1, ["meditate"], ["nodam", "trueHit"])
+lifePact = Skill("Life Pact", blood, False, 0, 0, -2, 0,[1,1], 4, [], ["lifepact", "trueHit"])
+shroud = Skill("Shroud", dark, False, 0, 0, 10, 0,[1,1], 2, [], ["shroud", "trueHit"])
 #-------------------------------------------------------------------
-bludgeon = Skill("Bludgeon", fighting, True, 10, 2, -1, 0, 1, [], [""])
-stab = Skill("Stab", fighting, True, 5, 7, 2, 0, 0, [], [""])
-confuse = Skill("Confuse", physic, False, 0, 0, 10, 0, 2, [1,confusion], [""])
-planAhead = Skill("Plan Ahead", tech, False, 0, 0, -10, 0, 2, [], ["atkUp"])
-erase =Skill("Erase", unknown, False, 0, 0, -10, 0, 5, [], ["division"])
-create = Skill("Create", unknown, False, 0,0, -10, 0, 5, [], ["immortal"])
-mend = Skill("Mend", magic, False, 0,0, 1, 0, 3, [], ["heal"])
+bludgeon = Skill("Bludgeon", fighting, True, 10, 2, -1, 0,[9,10], 1, [], [""])
+stab = Skill("Stab", fighting, True, 5, 7, 2, 0,[1,1], 0, [], [""])
+confuse = Skill("Confuse", physic, False, 0, 0, 10, 0,[8,10], 2, [1,confusion], [""])
+planAhead = Skill("Plan Ahead", tech, False, 0, 0, -10, 0,[1,1], 2, [], ["atkUp", "trueHit"])
+erase =Skill("Erase", unknown, False, 0, 0, -10, 0,[1,1], 5, [], ["division"])
+create = Skill("Create", unknown, False, 0,0, -10, 0,[1,1], 5, [], ["immortal", "trueHit"])
+mend = Skill("Mend", magic, False, 0,0, 1, 0,[1,1], 3, [], ["heal", "trueHit"])
 #------------------------------------------------------------------
-energiBeam = Skill("Energy Beam", tech, False, 77, 10, -3, 0, 5, [], [""]) 
-wellspring = Skill("Wellspring", tech, False, 0, 0, 3, 0, -10, [], [""])
+energiBeam = Skill("Energy Beam", tech, False, 77, 10, -3, 0,[9,10], 5, [], [""]) 
+wellspring = Skill("Wellspring", tech, False, 0, 0, 3, 0,[1,1], -10, [], ["trueHit"])
 #-----------------------------------------------------------------
-bladeFlash = Skill("Blade Flash", fighting, True, 6, 5, 10, 2, 1, [], [""])
-cleave = Skill("Cleave", fighting, True, 10, 20, -2, 2, 2, [2, bleed], [""])
-revenge = Skill("Revenge", dark, False, 0, 0, 10, 0, 5, [], ["revenge"])
+bladeFlash = Skill("Blade Flash", fighting, True, 6, 5, 10, 2,[9,10], 1, [], [""])
+cleave = Skill("Cleave", fighting, True, 20, 20, -2, 2,[9,10], 2, [2, bleed], [""])
+revenge = Skill("Revenge", dark, False, 0, 0, 10, 0,[1,1], 5, [], ["revenge"])
 #----------------------------------------------------------------------
-obsidianBlast = Skill("Obsidian Blast", fire, False, 30, 10, -3, 0, 5, [1, burn] ,[""])
-recover = Skill("Recover", magic, False, 0, 0, 10, 0, 7, [], ["recover", "endeffect"])
-psionicRadiance = Skill("Psionic Radiance", physic, False, 30, 10, -2, 3, 3, [], [""])
+obsidianBlast = Skill("Obsidian Blast", fire, False, 30, 10, -3, 0,[9,10], 5, [1, burn] ,[""])
+recover = Skill("Recover", magic, False, 0, 0, 10, 0,[1,1], 7, [], ["recover", "endeffect", "trueHit"])
+psionicRadiance = Skill("Psionic Radiance", physic, False, 30, 10, -2, 3,[1,1], 3, [], [""])
 #------------------------------------------------------------------------
-stare = Skill("Stare", physic, False, 30, 10, -2, 15, 5, [], [""])
-blink = Skill("Blink", physic, True, 5, 5, 1, 0, 0, [], ["mark"])
-creepyAtk = Skill("Creep Attack", physic, False, 5, 5, 1, 0, 0, [], ["creepyAtk"])
-inhale = Skill("Inhale", air, False, 0, 0, 3, 0, 0, [], ["defend", "mark"])
-observe = Skill("Observe", unknown, False, 0, 0, 3, 0, 1, [], ["mark", "mark", "mark", "mark", "mark", "mark", "nodam"])
-exhale = Skill("Exhale", air, False, 5, 10, 3, 0, 0, [], ["mark"])
+stare = Skill("Stare", physic, False, 30, 10, -2, 15,[1,1], 5, [], [""])
+blink = Skill("Blink", physic, True, 5, 5, 1, 0,[1,1], 0, [], ["mark"])
+creepyAtk = Skill("Creep Attack", physic, False, 5, 5, 1, 0,[9,10], 0, [], ["creepyAtk"])
+inhale = Skill("Inhale", air, False, 0, 0, 3, 0,[1,1], 0, [], ["defend", "mark"])
+observe = Skill("Observe", unknown, False, 0, 0, 3, 0,[1,1], 1, [], ["mark", "mark", "mark", "mark", "mark", "mark", "nodam"])
+exhale = Skill("Exhale", air, False, 5, 10, 3, 0,[9,10], 0, [], ["mark"])
 #------------------------------------------------------------------------
-sneeze = Skill("Sneeze", acid, False, 14, 6, 6, 0, 1, [2, poison], [""])
+sneeze = Skill("Sneeze", acid, False, 14, 6, 6, 0,[9,10], 1, [2, poison], [""])
 
-eggon = Skill("Egg On", normal, True, 0, 0, 10, 0, 2, [1, rebuff], [""])
-rebuke = Skill("Rebuke", normal, True, 0, 0, 10, 0, 1, [], ["removeEff", "removeUff"])
+eggon = Skill("Egg On", normal, True, 0, 0, 10, 0,[1,1], 2, [1, rebuff], ["trueHit"])
+rebuke = Skill("Rebuke", normal, True, 0, 0, 10, 0,[1,1], 1, [], ["removeEff", "removeUff", "trueHit"])
 
 
 
 
 
 class Char(object):
-	def __init__(self, name, types, hp, str, int, con, mag, agil, crit, lvl, xp, skills, image, cords, menuImg):
+	def __init__(self, name, types, hp, str, int, con, mag, agil, crit, dodgeChance, lvl, xp, skills, image, cords, menuImg):
 		self.name = name
 		self.hp = hp
 		self.str = str
@@ -511,6 +523,8 @@ class Char(object):
 		self.maxhp = hp
 		self.crit = crit
 		self.basecrit = crit
+		self.dodgeChance = dodgeChance
+		self.basedodgeChance = dodgeChance
 		self.marks = 0
 		self.power = 0
 		self.menuImg = menuImg
@@ -520,37 +534,37 @@ class Char(object):
 		
 		
 	def buildNew(self):
-		newchar = Char(self.name, self.types, self.hp, self.str, self.int, self.con, self.mag, self.agil, self.crit, self.lvl, self.xp, self.skills, pygame.transform.scale(pygame.image.load(self.image), [50, 50]), self.cords, pygame.transform.scale(pygame.image.load(self.image), [42, 42]))
+		newchar = Char(self.name, self.types, self.hp, self.str, self.int, self.con, self.mag, self.agil, self.crit, self.dodgeChance, self.lvl, self.xp, self.skills, pygame.transform.scale(pygame.image.load(self.image), [50, 50]), self.cords, pygame.transform.scale(pygame.image.load(self.image), [42, 42]))
 		newchar.img = pygame.image.load(self.image)
 		return newchar
 		
 	def reBuild(self):
-		newchar = Char(self.name, self.types, self.hp, self.str, self.int, self.con, self.mag, self.agil, self.crit, self.lvl, self.xp, self.skills, self.image, self.cords, self.menuImg)
+		newchar = Char(self.name, self.types, self.hp, self.str, self.int, self.con, self.mag, self.agil, self.crit, self.dodgeChance, self.lvl, self.xp, self.skills, self.image, self.cords, self.menuImg)
 		newchar.img = self.image
 		return newchar
 		
-NOT = Char("???", [unknown], 0, 0, 0, 0, 0, 0, 0, 0, 0, [], "Assets/battlers/locked.png", [-1,0], "")
+NOT = Char("???", [unknown], 0, 0, 0, 0, 0, 0, 0, [0,0], 0, 0, [], "Assets/battlers/locked.png", [-1,0], "")
 
-Mage = Char("Meigis", [normal, chaos], 500, 5, 15, 5, 15, 4, 0, 1, 0, [basicAtk, fireBall, waterSpout, airBlast, earthShot, defend], "Assets/battlers/Mage.png", [5,0], "")
+Mage = Char("Meigis", [normal, chaos], 500, 5, 15, 5, 15, 4, 0, [1,10], 1, 0, [basicAtk, fireBall, waterSpout, airBlast, earthShot, defend], "Assets/battlers/Mage.png", [5,0], "")
 
-Mouther = Char("Mouther", [earth], 500, 20, 0, 10, 5, 4, 0, 1, 0, [basicAtk, bite, consumeFlesh, defend], "Assets/battlers/Mouther.png", [4,0], "")
+Mouther = Char("Mouther", [earth], 500, 20, 0, 10, 5, 4, 0, [1,10], 1, 0, [basicAtk, bite, consumeFlesh, defend], "Assets/battlers/Mouther.png", [4,0], "")
 
-NotScaryGhost = Char("Not Scary Ghost", [ghost], 1000, 0, 0, 10, 75, 2, 0, 1, 0, [basicAtk, sneeze, forceShield, recover], "Assets/battlers/Not_Scary_Ghost.png", [2, 14], "")
-Creep = Char("Creepy Bald Guy", [physic, unknown], 750, 10, 10, 15, 50, 0, 0, 1, 0, [creepyAtk, blink, stare, inhale, exhale, observe], "Assets/battlers/Creepy_Bald_Guy.png", [1, 7], "")
+NotScaryGhost = Char("Not Scary Ghost", [ghost], 1000, 0, 0, 10, 75, 2, 0, [1,10], 1, 0, [basicAtk, sneeze, forceShield, recover], "Assets/battlers/Not_Scary_Ghost.png", [2, 14], "")
+Creep = Char("Creepy Bald Guy", [physic, unknown], 750, 10, 10, 15, 50, 0, 0, [1,10], 1, 0, [creepyAtk, blink, stare, inhale, exhale, observe], "Assets/battlers/Creepy_Bald_Guy.png", [1, 7], "")
 
-Nic = Char("Nic", [chaos], 500, 15, 50, 10, 25, 4, 0, 1, 0, [basicAtk, magicMute, shardSwarm, powerUp, defend], "Assets/battlers/nic.png", [5,8], "")
+Nic = Char("Nic", [chaos], 500, 15, 50, 10, 25, 4, 0, [1,10], 1, 0, [basicAtk, magicMute, shardSwarm, powerUp, defend], "Assets/battlers/nic.png", [5,8], "")
 
-Scarlet = Char("Scarlet", [dark, blood], 100, 20, 20, 5, 20, 6, 0, 1, 0, [basicAtk, scar, vampire, destroy, lifePact, defend], "Assets/battlers/vamp.png", [1,0], "")
-Nue = Char("Nue", [astral, dark], 300, 25, 40, 10, 50, 4, 15, 1, 0, [basicAtk, meteorStorm, planAhead, forceShield, powerDrain, stab, meditate, defend], "Assets/battlers/8bitnue.png", [4,7], "")
+Scarlet = Char("Scarlet", [dark, blood], 100, 20, 20, 5, 20, 6, 0, [1,10], 1, 0, [basicAtk, scar, vampire, destroy, lifePact, defend], "Assets/battlers/vamp.png", [1,0], "")
+Nue = Char("Nue", [astral, dark], 300, 25, 40, 10, 50, 4, 15, [1,10], 1, 0, [basicAtk, meteorStorm, planAhead, forceShield, powerDrain, stab, meditate, defend], "Assets/battlers/8bitnue.png", [4,7], "")
 
-Epic = Char("Epic", [tech], 1000, 25, 50, 35, 45, 7, 10, 1, 0, [basicAtk,energiBeam, wellspring, defend], "Assets/battlers/epic.png", [7,7], "")
+Epic = Char("Epic", [tech], 1000, 25, 50, 35, 45, 7, 10, [1,10], 1, 0, [basicAtk,energiBeam, wellspring, defend], "Assets/battlers/epic.png", [7,7], "")
 
-Coo33 = Char("Coo33", [dark, blood], 250, 50, 0, 30, 0, 10, 10, 5, 0, [basicAtk, slash, bite, kick, dodge, rip, consumeFlesh, defend], "Assets/battlers/Coo33.png", [3,3], "")
-Alpha = Char("Alpha", [normal, earth, fighting], 500, 50, -50, 30, 5, 5, 0, 1, 0, [basicAtk, slash, cleave, bladeFlash, revenge, mend, defend], "Assets/battlers/alpha.png", [8,4], "")
-Siv = Char("Siv", [normal, earth, dark, physic, chaos, magic], 250, 0, 50, 0, 38, 5, 7, 1, 0, [basicAtk, chaosBolt, setFire, forceShield, chaosBeam, meditate, lifePact, shroud], "Assets/battlers/siv.png", [4,2], "")
-CoosomeJoe = Char("Coosome Joe", [light, tech], 500, 25, 25, 25, 25, 5, 2, 1, 0, [basicAtk, bludgeon, erase, create, confuse, planAhead, mend, defend], "Assets/battlers/Coosome.png", [3, 7], "")
-Durric = Char("Durric", [earth, light, fighting, physic], 1000, 25, 25, 75, 25, 0, 0, 1, 0, [basicAtk, forceShield, cleave, obsidianBlast, recover, psionicRadiance, mend, defend], "Assets/battlers/Durric.png", [4, 4], "")
-Catsome = Char("Catsome", [light, ghost, physic], 1000, 10, 35, 10, 15, 5, 5, 1, 0, [slash, bite, eggon, rebuke, mend, recover], "Assets/battlers/catsome.png", [6,9], "")
+Coo33 = Char("Coo33", [dark, blood], 250, 50, 0, 30, 0, 10, 10, [1,10], 5, 0, [basicAtk, slash, bite, kick, dodge, rip, consumeFlesh, defend], "Assets/battlers/Coo33.png", [3,3], "")
+Alpha = Char("Alpha", [normal, earth, fighting], 500, 50, -50, 30, 5, 5, 0, [1,10], 1, 0, [basicAtk, slash, cleave, bladeFlash, revenge, mend, defend], "Assets/battlers/alpha.png", [8,4], "")
+Siv = Char("Siv", [normal, earth, dark, physic, chaos, magic], 250, 0, 50, 0, 38, 5, 7, [1,10], 1, 0, [basicAtk, chaosBolt, setFire, forceShield, chaosBeam, meditate, lifePact, shroud], "Assets/battlers/siv.png", [4,2], "")
+CoosomeJoe = Char("Coosome Joe", [light, tech], 500, 25, 25, 25, 25, 5, 2, [1,10], 1, 0, [basicAtk, bludgeon, erase, create, confuse, planAhead, mend, defend], "Assets/battlers/Coosome.png", [3, 7], "")
+Durric = Char("Durric", [earth, light, fighting, physic], 1000, 25, 25, 75, 25, 0, 0, [1,90], 1, 0, [basicAtk, forceShield, cleave, obsidianBlast, recover, psionicRadiance, mend, defend], "Assets/battlers/Durric.png", [4, 4], "")
+Catsome = Char("Catsome", [light, ghost, physic], 1000, 10, 35, 10, 15, 5, 5, [1,10], 1, 0, [slash, bite, eggon, rebuke, mend, recover], "Assets/battlers/catsome.png", [6,9], "")
 
 NO = NOT.buildNew()	
 		
