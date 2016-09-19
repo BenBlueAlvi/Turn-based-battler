@@ -4,6 +4,7 @@ import pygame
 import random
 import time
 import math
+import pyganim
 from decimal import *
 
 from pygame.locals import *
@@ -65,7 +66,7 @@ selector1 = pygame.image.load("assets/ui/selector1.png")
 selector2 = pygame.image.load("assets/ui/selector2.png")
 selector3 = pygame.image.load("assets/ui/selector3.png")
 
-hasprinted = False
+printing = False
 log = []
 
 
@@ -78,24 +79,45 @@ def bubble_sort(items):
 				items[j], items[j+1] = items[j+1], items[j] 
 	return items
 
-
+timer = 0
 def printb(text):
 	global disptext
-	global hasprinted
+	global printing
 	global log
-	log.append(text)
+	global timer
+	
 	newtext = font.render(text,True,BLACK)
+	log.append(newtext)
 	
-	time.sleep(1)
-	if hasprinted:
+	if not printing:
 		disptext = newtext
+		timer = 60
 
 		
+
 		
-		
-	
+recte = []
+test = pyganim.getImagesFromSpriteSheet("Assets/ui/animationtest.png",rows = 5,cols=5, rects = recte)
+
+frames = list(zip(test, [200] * 25))
+testAnim = pyganim.PygAnimation(frames)
+testAnim.play()
+
+class SpreetSheet(object):
+	def __init__(self, img, row, colm):
+		self.img = img
+		self.row = row
+		self.colm = colm
+		self.animation = pyganim.PygAnimation(list(zip(pyganim.getImagesFromSpriteSheet(self.img, rows = self.row, cols = self.colm, rects = []),[200] * self.row * self.colm)))
+		self.animation.play()
+	def image_at(self, rectangle):
+		rect = pygame.Rect(rectangle)
+		image = pygame.Surface(rect.size).convert()
+		image.blit(self.sheet, (0, 0), rect)
+		return image
 
 
+		
 class Type(object):
 	def __init__(self, name, weks, strs):
 		self.name = name
@@ -132,13 +154,21 @@ class Effect(object):
 	def __init__(self, effect):
 		self.effect = effect
 		self.endeffect = 0
+		self.img = pygame.image.load("Assets/ui/" + effect + ".png")
 		
 	def update(self, target):
 		if self.effect == "burn":
 			damage = 25 + random.randint(1, 25)
+			self.endeffect = random.randint(1,3)
+			for i in thesebattlers:
+				if i.ability == "watch them burn":
+					self.endeffect = 0
+					damage *= 2
+			
 			target.hp -= damage
 			printb(target.name + " is on fire!   " + target.name + " takes " + str(damage) + " damage")
-			self.endeffect = random.randint(1,3)
+			
+			
 			if self.endeffect == 2:
 				printb(target.name + " put out the fire!")
 				target.effects.remove(self)
@@ -168,7 +198,7 @@ class Effect(object):
 			if self.endeffect == 2:
 				target.effects.remove(self)
 				printb(target.name + " is no longer defending!")
-				resetStats(target)
+				self.resetStats(target)
 				
 		if self.effect == "forceshield":
 			target.con = target.basecon * 3
@@ -178,7 +208,7 @@ class Effect(object):
 			if self.endeffect == 2:
 				target.effects.remove(self)
 				printb(target.name + " no longer has a shield up!")
-				resetStats(target)
+				self.resetStats(target)
 				
 		if self.effect == "confusion":
 			target.con = target.basecon / 2
@@ -190,7 +220,7 @@ class Effect(object):
 				target.con = target.basecon
 				target.mag = target.basemag
 				printb(target.name + " is no longer confused!")
-				resetStats(target)
+				self.resetStats(target)
 				
 		if self.effect == "immortal":
 			target.con = 100000000
@@ -201,7 +231,7 @@ class Effect(object):
 				target.effects.remove(self)
 				
 				printb(target.name + " is no longer invincible!")
-				resetStats(target)
+				self.resetStats(target)
 				
 		if self.effect == "block":
 			target.con = 100000000
@@ -211,7 +241,7 @@ class Effect(object):
 			if self.endeffect == 2:
 				target.effects.remove(self)
 				printb(target.name + " is no longer blocking attacks!")
-				resetStats(target)
+				self.resetStats(target)
 				
 				
 		if self.effect == "poison":
@@ -231,7 +261,7 @@ class Effect(object):
 			if self.endeffect == 1:
 				printb(target.name + " is no longer encouraged. :(")
 				target.effects.remove(self)
-				resetStats(target)
+				self.resetStats(target)
 			self.endeffect += 1
 			
 		if self.effect == "meditate":
@@ -243,20 +273,20 @@ class Effect(object):
 			if self.endeffect == 1:
 				printb(target.name + " is no longer meditating!")
 				target.effects.remove(self)
-				resetStats(target)
+				self.resetStats(target)
 			self.endeffect += 1
 				
 		if self.effect == "planAhead":
 		
 			printb(target.name + " is scheming!")
-			target.hitChance += 15
+			
 			target.crit += 2
 			target.int += target.int / 10
 			target.str += target.str / 10
 			if self.endeffect == 1:
 				printb(target.name + " is no longer scheming!")
 				target.effects.remove(self)
-				resetStats(target)
+				self.resetStats(target)
 			self.endeffect += 1
 		
 		if self.effect == "dodgeUp":
@@ -265,8 +295,59 @@ class Effect(object):
 			if self.endeffect == 1:
 				printb(target.name + " is no longer prepared!")
 				target.effects.remove(self)
-				resetStats(target)
+				self.resetStats(target)
 			self.endeffect += 1
+			
+		if self.effect == "earthStage":
+			self.resetStats(target)
+			target.con += 50
+			target.mag += 50
+			target.int -= 20
+			target.str -= 20
+			try:
+				target.effects.remove(moonStagef)
+			except:
+				pass
+			try:
+				target.effects.remove(otherStagef)
+			except:
+				pass
+				
+			
+			
+		if self.effect == "moonStage":
+			self.resetStats(target)
+			target.mag += 50
+			target.int += 50
+			target.str -= 25
+			target.con -= 25
+			try:
+				target.effects.remove(earthStagef)
+			except:
+				pass
+			try:
+				target.effects.remove(otherStagef)
+			except:
+				pass
+			
+		if self.effect == "otherStage":
+			self.resetStats(target)
+			
+			target.int += 75
+			target.crit += 10
+			target.dodgeChance += 20
+			target.con -= 50
+			target.mag -= 50
+			try:
+				target.effects.remove(moonStagef)
+			except:
+				pass
+			try:
+				target.effects.remove(earthStagef)
+			except:
+				pass
+			
+			
 		
 		
 			
@@ -296,10 +377,10 @@ class Effect(object):
 				
 			
 burn = Effect("burn")
-magicmute = Effect("magicmute")
+magicmute = Effect("magicMute")
 defense = Effect("defend")
 bleed = Effect("bleed")
-forceshield = Effect("forceshield")
+forceshield = Effect("forceShield")
 confusion = Effect("confusion")
 immortal = Effect("immortal")
 block = Effect("block")
@@ -309,6 +390,9 @@ meditatef = Effect("meditate")
 planAheadf = Effect("planAhead")
 dodgeUp = Effect("dodgeUp")
 death = Effect("death")
+earthStagef = Effect("earthStage")
+otherStagef = Effect("otherStage")
+moonStagef = Effect("moonStage")
 
 		
 
@@ -323,6 +407,7 @@ class Skill(object):
 		self.cost = cost
 		self.spec = spec
 		self.crit = crit
+		
 		self.hitChance = hitChance
 		self.effects = effects
 		self.text = font.render(name, True, WHITE)
@@ -331,7 +416,8 @@ class Skill(object):
 	def use(self, user, target):
 		
 		message = ""
-
+		if target.ability == "Cuteness":
+			self.hitChance -= 25
 
 		hit = self.hitChance - target.dodgeChance
 		
@@ -343,7 +429,7 @@ class Skill(object):
 			
 			else:
 				damage = (user.int + self.atk + random.randint(0, self.var)) - target.mag
-		
+			
 			
 		
 		
@@ -371,6 +457,9 @@ class Skill(object):
 			if not len(self.effects) == 0:
 				if random.randint(1,self.effects[0]) == 1:
 					target.effects.append(self.effects[1])
+					
+			if target.ability == "Creepus":
+				user.marks += 1
 					
 			for i in self.spec:
 			
@@ -404,7 +493,10 @@ class Skill(object):
 					user.effects.append(immortal.buildNew())
 				if i == "heal":
 					damage = 0
-					target.hp += target.int * 3
+					target.hp += user.int * 3
+					if target.ability == "3 worlds":
+						target.hp -= user.int * 2
+						
 				if i == "block":
 					damage = 0
 					user.effects.append(block.buildNew())
@@ -417,7 +509,10 @@ class Skill(object):
 					damage = user.maxhp - user.hp
 				if i == "recover":
 					damage = 0
-					target.hp += target.maxhp / 4
+					heal =target.maxhp / 4 
+					if target.ability == "3 worlds":
+						heal /= 3
+					target.hp += heal
 					
 				if i == "stare":
 			
@@ -428,8 +523,7 @@ class Skill(object):
 					target.marks += 1
 				if i == "creepyAtk":
 		
-					damage = target.marks * target.marks
-				
+					damage = target.marks * user.int - target.mag * 2
 				if i == "endeffect":
 					
 					user.effects = []
@@ -456,11 +550,22 @@ class Skill(object):
 					user.effects.append(meditatef)
 				if i == "dodgeUp":
 					user.effects.append(dodgeUp)
+				if i == "otherStage":
+					user.effects.append(otherStagef)
+				if i == "earthStage":
+					user.effects.append(earthStagef)
+				if i == "moonStage":
+					user.effects.append(moonStagef)
 				
 				
 				
 			if user.hp > 0:
 				printb(user.name + " uses " + self.name + " and deals " + str(damage) + " damage to " + target.name + message)
+				if target.ability == "3 worlds":
+					damage /= 3
+				if damage < 0:
+					damage = 0
+					target.hp -= damage
 				
 		else:
 			damage = 0
@@ -469,9 +574,7 @@ class Skill(object):
 				
 				
 				
-		if damage < 0:
-			damage = 0
-		target.hp -= damage
+		
 		
 		
 		
@@ -545,12 +648,20 @@ eggon = Skill("Egg On", normal, True, 0, 0, 10, 0,100, 2, [1, rebuff], ["trueHit
 rebuke = Skill("Rebuke", normal, True, 0, 0, 10, 0,100, 1, [], ["removeEff", "removeUff", "trueHit"])
 
 blast = Skill("Blast", tech, False, 20, 20, 5, 8, 95, 2, [2, burn], [""])
-fission = Skill("Fission", fire, False, 20, 40, -1, 0, 90, 0, [], ["powerDown", "fullmana"])
-fusion = Skill("Fusion", fire, False, 1, 40, -1, 0, 90, 1, [], ["powerUp"])
+fission = Skill("Fission", fire, False, 20, 40, -1, 0, 90, 0, [2, burn], ["powerDown", "fullmana"])
+fusion = Skill("Fusion", fire, False, 1, 40, -1, 0, 90, 1, [2,burn], ["powerUp"])
 
 lifeTransfer = Skill("Life Transfer", blood, False, 0, 0, 10, 0,100, 2, [], ["lifeTransfer", "nodam"])
 powerTransfer = Skill("Power Transfer", tech, False, 0, 0, 10, 0, 100, 0, [], ["powerTransfer", "nodam"])
 
+earthStage = Skill("Earth Stage", astral, False, 10, 15, 10, 0, 100, 0, [], ["trueHit","hitAll","earthStage"])
+moonStage = Skill("Moon Stage", astral, False, 10, 15, 10, 0, 100, 0, [], ["trueHit","hitAll","moonStage"])
+otherStage = Skill("Otherworld Stage", astral, False, 10, 15, 10, 0, 100, 0, [], ["trueHit","hitAll","otherStage"])
+voidSnap = Skill("Void Snap", astral, False, 20, 10, 4, 5, 97, 1, [2,bleed], [""])
+chains = Skill("Chains", normal, True, 30, 2, 1, 5, 90, 1, [], [""])
+earthenVortex = Skill("Earthen Vortex", earth, False, 30, 40, 5, 6, 90, 2, [], [""])
+astralVortex = Skill("Astral Vortex", astral, False, 50, 40, 5, 6, 90, 3, [], [""])
+chaosVortex = Skill("Chaos Vortex", chaos, False, 20, 60, 5, 6, 90, 2, [], [""])
 
 
 
@@ -587,13 +698,19 @@ class Char(object):
 		self.power = 0
 		self.menuImg = menuImg
 		self.goskill = "hoi"
-		self.target = ["nul"]
+		self.target = ["bob"]
 		self.updated = False
+		self.x = 0
+		self.y = 0
+		self.basey = 0
+		self.basex = 0
+		self.ym = 1
 		
 		
 	def buildNew(self):
 		newchar = Char(self.name, self.types, self.hp, self.str, self.int, self.con, self.mag, self.agil, self.crit, self.dodgeChance, self.lvl, self.xp, self.skills, self.ability, pygame.transform.scale(pygame.image.load(self.image), [50, 50]), self.cords, pygame.transform.scale(pygame.image.load(self.image), [42, 42]))
 		newchar.img = pygame.image.load(self.image)
+		newchar.target = [NOT]
 		return newchar
 		
 	def reBuild(self):
@@ -607,8 +724,9 @@ Mage = Char("Meigis", [normal, chaos], 500, 5, 15, 5, 15, 4, 0, 10, 1, 0, [basic
 
 Mouther = Char("Mouther", [earth], 500, 20, 0, 10, 5, 4, 0, 10, 1, 0, [basicAtk, bite, consumeFlesh, defend], "", "Assets/battlers/Mouther.png", [4,0], "")
 
-NotScaryGhost = Char("Not Scary Ghost", [ghost], 1000, 0, 0, 10, 75, 2, 0, 10, 1, 0, [basicAtk, sneeze, forceShield, recover], "", "Assets/battlers/Not_Scary_Ghost.png", [2, 14], "")
-Creep = Char("Creepy Bald Guy", [physic, unknown], 750, 10, 10, 15, 50, 0, 0, 0, 1, 0, [creepyAtk, blink, stare, inhale, exhale, observe], "", "Assets/battlers/Creepy_Bald_Guy.png", [1, 7], "")
+NotScaryGhost = Char("Not Scary Ghost", [ghost], 1000, 0, 0, 10, 75, 2, 0, 10, 1, 0, [basicAtk, sneeze, forceShield, recover], "Creepus", "Assets/battlers/Not_Scary_Ghost.png", [2, 15], "")
+Creep = Char("Creepy Bald Guy", [physic, unknown], 750, 10, 10, 15, 50, 0, 0, 0, 1, 0, [creepyAtk, blink, stare, inhale, exhale, observe], "Creepus", "Assets/battlers/Creepy_Bald_Guy.png", [3, 15], "")
+KnowingEye = Char("Knowing Eye", [physic, unknown, astral], 750, 0, 75, 0, 75, 5, 6, 5, 1, 0, [creepyAtk, observe, meditate, magicMute, forceShield, create], "Creepus", "Assets/battlers/wip.png", [4, 15], "")
 
 Nic = Char("Nic", [chaos], 500, 15, 50, 10, 25, 4, 0, 10, 1, 0, [basicAtk, magicMute, shardSwarm, powerUp, defend], "", "Assets/battlers/nic.png", [5,8], "")
 
@@ -616,25 +734,26 @@ Nic = Char("Nic", [chaos], 500, 15, 50, 10, 25, 4, 0, 10, 1, 0, [basicAtk, magic
 
 Scarlet = Char("Scarlet", [dark, blood], 100, 20, 20, 5, 20, 6, 0, 10, 1, 0, [basicAtk, scar, vampire, destroy, lifePact, defend], "", "Assets/battlers/vamp.png", [1,0], "")
 
-Flan = Char("Flan", [dark,blood], 200, 35, 30, 10, 20, 7, 10, 20, 1, 0, [slash, rip, scar, vampire, destroy, lifePact, setFire, lifeTransfer], "Watch them burn", "Assets/battlers/flandre.png", [5,7], "")
-Nue = Char("Nue", [astral, dark], 300, 25, 40, 10, 50, 4, 15, 10, 1, 0, [basicAtk, meteorStorm, powerTransfer, forceShield, powerDrain, stab, meditate, defend], "", "Assets/battlers/nue.png", [4,7], "")
-Okuu = Char("Okuu", [fire, tech], 500, 15, 50, 30, 10, 1, 5, 5, 1, 0, [bludgeon, blast, fusion, fission, nuke, forceShield, recover], "", "Assets/battlers/reiji.png", [3,7], "")
+Flan = Char("Flan", [dark,blood], 200, 35, 30, 10, 20, 7, 10, 20, 1, 0, [slash, rip, scar, vampire, destroy, lifePact, setFire, lifeTransfer], "watch them burn", "Assets/battlers/flandre.png", [5,7], "")
+Nue = Char("Nue", [astral, dark], 300, 25, 40, 10, 50, 4, 15, 10, 1, 0, [basicAtk, meteorStorm, powerTransfer, forceShield, powerDrain, stab, meditate, defend], "Unidentifiable", "Assets/battlers/nue.png", [4,7], "")
+Okuu = Char("Okuu", [fire, tech], 500, 15, 50, 30, 10, 1, 5, 5, 1, 0, [bludgeon, blast, fusion, fission, nuke, forceShield, recover], "Radiation", "Assets/battlers/reiji.png", [3,7], "")
+Lapis = Char("Lapis", [astral], 400, 20, 20, 10, 10, 4, 5, 20, 1, 0, [chains, voidSnap, earthStage, moonStage, otherStage, earthenVortex, chaosVortex, astralVortex], "3 worlds", "Assets/battlers/lapis.png", [6,7], "")
 
 Epic = Char("Epic", [tech], 1000, 25, 50, 35, 45, 7, 10, 10, 1, 0, [basicAtk,energiBeam, wellspring, defend], "", "Assets/battlers/epic.png", [7,8], "")
 
-Coo33 = Char("Coo33", [dark, blood], 250, 50, 0, 30, 0, 10, 10, 10, 5, 0, [basicAtk, slash, bite, kick, dodge, rip, consumeFlesh, defend], "", "Assets/battlers/Coo33.png", [3,3], "")
+Coo33 = Char("Coo33", [dark, blood], 250, 50, 0, 30, 0, 10, 10, 10, 5, 0, [basicAtk, slash, bite, kick, dodge, rip, consumeFlesh, defend], "Blood hunt", "Assets/battlers/Coo33.png", [3,3], "")
 Alpha = Char("Alpha", [normal, earth, fighting], 500, 50, -50, 30, 5, 5, 0, 10, 1, 0, [basicAtk, slash, cleave, bladeFlash, revenge, mend, defend], "", "Assets/battlers/alpha.png", [8,4], "")
 Siv = Char("Siv", [normal, earth, dark, physic, chaos, magic], 250, 0, 50, 0, 38, 5, 7, 10, 1, 0, [basicAtk, chaosBolt, setFire, forceShield, chaosBeam, meditate, lifePact, shroud], "", "Assets/battlers/siv.png", [4,2], "")
 CoosomeJoe = Char("Coosome Joe", [light, tech], 500, 25, 25, 25, 25, 5, 2, 10, 1, 0, [basicAtk, bludgeon, erase, create, confuse, planAhead, mend, defend], "", "Assets/battlers/Coosome.png",  [3, 8], "")
-Durric = Char("Durric", [earth, light, fighting, physic], 1000, 25, 25, 75, 25, 0, 0, 1, 1, 0, [basicAtk, forceShield, cleave, obsidianBlast, recover, psionicRadiance, mend, defend], "", "Assets/battlers/Durric.png", [4, 4], "")
-Catsome = Char("Catsome", [light, ghost, physic], 1000, 10, 35, 10, 15, 5, 5, 10, 1, 0, [slash, bite, eggon, rebuke, mend, recover], "", "Assets/battlers/catsome.png",[6,9], "")
+Durric = Char("Durric", [earth, light, fighting, physic], 1000, 25, 25, 75, 25, 0, 0, 1, 1, 0, [basicAtk, forceShield, cleave, obsidianBlast, recover, psionicRadiance, mend, defend], "Regen", "Assets/battlers/Durric.png", [4, 4], "")
+Catsome = Char("Catsome", [light, ghost, physic], 1000, 10, 35, 10, 15, 5, 5, 10, 1, 0, [slash, bite, eggon, rebuke, mend, recover], "Cuteness", "Assets/battlers/catsome.png",[6,9], "")
 
 NO = NOT.buildNew()	
-		
 
 
+
 		
-unlockedchars = [Flan.buildNew(), Okuu.buildNew(), Nue.buildNew(), Scarlet.buildNew(), Mage.buildNew(), Mouther.buildNew(), Nic.buildNew(), Siv.buildNew(), Coo33.buildNew(), CoosomeJoe.buildNew(), Epic.buildNew(), Alpha.buildNew(), Durric.buildNew(), Creep.buildNew(), NotScaryGhost.buildNew(), Catsome.buildNew()]			
+unlockedchars = [Lapis.buildNew(), Flan.buildNew(), Okuu.buildNew(), Nue.buildNew(), Scarlet.buildNew(), Mage.buildNew(), Mouther.buildNew(), Nic.buildNew(), Siv.buildNew(), Coo33.buildNew(), CoosomeJoe.buildNew(), Epic.buildNew(), Alpha.buildNew(), Durric.buildNew(), Creep.buildNew(), NotScaryGhost.buildNew(), Catsome.buildNew(), KnowingEye.buildNew()]			
 
 class Player(object):
 	def __init__(self, name):
@@ -865,6 +984,16 @@ while not done:
 				ready = False
 			
 				thesebattlers += player1.battlers + player2.battlers
+				x = 0
+				y = 0
+				for i in thesebattlers:
+					if y > 2:
+						y = 0
+						x += 1
+					i.basex = x * 550 + 50
+					i.basey = y * 100 + 50
+					y += 1
+					
 				
 		if mouse_down:
 			thisplayer = player2
@@ -926,6 +1055,9 @@ while not done:
 		gScreen.blit(mouse_pointer2,mouse_pos)
 	else:
 		gScreen.blit(mouse_pointer,mouse_pos)
+	
+
+	testAnim.blit(gScreen, [0,0])
 
 	pygame.display.flip()	
 	clock.tick(60)
@@ -935,6 +1067,8 @@ while not done:
 	powergiven = False
 	pickenm = False
 	increment = 0
+	timer = 0
+	mincrement = 0
 	
 #--------------------------------------------------------------------------------------------------------------------------------------------------		
 #--------------------------------------------------------------------------------------------------------------------------------------------------	
@@ -976,8 +1110,21 @@ while not done:
 		if not thisbattler.updated:
 			for i in thisbattler.effects:
 				i.update(thisbattler)
+			if thisbattler.ability == "Unidentifiable":
+				thisbattler.marks = 0
+			if thisbattler.ability == "Radiation":
+				for l in thesebattlers:
+					l.hp -= 25
+				printb(thisbattler.name + "'s radiation hurt everyone!")
+
+			if thisbattler.ability == "Regen":
+				thisbattler.hp += 25
+				printb(thisbattler.name + " is healing themself!")
 			thisbattler.power += 1
+			thisbattler.x = thisbattler.basex
+			thisbattler.y = thisbattler.basey
 			thisbattler.updated = True
+			
 	
 		if thisbattler.hp > 0:
 			for i in thisbattler.skills:
@@ -1029,6 +1176,8 @@ while not done:
 							if selected:
 								mouse_down = False
 								print "skill picked:", thisbattler.goskill.name
+								if thisbattler.ability == "Blood hunt":
+									thisbattler.goskill.hitChance += 25
 								pickenm = True
 				x += 1
 			
@@ -1064,9 +1213,10 @@ while not done:
 						mouse_down = False
 					
 					if ready:
+						print thisbattler.target[0]
 						ready = False
 						if "hitAll" in  thisbattler.goskill.spec:
-							
+							thisbattler.target = []
 							if thisbattler in player1.battlers:
 								thisbattler.target = player2.battlers
 							elif thisbattler in player2.battlers:
@@ -1085,9 +1235,16 @@ while not done:
 			pickenm = False
 			ready = False
 		
+		
+		
+		
+		
+		
+		
 		agillist = []
 		for i in thesebattlers:
 			agillist.append(i)
+		print "thebattler:", thebattler
 		if thebattler >= len(thesebattlers):
 			
 			
@@ -1096,23 +1253,64 @@ while not done:
 				for j in range(len(agillist)-1-i):
 					if agillist[j].agil + agillist[j].goskill.spd  > agillist[j+1].agil + agillist[j+1].goskill.spd:
 						agillist[j], agillist[j+1] = agillist[j+1], agillist[j] 
-			for i in agillist[increment].target:
-				print i.name
-				agillist[increment].goskill.use(agillist[increment],i)
-			agillist[increment].target = ["nul"]
-			agillist[increment].power -= agillist[increment].goskill.cost
-			increment += 1
-			if increment > len(thesebattlers) - 1:
-				increment = 0
-				thebattler = 0
+			for i in agillist:
+			
+				print i.target
+			if len(agillist[increment].target) > 1:
+				if not printing:
+					agillist[increment].goskill.use(agillist[increment],agillist[increment].target[mincrement])
 				
-				for i in thesebattlers:
-					i.updated = False
+					if mincrement > 2:
+						agillist[increment].power -= agillist[increment].goskill.cost
+				
+			else:
+				if not printing:
+					agillist[increment].goskill.use(agillist[increment],agillist[increment].target[0])
+					agillist[increment].power -= agillist[increment].goskill.cost
+			if not printing:
+				if len(agillist[increment].target) > 1:
+					mincrement+=1
+					if mincrement > 2:
+						mincrement = 0
+						increment += 1
+				else:
+					increment += 1
+				if increment > len(thesebattlers) - 1:
+					increment = 0
+					thebattler = 0
+				
+					for i in thesebattlers:
+						i.updated = False
+			
+			
+			
+			
+			
+			
 
     # --- Drawing code should go here
 	
 	#player
 	#animation:
+		if not printing and not thebattler >= len(thesebattlers):
+			if thisbattler in player1.battlers:
+				thisbattler.x += 50
+				if not thisbattler.x == thisbattler.basex + 50:
+					thisbattler.x = thisbattler.basex + 50
+			else: 
+				thisbattler.x -= 50
+				if not thisbattler.x == thisbattler.basex - 50:
+					thisbattler.x = thisbattler.basex - 50
+			
+			
+			thisbattler.y += thisbattler.ym
+			if thisbattler.y >= thisbattler.basey + 5 or thisbattler.y <= thisbattler.basey - 5:
+				thisbattler.ym *= -1
+			
+
+			gScreen.blit(thisbattler.image, [thisbattler.x, thisbattler.y])
+
+		
 	
 		x = 0
 		y = 0
@@ -1121,18 +1319,29 @@ while not done:
 				y = 0
 				x += 1
 			
-			gScreen.blit(i.image,[x * 550 + 50, y * 100 + 50])
-			pygame.draw.rect(gScreen, RED, [x* 550 + 50, y* 100 + 25,int(i.hp) / 20,5])
+			if i.hp > 0:
+				try:
+					if not i == thesebattlers[thebattler] and not thebattler >= len(thesebattlers):
+						gScreen.blit(i.image,[x * 550 + 50, y * 100 + 50])
+				except:
+					gScreen.blit(i.image,[x * 550 + 50, y * 100 + 50])
+				
+				pygame.draw.rect(gScreen, RED, [x* 550 + 50, y* 100 + 25,int(i.hp) / 20,5])
+				 
+				for f in i.effects:
+					pygame.draw.rect(gScreen, RED, [x* 550 + 50, y* 100 + 25,int(i.hp) / 20,5])
+					gScreen.blit(f.img, [x* 550 + 40, y * 100 + 25])
 				
 				
 			y += 1
-			
+		#ANIMATIONS!
+		
+		
 	
 		
 		pygame.draw.rect(gScreen, BLACK, [0,350,700,150])
 		#pygame.draw.rect(gScreen, WHITE, [10,360,300,50])
-		gScreen.blit(disptext, [10, 320])
-		hasprinted = True
+		
 		gScreen.blit(health_border, [10, 360])
 		
 		pygame.draw.rect(gScreen, GREY, [320, 360, 370, 130])
@@ -1178,8 +1387,15 @@ while not done:
 			print "Player 1 Wins"
 			player2.battlers.append([NO, NO, NO])
 			break
-			
-			
+		
+		if timer > 0:
+			timer -= 1
+			gScreen.blit(disptext, [10, 320])
+			printing = True
+			pygame.draw.rect(gScreen, BLACK, [0,350,700,150])
+		
+		if timer <= 0:
+			printing = False
 		
 		if thebattler == len(thesebattlers):
 			pygame.draw.rect(gScreen, BLACK, [0,350,700,150])
