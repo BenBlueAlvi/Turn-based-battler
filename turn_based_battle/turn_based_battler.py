@@ -4,7 +4,7 @@ import pygame
 import random
 import time
 import math
-import pyganim
+#import pyganim
 from decimal import *
 
 from pygame.locals import *
@@ -95,7 +95,7 @@ def printb(text):
 
 		
 
-		
+'''		
 recte = []
 test = pyganim.getImagesFromSpriteSheet("Assets/ui/animationtest.png",rows = 5,cols=5, rects = recte)
 
@@ -115,7 +115,7 @@ class SpreetSheet(object):
 		image = pygame.Surface(rect.size).convert()
 		image.blit(self.sheet, (0, 0), rect)
 		return image
-
+'''
 
 		
 class Type(object):
@@ -164,7 +164,10 @@ class Effect(object):
 				if i.ability == "watch them burn":
 					self.endeffect = 0
 					damage *= 2
-			
+
+			if target.ability == "tank" and damage > 100:
+				damage = 100
+
 			target.hp -= damage
 			printb(target.name + " is on fire!   " + target.name + " takes " + str(damage) + " damage")
 			
@@ -175,7 +178,10 @@ class Effect(object):
 				
 				
 		if self.effect == "bleed":
-			target.hp -= target.hp / 4
+			if target.ability == "tank":
+				target.hp -= target.hp / 10
+			else:
+				target.hp -= target.hp / 4
 			printb(target.name + " is on bleeding out!")
 			self.endeffect = random.randint(1,3)
 			if self.endeffect == 2:
@@ -246,6 +252,8 @@ class Effect(object):
 				
 		if self.effect == "poison":
 			damage = target.hp / 10
+			if target.ability == "tank" and damage > 100:
+				damage = 100
 			target.hp -= damage
 			printb(target.name + " is poisoned!   " + target.name + " takes " + str(damage) + " damage")
 			self.endeffect = random.randint(1,4)
@@ -346,12 +354,6 @@ class Effect(object):
 				target.effects.remove(earthStagef)
 			except:
 				pass
-			
-			
-		
-		
-			
-		
 		
 		if self.effect == "death":
 			pass
@@ -416,11 +418,15 @@ class Skill(object):
 	def use(self, user, target):
 		
 		message = ""
-		if target.ability == "Cuteness":
-			self.hitChance -= 25
 
 		hit = self.hitChance - target.dodgeChance
+
+		if target.ability == "Cuteness" and hit > 70:
+			hit = 70
 		
+		if user.ability == "Blood hunt" and hit < 75 and not ghost in target.types:
+			hit = 75
+
 		if random.randint(1,100) < hit or "trueHit" in self.spec:
 			
 		
@@ -430,18 +436,12 @@ class Skill(object):
 			else:
 				damage = (user.int + self.atk + random.randint(0, self.var)) - target.mag
 			
-			
-		
-		
 			for i in target.types:
-					
 				if self.type.name in i.weks:
 					damage *= 2
 					message = " It's super effective!"
 					
 			for i in target.types:
-				
-					
 				if self.type.name in i.strs:
 					damage /= 2
 					message = " It's not very effective!"
@@ -557,15 +557,16 @@ class Skill(object):
 				if i == "moonStage":
 					user.effects.append(moonStagef)
 				
-				
-				
 			if user.hp > 0:
-				printb(user.name + " uses " + self.name + " and deals " + str(damage) + " damage to " + target.name + message)
 				if target.ability == "3 worlds":
 					damage /= 3
+				if target.ability == "tank" and damage > 100:
+					damage = 100
 				if damage < 0:
 					damage = 0
-					target.hp -= damage
+
+				printb(user.name + " uses " + self.name + " and deals " + str(damage) + " damage to " + target.name + message)
+				target.hp -= damage
 				
 		else:
 			damage = 0
@@ -724,7 +725,7 @@ Mage = Char("Meigis", [normal, chaos], 500, 5, 15, 5, 15, 4, 0, 10, 1, 0, [basic
 
 Mouther = Char("Mouther", [earth], 500, 20, 0, 10, 5, 4, 0, 10, 1, 0, [basicAtk, bite, consumeFlesh, defend], "", "Assets/battlers/Mouther.png", [4,0], "")
 
-NotScaryGhost = Char("Not Scary Ghost", [ghost], 1000, 0, 0, 10, 75, 2, 0, 10, 1, 0, [basicAtk, sneeze, forceShield, recover], "Creepus", "Assets/battlers/Not_Scary_Ghost.png", [2, 15], "")
+NotScaryGhost = Char("Not Scary Ghost", [ghost], 1000, 0, 0, 10, 75, 2, 0, 10, 1, 0, [basicAtk, sneeze, forceShield, recover], "tank", "Assets/battlers/Not_Scary_Ghost.png", [2, 15], "")
 Creep = Char("Creepy Bald Guy", [physic, unknown], 750, 10, 10, 15, 50, 0, 0, 0, 1, 0, [creepyAtk, blink, stare, inhale, exhale, observe], "Creepus", "Assets/battlers/Creepy_Bald_Guy.png", [3, 15], "")
 KnowingEye = Char("Knowing Eye", [physic, unknown, astral], 750, 0, 75, 0, 75, 5, 6, 5, 1, 0, [creepyAtk, observe, meditate, magicMute, forceShield, create], "Creepus", "Assets/battlers/wip.png", [4, 15], "")
 
@@ -1057,7 +1058,7 @@ while not done:
 		gScreen.blit(mouse_pointer,mouse_pos)
 	
 
-	testAnim.blit(gScreen, [0,0])
+	#testAnim.blit(gScreen, [0,0])
 
 	pygame.display.flip()	
 	clock.tick(60)
@@ -1176,8 +1177,6 @@ while not done:
 							if selected:
 								mouse_down = False
 								print "skill picked:", thisbattler.goskill.name
-								if thisbattler.ability == "Blood hunt":
-									thisbattler.goskill.hitChance += 25
 								pickenm = True
 				x += 1
 			
@@ -1244,7 +1243,7 @@ while not done:
 		agillist = []
 		for i in thesebattlers:
 			agillist.append(i)
-		print "thebattler:", thebattler
+		#print "thebattler:", thebattler
 		if thebattler >= len(thesebattlers):
 			
 			
@@ -1254,8 +1253,8 @@ while not done:
 					if agillist[j].agil + agillist[j].goskill.spd  > agillist[j+1].agil + agillist[j+1].goskill.spd:
 						agillist[j], agillist[j+1] = agillist[j+1], agillist[j] 
 			for i in agillist:
-			
-				print i.target
+				pass
+				#print i.target
 			if len(agillist[increment].target) > 1:
 				if not printing:
 					agillist[increment].goskill.use(agillist[increment],agillist[increment].target[mincrement])
