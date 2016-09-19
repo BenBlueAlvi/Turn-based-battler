@@ -321,8 +321,6 @@ class Effect(object):
 			except:
 				pass
 				
-			
-			
 		if self.effect == "moonStage":
 			self.resetStats(target)
 			target.mag += 50
@@ -359,8 +357,6 @@ class Effect(object):
 			pass
 			#Death stufff here
 			
-		
-			
 		else:
 			pass
 	def resetStats(self, target):
@@ -377,7 +373,6 @@ class Effect(object):
 		return neweff
 		
 				
-			
 burn = Effect("burn")
 magicmute = Effect("magicMute")
 defense = Effect("defend")
@@ -414,58 +409,42 @@ class Skill(object):
 		self.effects = effects
 		self.text = font.render(name, True, WHITE)
 		
-		
 	def use(self, user, target):
 		
 		message = ""
-
 		hit = self.hitChance - target.dodgeChance
 
 		if target.ability == "Cuteness" and hit > 70:
 			hit = 70
-		
 		if user.ability == "Blood hunt" and hit < 75 and not ghost in target.types:
 			hit = 75
 
 		if random.randint(1,100) < hit or "trueHit" in self.spec:
-			
-		
 			if self.phys:
 				damage = (user.str + self.atk+ random.randint(0, self.var)) - target.con
-			
 			else:
 				damage = (user.int + self.atk + random.randint(0, self.var)) - target.mag
-			
 			for i in target.types:
 				if self.type.name in i.weks:
 					damage *= 2
 					message = " It's super effective!"
-					
 			for i in target.types:
 				if self.type.name in i.strs:
 					damage /= 2
 					message = " It's not very effective!"
-			
-			
-			
 			if random.randint(1,30) + user.crit >= 30:
 				damage *= 2
 				message += " CRITICAL HIT!"
 				if not len(self.effects) == 0:
 					target.effects.append(self.effects[1])
-			
 			if not len(self.effects) == 0:
 				if random.randint(1,self.effects[0]) == 1:
 					target.effects.append(self.effects[1])
-					
 			if target.ability == "Creepus":
 				user.marks += 1
-					
 			for i in self.spec:
-			
 				if i == "vampire":
 					user.hp += damage
-				
 				if i == "defend":
 					damage = 0
 					user.effects.append(defense.buildNew())
@@ -475,7 +454,6 @@ class Skill(object):
 				if i == "lifepact":
 					damage = user.hp / 2 + user.int
 					user.hp /=2
-				
 				if i == "fullmana":
 					damage = ((user.power * (user.int + self.atk)) / 4) + self.atk
 					user.power = 0
@@ -496,7 +474,6 @@ class Skill(object):
 					target.hp += user.int * 3
 					if target.ability == "3 worlds":
 						target.hp -= user.int * 2
-						
 				if i == "block":
 					damage = 0
 					user.effects.append(block.buildNew())
@@ -504,7 +481,6 @@ class Skill(object):
 					damage = 0 
 					user.power += target.power
 					target.power = 0
-				
 				if i == "revenge":
 					damage = user.maxhp - user.hp
 				if i == "recover":
@@ -513,19 +489,14 @@ class Skill(object):
 					if target.ability == "3 worlds":
 						heal /= 3
 					target.hp += heal
-					
 				if i == "stare":
-			
 					target.con /=2
 					target.mag /=2
 				if i == "mark":
-					
 					target.marks += 1
 				if i == "creepyAtk":
-		
 					damage = target.marks * user.int - target.mag * 2
 				if i == "endeffect":
-					
 					user.effects = []
 				if i == "nodam":
 					damage = 0
@@ -538,11 +509,9 @@ class Skill(object):
 					target.str = target.basestr
 					target.crit = target.basecrit
 					target.agil = target.baseagil
-					
 				if i == "lifeTransfer":
 					user.hp -= user.hp/4
 					target.hp += (user.hp/4) * 2
-					
 				if i == "powerTransfer":
 					user.power -= user.power/4
 					target.power += (user.power/4)
@@ -573,13 +542,6 @@ class Skill(object):
 			printb(user.name + " missed!")
 				
 				
-				
-				
-		
-		
-		
-		
-				
 nothing = Skill("nothing", normal, True, 0, 0, 0, 0, 100, 0, [], ["nodam", "trueHit"])
 basicAtk = Skill("Basic Attack", normal, True, 5, 5, 1, 0,90, 0, [], [""])
 fireBall = Skill("Fire ball", fire, False, 7, 3, -1, 0,90, 2, [1, burn], [""])
@@ -599,14 +561,12 @@ meteorStorm = Skill("Meteor Storm", astral, False, 100, 50, -100, 0,50, 7, [2, b
 block = Skill("Block", fighting, True, 0, 0, 10, 0,100, 1, [], ["block", "trueHit"])
 powerDrain = Skill("Power Drain", astral, False, 25, 25, -10, 0,100, 2, [], ["powerdrain", "trueHit"])
 #-----------------------------------------------------------
-
 slash = Skill("Slash", normal, True, 10, 10, 3, 5,90, 0, [], [""])
 bite = Skill("Bite", normal, True, 20, 5, 0, 5,92, 2, [3,bleed], [""])
 kick = Skill("Kick", fighting, True, 15, 10, 4, 0,90, 1, [], [""])
 dodge = Skill("Dodge", fighting, True, 0, 0, 10, 0,100, 2, [], ["trueHit", "dodgeUp"])
 rip = Skill("Rip", dark, True, 20, 10, -1, 0,90, 4, [1,bleed], [""])
 consumeFlesh = Skill("Consume Flesh", blood, True, 30, 5, -5, 0,90, 3, [2,bleed], ["vampire"])
-
 #----------------------------------------------------------------
 chaosBolt = Skill("Chaos Bolt", chaos, False, 10, 20, 1, 0,90, 1, [], [""])
 setFire = Skill("Set Fire", fire, False, 5, 20, -1, 0,90, 3, [3,burn], ["hitAll"])
@@ -665,8 +625,6 @@ astralVortex = Skill("Astral Vortex", astral, False, 50, 40, 5, 6, 90, 3, [], ["
 chaosVortex = Skill("Chaos Vortex", chaos, False, 20, 60, 5, 6, 90, 2, [], [""])
 
 
-
-
 class Char(object):
 	def __init__(self, name, types, hp, str, int, con, mag, agil, crit, dodgeChance, lvl, xp, skills, ability, image, cords, menuImg):
 		self.name = name
@@ -707,7 +665,6 @@ class Char(object):
 		self.basex = 0
 		self.ym = 1
 		
-		
 	def buildNew(self):
 		newchar = Char(self.name, self.types, self.hp, self.str, self.int, self.con, self.mag, self.agil, self.crit, self.dodgeChance, self.lvl, self.xp, self.skills, self.ability, pygame.transform.scale(pygame.image.load(self.image), [50, 50]), self.cords, pygame.transform.scale(pygame.image.load(self.image), [42, 42]))
 		newchar.img = pygame.image.load(self.image)
@@ -725,13 +682,8 @@ Mage = Char("Meigis", [normal, chaos], 500, 5, 15, 5, 15, 4, 0, 10, 1, 0, [basic
 
 Mouther = Char("Mouther", [earth], 500, 20, 0, 10, 5, 4, 0, 10, 1, 0, [basicAtk, bite, consumeFlesh, defend], "", "Assets/battlers/Mouther.png", [4,0], "")
 
-NotScaryGhost = Char("Not Scary Ghost", [ghost], 1000, 0, 0, 10, 75, 2, 0, 10, 1, 0, [basicAtk, sneeze, forceShield, recover], "tank", "Assets/battlers/Not_Scary_Ghost.png", [2, 15], "")
-Creep = Char("Creepy Bald Guy", [physic, unknown], 750, 10, 10, 15, 50, 0, 0, 0, 1, 0, [creepyAtk, blink, stare, inhale, exhale, observe], "Creepus", "Assets/battlers/Creepy_Bald_Guy.png", [3, 15], "")
-KnowingEye = Char("Knowing Eye", [physic, unknown, astral], 750, 0, 75, 0, 75, 5, 6, 5, 1, 0, [creepyAtk, observe, meditate, magicMute, forceShield, create], "Creepus", "Assets/battlers/wip.png", [4, 15], "")
-
 Nic = Char("Nic", [chaos], 500, 15, 50, 10, 25, 4, 0, 10, 1, 0, [basicAtk, magicMute, shardSwarm, powerUp, defend], "", "Assets/battlers/nic.png", [5,8], "")
-
-
+Epic = Char("Epic", [tech], 1000, 25, 50, 35, 45, 7, 10, 10, 1, 0, [basicAtk,energiBeam, wellspring, defend], "", "Assets/battlers/epic.png", [7,8], "")
 
 Scarlet = Char("Scarlet", [dark, blood], 100, 20, 20, 5, 20, 6, 0, 10, 1, 0, [basicAtk, scar, vampire, destroy, lifePact, defend], "", "Assets/battlers/vamp.png", [1,0], "")
 
@@ -740,21 +692,22 @@ Nue = Char("Nue", [astral, dark], 300, 25, 40, 10, 50, 4, 15, 10, 1, 0, [basicAt
 Okuu = Char("Okuu", [fire, tech], 500, 15, 50, 30, 10, 1, 5, 5, 1, 0, [bludgeon, blast, fusion, fission, nuke, forceShield, recover], "Radiation", "Assets/battlers/reiji.png", [3,7], "")
 Lapis = Char("Lapis", [astral], 400, 20, 20, 10, 10, 4, 5, 20, 1, 0, [chains, voidSnap, earthStage, moonStage, otherStage, earthenVortex, chaosVortex, astralVortex], "3 worlds", "Assets/battlers/lapis.png", [6,7], "")
 
-Epic = Char("Epic", [tech], 1000, 25, 50, 35, 45, 7, 10, 10, 1, 0, [basicAtk,energiBeam, wellspring, defend], "", "Assets/battlers/epic.png", [7,8], "")
-
-Coo33 = Char("Coo33", [dark, blood], 250, 50, 0, 30, 0, 10, 10, 10, 5, 0, [basicAtk, slash, bite, kick, dodge, rip, consumeFlesh, defend], "Blood hunt", "Assets/battlers/Coo33.png", [3,3], "")
 Alpha = Char("Alpha", [normal, earth, fighting], 500, 50, -50, 30, 5, 5, 0, 10, 1, 0, [basicAtk, slash, cleave, bladeFlash, revenge, mend, defend], "", "Assets/battlers/alpha.png", [8,4], "")
 Siv = Char("Siv", [normal, earth, dark, physic, chaos, magic], 250, 0, 50, 0, 38, 5, 7, 10, 1, 0, [basicAtk, chaosBolt, setFire, forceShield, chaosBeam, meditate, lifePact, shroud], "", "Assets/battlers/siv.png", [4,2], "")
-CoosomeJoe = Char("Coosome Joe", [light, tech], 500, 25, 25, 25, 25, 5, 2, 10, 1, 0, [basicAtk, bludgeon, erase, create, confuse, planAhead, mend, defend], "", "Assets/battlers/Coosome.png",  [3, 8], "")
 Durric = Char("Durric", [earth, light, fighting, physic], 1000, 25, 25, 75, 25, 0, 0, 1, 1, 0, [basicAtk, forceShield, cleave, obsidianBlast, recover, psionicRadiance, mend, defend], "Regen", "Assets/battlers/Durric.png", [4, 4], "")
+
+Coo33 = Char("Coo33", [dark, blood], 250, 50, 0, 30, 0, 10, 10, 10, 5, 0, [basicAtk, slash, bite, kick, dodge, rip, consumeFlesh, defend], "Blood hunt", "Assets/battlers/Coo33.png", [3,3], "")
+CoosomeJoe = Char("Coosome Joe", [light, tech], 500, 25, 25, 25, 25, 5, 2, 10, 1, 0, [basicAtk, bludgeon, erase, create, confuse, planAhead, mend, defend], "", "Assets/battlers/Coosome.png",  [3, 8], "")
 Catsome = Char("Catsome", [light, ghost, physic], 1000, 10, 35, 10, 15, 5, 5, 10, 1, 0, [slash, bite, eggon, rebuke, mend, recover], "Cuteness", "Assets/battlers/catsome.png",[6,9], "")
 
+NotScaryGhost = Char("Not Scary Ghost", [ghost], 1000, 0, 0, 10, 75, 2, 0, 10, 1, 0, [basicAtk, sneeze, forceShield, recover], "tank", "Assets/battlers/Not_Scary_Ghost.png", [2, 15], "")
+Creep = Char("Creepy Bald Guy", [physic, unknown], 750, 10, 10, 15, 50, 0, 0, 0, 1, 0, [creepyAtk, blink, stare, inhale, exhale, observe], "Creepus", "Assets/battlers/Creepy_Bald_Guy.png", [3, 15], "")
+KnowingEye = Char("Knowing Eye", [physic, unknown, astral], 750, 0, 75, 0, 75, 5, 6, 5, 1, 0, [creepyAtk, observe, meditate, magicMute, forceShield, create], "Creepus", "Assets/battlers/wip.png", [4, 15], "")
+
 NO = NOT.buildNew()	
-
-
-
-		
+	
 unlockedchars = [Lapis.buildNew(), Flan.buildNew(), Okuu.buildNew(), Nue.buildNew(), Scarlet.buildNew(), Mage.buildNew(), Mouther.buildNew(), Nic.buildNew(), Siv.buildNew(), Coo33.buildNew(), CoosomeJoe.buildNew(), Epic.buildNew(), Alpha.buildNew(), Durric.buildNew(), Creep.buildNew(), NotScaryGhost.buildNew(), Catsome.buildNew(), KnowingEye.buildNew()]			
+
 
 class Player(object):
 	def __init__(self, name):
@@ -779,10 +732,7 @@ class Player(object):
 player1 = Player("1")
 player2 = Player("2")
 
-
 done = False
- 
-
 
 def dispSkills(player):
 	global lockedskill
@@ -802,17 +752,8 @@ def dispSkills(player):
 		else:
 			gScreen.blit(lockedskill, [330 + x*175, y*30 + 370])
 			
-		
-			
-		
-		
-	
 		x += 1	
 		
-		
-		
-	
-	
 	pygame.draw.rect(gScreen, GREEN, [21,371,player.hp / 278,28])
 	pygame.draw.rect(gScreen, BLUE, [10, 430, player.power * 2, 28])
 	gScreen.blit(font.render("HP: " + str(player.hp), True, (0,0,255)), [75, 376])
@@ -820,11 +761,9 @@ def dispSkills(player):
 	gScreen.blit(font.render(player.name + "'s turn", True, (255,255,255)), [75, 476])
 	
 
-
 def hitDetect(pt1, pt2, pt3, pt4):
 	'''Determine if 2 rectangles overlap. Rect 1 is defined as pt1 & pt2. Rect 2 is defined as pt3 & pt4.
 	Each point is a 2-tuple with the x & y: pt1 = (32, 55)'''
-
 
 	# Test upper left point
 	if pt4[0]>pt1[0]>pt3[0]and pt4[1]>pt1[1]>pt3[1]:
@@ -842,21 +781,14 @@ def hitDetect(pt1, pt2, pt3, pt4):
 	if pt4[0]>pt2[0]>pt3[0]and pt4[1]>pt1[1]>pt3[1]:
 		return True
 		
-	
-	
 dispchar2 = NO		
 	
 battling = False
-
 
 thesebattlers = []
 thisplayer = player1
 
 while not done:
-	
-
-	
-	
 	for event in pygame.event.get(): 
 		if event.type == pygame.QUIT: 
 			done = True 
@@ -876,7 +808,6 @@ while not done:
 				if event.key == K_LEFT:
 					thisplayer.x3 -= 1
 				
-					
 				if event.key == K_RIGHT:
 					thisplayer.x3 += 1
 					
@@ -889,10 +820,8 @@ while not done:
 				if event.key == K_a:
 					thisplayer.x1 -= 1
 				
-					
 				if event.key == K_d:
 					thisplayer.x1 += 1
-					
 					
 				if event.key == K_i:
 					thisplayer.y2 -= 1
@@ -903,7 +832,6 @@ while not done:
 				if event.key == K_j:
 					thisplayer.x2 -= 1
 				
-					
 				if event.key == K_l:
 					thisplayer.x2 += 1
 			
@@ -925,14 +853,11 @@ while not done:
 				thisplayer.battlers[0] = f.reBuild()
 				break
 				
-				
 			else:
 				dispchar = NO
 				thisplayer.battlers[0] = NO
 
-		
 		x += 1
-		
 		
 	y = 0
 	x = 0
@@ -970,7 +895,6 @@ while not done:
 				
 				thisplayer.battlers[2] = f.reBuild()
 				break
-				
 				
 			else:
 				dispchar2 = NO
@@ -1022,18 +946,12 @@ while not done:
 			gScreen.blit(lockedchar, [3 + 22*x,3 + 22*y])
 			loaded = False
 				
-			
-		
-		
-			
-		
 		x += 1
 			
 	gScreen.blit(selector1, [thisplayer.x1*22 + 1, thisplayer.y1*22 + 1])
 	gScreen.blit(selector2, [thisplayer.x2*22 + 1, thisplayer.y2*22 + 1])
 	gScreen.blit(selector3, [thisplayer.x3*22 + 1, thisplayer.y3*22 + 1])
 	
-
 	for i in range(len(thisplayer.battlers)):
 	
 		localbattler = thisplayer.battlers[i]
@@ -1048,21 +966,15 @@ while not done:
 		gScreen.blit(font.render(atypes, True, BLACK), [56, i * 47 + 375])
 		gScreen.blit(font.render("Str: " + str(localbattler.str) + "   Con: " + str(localbattler.con) + "   Int: " + str(localbattler.int) + "   Mdf: " + str(localbattler.mag) + "   Agil: " + str(localbattler.agil) + "   Crit: " + str(localbattler.crit), True, BLACK), [56, i * 47 + 391])
 	
-	
-
-
-	
 	if mouse_down:
 		gScreen.blit(mouse_pointer2,mouse_pos)
 	else:
 		gScreen.blit(mouse_pointer,mouse_pos)
 	
-
 	#testAnim.blit(gScreen, [0,0])
 
 	pygame.display.flip()	
 	clock.tick(60)
-	
 	
 	thebattler = 0
 	powergiven = False
@@ -1081,15 +993,13 @@ while not done:
 #--------------------------------------------------------------------------------------------------------------------------------------------------	
 	
 	while battling:
-	
-	
+
 		gScreen.fill(WHITE)
 		try:
 			thisbattler = thesebattlers[thebattler]
 		except:
 			pass
 			
-	
 		for event in pygame.event.get(): 
 			if event.type == pygame.QUIT: 
 				done = True 
@@ -1100,12 +1010,8 @@ while not done:
 			elif event.type == pygame.MOUSEBUTTONUP:
 				mouse_down = False
 				
-		
-			
- 
 		# --- Game logic should go here
 		mouse_pos = pygame.mouse.get_pos()
-	
 	
 		#health-=0.01
 		if not thisbattler.updated:
@@ -1126,7 +1032,6 @@ while not done:
 			thisbattler.y = thisbattler.basey
 			thisbattler.updated = True
 			
-	
 		if thisbattler.hp > 0:
 			for i in thisbattler.skills:
 
@@ -1226,27 +1131,17 @@ while not done:
 						pickenm = False
 					y += 1
 									
-		
-
 		else:
 			thisbattler.goskill = nothing
 			thebattler += 1
 			pickenm = False
 			ready = False
 		
-		
-		
-		
-		
-		
-		
 		agillist = []
 		for i in thesebattlers:
 			agillist.append(i)
 		#print "thebattler:", thebattler
 		if thebattler >= len(thesebattlers):
-			
-			
 			#sorting
 			for i in range(len(agillist)):
 				for j in range(len(agillist)-1-i):
@@ -1280,12 +1175,6 @@ while not done:
 				
 					for i in thesebattlers:
 						i.updated = False
-			
-			
-			
-			
-			
-			
 
     # --- Drawing code should go here
 	
@@ -1306,11 +1195,8 @@ while not done:
 			if thisbattler.y >= thisbattler.basey + 5 or thisbattler.y <= thisbattler.basey - 5:
 				thisbattler.ym *= -1
 			
-
 			gScreen.blit(thisbattler.image, [thisbattler.x, thisbattler.y])
 
-		
-	
 		x = 0
 		y = 0
 		for i in thesebattlers:	
@@ -1335,28 +1221,17 @@ while not done:
 			y += 1
 		#ANIMATIONS!
 		
-		
-	
-		
 		pygame.draw.rect(gScreen, BLACK, [0,350,700,150])
 		#pygame.draw.rect(gScreen, WHITE, [10,360,300,50])
-		
 		gScreen.blit(health_border, [10, 360])
-		
 		pygame.draw.rect(gScreen, GREY, [320, 360, 370, 130])
-		
-
-	
 	
 		x = 0
 		y = 0
 
-			
-		
 		if thisbattler.hp > 0:
 			dispSkills(thisbattler)
 		
-	
 		if mouse_down:
 			gScreen.blit(mouse_pointer2,mouse_pos)
 		else:
@@ -1399,7 +1274,6 @@ while not done:
 		if thebattler == len(thesebattlers):
 			pygame.draw.rect(gScreen, BLACK, [0,350,700,150])
 	
- 
 		# --- Go ahead and update the screen with what we've drawn.
 		pygame.display.flip()
  
