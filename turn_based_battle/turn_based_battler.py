@@ -4,7 +4,7 @@ import pygame
 import random
 import time
 import math
-#import pyganim
+import pyganim
 from decimal import *
 
 from pygame.locals import *
@@ -95,7 +95,7 @@ def printb(text):
 
 		
 
-'''		
+
 recte = []
 test = pyganim.getImagesFromSpriteSheet("Assets/ui/animationtest.png",rows = 5,cols=5, rects = recte)
 
@@ -115,7 +115,6 @@ class SpreetSheet(object):
 		image = pygame.Surface(rect.size).convert()
 		image.blit(self.sheet, (0, 0), rect)
 		return image
-'''
 
 		
 class Type(object):
@@ -414,16 +413,18 @@ class Skill(object):
 		message = ""
 		hit = self.hitChance - target.dodgeChance
 
-		if target.ability == "Cuteness" and hit > 70:
-			hit = 70
-		if user.ability == "Blood hunt" and hit < 75 and not ghost in target.types:
-			hit = 75
+		if target.ability == "Cuteness":
+			self.hitChance -= 25
+		if user.ability == "Blood hunt":
+			hit += 25
 
 		if random.randint(1,100) < hit or "trueHit" in self.spec:
+		
 			if self.phys:
 				damage = (user.str + self.atk+ random.randint(0, self.var)) - target.con
 			else:
 				damage = (user.int + self.atk + random.randint(0, self.var)) - target.mag
+				
 			for i in target.types:
 				if self.type.name in i.weks:
 					damage *= 2
@@ -432,16 +433,20 @@ class Skill(object):
 				if self.type.name in i.strs:
 					damage /= 2
 					message = " It's not very effective!"
+					
 			if random.randint(1,30) + user.crit >= 30:
 				damage *= 2
 				message += " CRITICAL HIT!"
 				if not len(self.effects) == 0:
 					target.effects.append(self.effects[1])
+					
 			if not len(self.effects) == 0:
 				if random.randint(1,self.effects[0]) == 1:
 					target.effects.append(self.effects[1])
+					
 			if target.ability == "Creepus":
 				user.marks += 1
+				
 			for i in self.spec:
 				if i == "vampire":
 					user.hp += damage
@@ -694,20 +699,26 @@ Lapis = Char("Lapis", [astral], 400, 20, 20, 10, 10, 4, 5, 20, 1, 0, [chains, vo
 
 Alpha = Char("Alpha", [normal, earth, fighting], 500, 50, -50, 30, 5, 5, 0, 10, 1, 0, [basicAtk, slash, cleave, bladeFlash, revenge, mend, defend], "", "Assets/battlers/alpha.png", [8,4], "")
 Siv = Char("Siv", [normal, earth, dark, physic, chaos, magic], 250, 0, 50, 0, 38, 5, 7, 10, 1, 0, [basicAtk, chaosBolt, setFire, forceShield, chaosBeam, meditate, lifePact, shroud], "", "Assets/battlers/siv.png", [4,2], "")
+
 Durric = Char("Durric", [earth, light, fighting, physic], 1000, 25, 25, 75, 25, 0, 0, 1, 1, 0, [basicAtk, forceShield, cleave, obsidianBlast, recover, psionicRadiance, mend, defend], "Regen", "Assets/battlers/Durric.png", [4, 4], "")
 
 Coo33 = Char("Coo33", [dark, blood], 250, 50, 0, 30, 0, 10, 10, 10, 5, 0, [basicAtk, slash, bite, kick, dodge, rip, consumeFlesh, defend], "Blood hunt", "Assets/battlers/Coo33.png", [3,3], "")
 CoosomeJoe = Char("Coosome Joe", [light, tech], 500, 25, 25, 25, 25, 5, 2, 10, 1, 0, [basicAtk, bludgeon, erase, create, confuse, planAhead, mend, defend], "", "Assets/battlers/Coosome.png",  [3, 8], "")
 Catsome = Char("Catsome", [light, ghost, physic], 1000, 10, 35, 10, 15, 5, 5, 10, 1, 0, [slash, bite, eggon, rebuke, mend, recover], "Cuteness", "Assets/battlers/catsome.png",[6,9], "")
 
-NotScaryGhost = Char("Not Scary Ghost", [ghost], 1000, 0, 0, 10, 75, 2, 0, 10, 1, 0, [basicAtk, sneeze, forceShield, recover], "tank", "Assets/battlers/Not_Scary_Ghost.png", [2, 15], "")
 Creep = Char("Creepy Bald Guy", [physic, unknown], 750, 10, 10, 15, 50, 0, 0, 0, 1, 0, [creepyAtk, blink, stare, inhale, exhale, observe], "Creepus", "Assets/battlers/Creepy_Bald_Guy.png", [3, 15], "")
 KnowingEye = Char("Knowing Eye", [physic, unknown, astral], 750, 0, 75, 0, 75, 5, 6, 5, 1, 0, [creepyAtk, observe, meditate, magicMute, forceShield, create], "Creepus", "Assets/battlers/wip.png", [4, 15], "")
 
 NO = NOT.buildNew()	
 	
-unlockedchars = [Lapis.buildNew(), Flan.buildNew(), Okuu.buildNew(), Nue.buildNew(), Scarlet.buildNew(), Mage.buildNew(), Mouther.buildNew(), Nic.buildNew(), Siv.buildNew(), Coo33.buildNew(), CoosomeJoe.buildNew(), Epic.buildNew(), Alpha.buildNew(), Durric.buildNew(), Creep.buildNew(), NotScaryGhost.buildNew(), Catsome.buildNew(), KnowingEye.buildNew()]			
+unlockedchars = [Lapis.buildNew(), Flan.buildNew(), Okuu.buildNew(), Nue.buildNew(), Scarlet.buildNew(), Mage.buildNew(), Mouther.buildNew(), Nic.buildNew(), Siv.buildNew(), Coo33.buildNew(), CoosomeJoe.buildNew(), Epic.buildNew(), Alpha.buildNew(), Durric.buildNew(), Creep.buildNew(), Catsome.buildNew(), KnowingEye.buildNew()]			
 
+#as off yet, not used
+class Arena(object):
+	def __init__(self, name, effect, img):
+		self.name = name
+		self.effect = effect
+		self.img = img
 
 class Player(object):
 	def __init__(self, name):
@@ -971,7 +982,7 @@ while not done:
 	else:
 		gScreen.blit(mouse_pointer,mouse_pos)
 	
-	#testAnim.blit(gScreen, [0,0])
+	testAnim.blit(gScreen, [0,0])
 
 	pygame.display.flip()	
 	clock.tick(60)
