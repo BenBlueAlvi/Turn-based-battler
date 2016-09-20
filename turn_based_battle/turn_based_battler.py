@@ -743,7 +743,7 @@ Siv = Char("Siv", [normal, earth, dark, physic, chaos, magic], 250, 0, 50, 0, 38
 Durric = Char("Durric", [earth, light, fighting, physic], 1000, 25, 25, 75, 25, 0, 0, 1, 1, 0, [basicAtk, forceShield, cleave, obsidianBlast, recover, psionicRadiance, mend, takeBlow], "Regen", "Assets/battlers/Durric.png", [4, 4], "")
 
 Coo33 = Char("Coo33", [dark, blood], 250, 50, 0, 30, 0, 10, 10, 10, 5, 0, [basicAtk, slash, bite, kick, dodge, rip, consumeFlesh, defend], "Blood hunt", "Assets/battlers/Coo33.png", [3,3], "")
-CoosomeJoe = Char("Coosome Joe", [light, tech], 500, 25, 25, 25, 25, 5, 2, 10, 1, 0, [basicAtk, bludgeon, erase, create, confuse, planAhead, mend, defend], "", "Assets/battlers/Coosome.png",  [3, 8], "")
+CoosomeJoe = Char("Coosome Joe", [light, tech], 500, 25, 25, 25, 25, 5, 2, 10, 1, 0, [basicAtk, bludgeon, erase, create, confuse, planAhead, mend, defend], "", "Assets/battlers/Coosome.png",  [3, 4], "")
 Catsome = Char("Catsome", [light, ghost, physic], 1000, 10, 35, 10, 15, 5, 5, 10, 1, 0, [slash, bite, eggon, rebuke, mend, recover], "Cuteness", "Assets/battlers/catsome.png",[6,9], "")
 
 Creep = Char("Creepy Bald Guy", [physic, unknown], 750, 10, 10, 15, 50, 0, 0, 0, 1, 0, [creepyAtk, blink, stare, inhale, exhale, observe], "Creepus", "Assets/battlers/Creepy_Bald_Guy.png", [3, 15], "")
@@ -856,40 +856,52 @@ while not done:
 		elif event.type == pygame.KEYDOWN:
 				if event.key == K_UP:
 					thisplayer.y3 -= 1
-					
+					if thisplayer.y3 < 0:
+						thisplayer.y3 = 15
 				if event.key == K_DOWN:
 					thisplayer.y3 += 1
-					
+					if thisplayer.y3 > 15:
+						thisplayer.y3 = 0
 				if event.key == K_LEFT:
 					thisplayer.x3 -= 1
-				
+					if thisplayer.x3 < 0:
+						thisplayer.x3 = 23
 				if event.key == K_RIGHT:
 					thisplayer.x3 += 1
-					
+					if thisplayer.x3 > 23:
+						thisplayer.x3 = 0
 				if event.key == K_w:
 					thisplayer.y1 -= 1
-					
+					if thisplayer.y1 < 0:
+						thisplayer.y1 = 15
 				if event.key == K_s:
 					thisplayer.y1 += 1
-					
+					if thisplayer.y1 > 15:
+						thisplayer.y1 = 0
 				if event.key == K_a:
 					thisplayer.x1 -= 1
-				
+					if thisplayer.x1 < 0:
+						thisplayer.x1 = 23
 				if event.key == K_d:
 					thisplayer.x1 += 1
-					
+					if thisplayer.x1 > 23:
+						thisplayer.x1 = 0
 				if event.key == K_i:
 					thisplayer.y2 -= 1
-					
+					if thisplayer.y2 < 0:
+						thisplayer.y2 = 15
 				if event.key == K_k:
 					thisplayer.y2 += 1
-					
+					if thisplayer.y2 > 15:
+						thisplayer.y2 = 0
 				if event.key == K_j:
 					thisplayer.x2 -= 1
-				
+					if thisplayer.x2 < 0:
+						thisplayer.x2 = 23
 				if event.key == K_l:
 					thisplayer.x2 += 1
-			
+					if thisplayer.x2 > 23:
+						thisplayer.x2 = 0
 			
 	mouse_pos = pygame.mouse.get_pos()
 	y = 0
