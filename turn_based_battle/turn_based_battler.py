@@ -664,7 +664,7 @@ takeBlow = Skill("Take The Blow", fighting, True, 0, 0, 12, 10, 100, 1, [], ["ta
 powerStrike = Skill("Power Strike", fighting, True, 75, 10, -1, 0, 40, 1, [], [""])
 antiPhysic = Skill("Anti Physic", unknown, False, 30, 20, 5, 15, 90, 2, [], [""])
 mindReading = Skill("Mind Reading", physic, False, 20, 20, 5, 2, 100, 1, [], ["mindReading"])
-neverThere = Skill("Never There", physic, False, 0,0, 20, 0, 100, 2, [], ["trueHit"])
+neverThere = Skill("Never There", physic, False, 0,0, 20, 0, 100, 2, [], ["trueHit", "neverThere"])
 
 
 class Char(object):
@@ -735,7 +735,7 @@ Flan = Char("Flan", [dark,blood], 200, 35, 30, 10, 20, 7, 10, 20, 1, 0, [slash, 
 Nue = Char("Nue", [astral, dark], 300, 25, 40, 10, 50, 4, 15, 10, 1, 0, [basicAtk, meteorStorm, powerTransfer, forceShield, powerDrain, stab, meditate, defend], "Unidentifiable", "Assets/battlers/nue.png", [4,7], "")
 Okuu = Char("Okuu", [fire, tech], 500, 15, 50, 30, 10, 1, 5, 5, 1, 0, [bludgeon, blast, fusion, fission, nuke, forceShield, recover], "Radiation", "Assets/battlers/reiji.png", [3,7], "")
 Lapis = Char("Lapis", [astral], 400, 20, 20, 10, 10, 4, 5, 20, 1, 0, [chains, voidSnap, earthStage, moonStage, otherStage, earthenVortex, chaosVortex, astralVortex], "3 worlds", "Assets/battlers/lapis.png", [6,7], "")
-Koishi = Char("Koishi", [unknown], 400, 10, 55, 20, 75, 10, 6, 1, 0, [], "", "", [], "")
+Koishi = Char("Koishi", [unknown], 400, 10, 55, 20, 75, 10, 6, 1, 0, [antiPhysic, mindReading, neverThere, erase, voidSnap], "", "", [], "")
 
 Alpha = Char("Alpha", [normal, earth, fighting], 500, 50, -50, 30, 5, 5, 0, 10, 1, 0, [basicAtk, slash, cleave, bladeFlash, revenge, mend, defend], "", "Assets/battlers/alpha.png", [8,4], "")
 Siv = Char("Siv", [normal, earth, dark, physic, chaos, magic], 250, 0, 50, 0, 38, 5, 7, 10, 1, 0, [basicAtk, chaosBolt, setFire, forceShield, chaosBeam, meditate, lifePact, shroud], "", "Assets/battlers/siv.png", [4,2], "")
