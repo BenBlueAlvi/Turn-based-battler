@@ -1092,7 +1092,7 @@ while not done:
 			for i in thisbattler.effects:
 				i.update(thisbattler)
 			if thisbattler.ability == "Unidentifiable":
-				thisbattler.marks = math.floor(thisbattler.marks / 2)
+				thisbattler.marks = 0
 			if thisbattler.ability == "Radiation":
 				for l in thesebattlers:
 					l.hp -= 25
