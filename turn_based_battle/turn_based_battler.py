@@ -425,9 +425,11 @@ class Skill(object):
 			target = target.guarder
 
 		if target.ability == "Cuteness":
-			self.hitChance -= 25
+			hit -= 25
 		if user.ability == "Blood hunt":
 			hit += 25
+		if user.ability == "Frenzy" and user.hp <= user.maxhp/5:
+			hit += 2
 
 		if random.randint(1,100) < hit or "trueHit" in self.spec:
 		
@@ -514,8 +516,6 @@ class Skill(object):
 					damage = target.marks * user.int / target.mag
 				if i == "endeffect":
 					user.effects = []
-				if i == "nodam":
-					damage = 0
 				if i == "removeEff":
 					target.effects = []
 				if i == "removeUff":
@@ -560,13 +560,15 @@ class Skill(object):
 					target.effects.append(guarded)
 				if i == "mindReading":
 					user.dodgeChance += 5
-					
+
+			if user.ability == "Frenzy" and user.hp <= user.maxhp/5:
+				damage *= 1.25
 						
 			if user.hp > 0:
 				if target.ability == "3 worlds":
 					damage /= 3
 				
-				if damage < 0:
+				if damage < 0 or "nodam" in self.spec:
 					damage = 0
 
 				printb(user.name + " uses " + self.name + " and deals " + str(damage) + " damage to " + target.name + message)
@@ -735,7 +737,10 @@ Flan = Char("Flan", [dark,blood], 200, 35, 30, 10, 20, 7, 10, 20, 1, 0, [slash, 
 Nue = Char("Nue", [astral, dark], 300, 25, 40, 10, 50, 4, 15, 10, 1, 0, [basicAtk, meteorStorm, powerTransfer, forceShield, powerDrain, stab, meditate, defend], "Unidentifiable", "Assets/battlers/nue.png", [4,7], "")
 Okuu = Char("Okuu", [fire, tech], 500, 15, 50, 30, 10, 1, 5, 5, 1, 0, [bludgeon, blast, fusion, fission, nuke, forceShield, recover], "Radiation", "Assets/battlers/reiji.png", [3,7], "")
 Lapis = Char("Lapis", [astral], 400, 20, 20, 10, 10, 4, 5, 20, 1, 0, [chains, voidSnap, earthStage, moonStage, otherStage, earthenVortex, chaosVortex, astralVortex], "3 worlds", "Assets/battlers/lapis.png", [6,7], "")
-Koishi = Char("Koishi", [unknown], 400, 10, 55, 20, 75, 10, 6, 1, 0, [antiPhysic, mindReading, neverThere, erase, voidSnap], "", "", [], "")
+
+Koishi = Char("Koishi", [unknown], 400, 10, 55, 20, 75, 10, 6, 10, 1, 0, [antiPhysic, mindReading, neverThere, erase, voidSnap], "", "", [], "")
+
+
 
 Alpha = Char("Alpha", [normal, earth, fighting], 500, 50, -50, 30, 5, 5, 0, 10, 1, 0, [basicAtk, slash, cleave, bladeFlash, revenge, mend, defend], "", "Assets/battlers/alpha.png", [8,4], "")
 Siv = Char("Siv", [normal, earth, dark, physic, chaos, magic], 250, 0, 50, 0, 38, 5, 7, 10, 1, 0, [basicAtk, chaosBolt, setFire, forceShield, chaosBeam, meditate, lifePact, shroud], "", "Assets/battlers/siv.png", [4,2], "")
@@ -1087,7 +1092,7 @@ while not done:
 			for i in thisbattler.effects:
 				i.update(thisbattler)
 			if thisbattler.ability == "Unidentifiable":
-				thisbattler.marks = 0
+				thisbattler.marks = math.floor(thisbattler.marks / 2)
 			if thisbattler.ability == "Radiation":
 				for l in thesebattlers:
 					l.hp -= 25
