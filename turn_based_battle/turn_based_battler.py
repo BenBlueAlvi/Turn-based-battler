@@ -357,6 +357,17 @@ class Effect(object):
 				target.effects.remove(self)
 				self.resetStats(target)
 			self.endeffect += 1	
+			
+		if self.effect == "neverThere":
+			printb(target.name + " dissapeared")
+			target.dodgeChance += 100
+			self.endeffect = random.randint(1,3)
+			if self.endeffect == 1:
+				printb(target.name + " reapeared!")
+				
+				target.effects.remove(self)
+				self.resetStats(target)
+			
 		
 		
 		if self.effect == "death":
@@ -397,7 +408,7 @@ earthStagef = Effect("earthStage")
 otherStagef = Effect("otherStage")
 moonStagef = Effect("moonStage")
 guarded = Effect("guarded")
-
+neverTheref = Effect("neverThere")
 		
 
 class Skill(object):
@@ -560,6 +571,8 @@ class Skill(object):
 					target.effects.append(guarded)
 				if i == "mindReading":
 					user.dodgeChance += 5
+				if i == "neverThere":
+					user.effects.append(neverTheref)
 
 			if user.ability == "Frenzy" and user.hp <= user.maxhp/5:
 				damage *= 1.25
@@ -667,6 +680,7 @@ powerStrike = Skill("Power Strike", fighting, True, 75, 10, -1, 0, 40, 1, [], ["
 antiPhysic = Skill("Anti Physic", unknown, False, 30, 20, 5, 15, 90, 2, [], [""])
 mindReading = Skill("Mind Reading", physic, False, 20, 20, 5, 2, 100, 1, [], ["mindReading"])
 neverThere = Skill("Never There", physic, False, 0,0, 20, 0, 100, 2, [], ["trueHit", "neverThere"])
+colorfulBullet = Skill("colorfulBullet", magic, False, 10,5, 1, 2, 90, 0, [], [""])
 
 
 class Char(object):
@@ -738,7 +752,7 @@ Nue = Char("Nue", [astral, dark], 300, 25, 40, 10, 50, 4, 15, 10, 1, 0, [basicAt
 Okuu = Char("Okuu", [fire, tech], 500, 15, 50, 30, 10, 1, 5, 5, 1, 0, [bludgeon, blast, fusion, fission, nuke, forceShield, recover], "Radiation", "Assets/battlers/reiji.png", [3,7], "")
 Lapis = Char("Lapis", [astral], 400, 20, 20, 10, 10, 4, 5, 20, 1, 0, [chains, voidSnap, earthStage, moonStage, otherStage, earthenVortex, chaosVortex, astralVortex], "3 worlds", "Assets/battlers/lapis.png", [6,7], "")
 
-Koishi = Char("Koishi", [unknown], 400, 10, 55, 20, 75, 10, 6, 10, 1, 0, [antiPhysic, mindReading, neverThere, erase, voidSnap], "", "", [], "")
+Koishi = Char("Koishi", [unknown], 400, 10, 55, 20, 75, 10, 6, 30, 1, 0, [colorfulBullet,mindReading, antiPhysic, neverThere, erase, mend, voidSnap], "", "Assets/battlers/komeiji.png", [7,7], "")
 
 
 
@@ -758,7 +772,7 @@ Protagonist = Char("Protagonist", [normal], 750, 15, 15, 20, 10, 2, 6, 5, 1, 0, 
 
 NO = NOT.buildNew()	
 	
-unlockedchars = [Lapis.buildNew(), Flan.buildNew(), Okuu.buildNew(), Nue.buildNew(), Scarlet.buildNew(), Mage.buildNew(), Mouther.buildNew(), Nic.buildNew(), Siv.buildNew(), Coo33.buildNew(), CoosomeJoe.buildNew(), Epic.buildNew(), Alpha.buildNew(), Durric.buildNew(), Creep.buildNew(), Catsome.buildNew(), KnowingEye.buildNew(), Protagonist.buildNew()]			
+unlockedchars = [Koishi.buildNew(), Lapis.buildNew(), Flan.buildNew(), Okuu.buildNew(), Nue.buildNew(), Scarlet.buildNew(), Mage.buildNew(), Mouther.buildNew(), Nic.buildNew(), Siv.buildNew(), Coo33.buildNew(), CoosomeJoe.buildNew(), Epic.buildNew(), Alpha.buildNew(), Durric.buildNew(), Creep.buildNew(), Catsome.buildNew(), KnowingEye.buildNew(), Protagonist.buildNew()]			
 
 #as off yet, not used
 
@@ -1222,7 +1236,7 @@ while not done:
 			#sorting
 			for i in range(len(agillist)):
 				for j in range(len(agillist)-1-i):
-					if agillist[j].agil + agillist[j].goskill.spd  > agillist[j+1].agil + agillist[j+1].goskill.spd:
+					if agillist[j].agil + agillist[j].goskill.spd  < agillist[j+1].agil + agillist[j+1].goskill.spd:
 						agillist[j], agillist[j+1] = agillist[j+1], agillist[j] 
 			for i in agillist:
 				pass
