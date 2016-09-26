@@ -377,7 +377,6 @@ class Effect(object):
 	def buildNew(self):
 		neweff = Effect(self.effect)
 		return neweff
-		
 				
 burn = Effect("burn")
 magicmute = Effect("magicMute")
@@ -397,7 +396,6 @@ earthStagef = Effect("earthStage")
 otherStagef = Effect("otherStage")
 moonStagef = Effect("moonStage")
 guarded = Effect("guarded")
-
 		
 
 class Skill(object):
@@ -450,7 +448,8 @@ class Skill(object):
 					effective = False
 					
 			if random.randint(1,30) + user.crit >= 30:
-				message += " CRITICAL HIT!"
+				if effective:
+					message += " CRITICAL HIT!"
 				critical = True
 				if not len(self.effects) == 0:
 					target.effects.append(self.effects[1])
@@ -461,6 +460,8 @@ class Skill(object):
 					
 			if target.ability == "Creepus":
 				user.marks += 1
+				if critical:
+					user.marks += 1
 				
 			for i in self.spec:
 				if i == "vampire":
@@ -523,7 +524,7 @@ class Skill(object):
 					if critical:
 						target.marks += 1
 				if i == "creepyAtk":
-					damage = target.marks * user.int / target.mag
+					damage = math.floor((user.int * (1.08 ** target.marks))/target.mag)
 				if i == "endeffect":
 					user.effects = []
 				if i == "removeEff":
@@ -621,7 +622,7 @@ powerDrain = Skill("Power Drain", astral, False, 25, 25, -10, 0,100, 2, [], ["po
 slash = Skill("Slash", normal, True, 10, 10, 3, 5,90, 0, [], [""])
 bite = Skill("Bite", normal, True, 15, 5, 0, 5,92, 0, [4,bleed], [""])
 kick = Skill("Kick", fighting, True, 15, 10, 4, 0,90, 1, [], [""])
-dodge = Skill("Dodge", fighting, True, 0, 0, 10, 0,100, 2, [], ["trueHit", "dodgeUp"])
+dodge = Skill("Dodge", fighting, True, 0, 0, 10, 10, 100, 2, [], ["trueHit", "dodgeUp"])
 rip = Skill("Rip", dark, True, 20, 15, -1, 0,90, 3, [1,bleed], [""])
 consumeFlesh = Skill("Consume Flesh", blood, True, 30, 8, -5, 0,90, 3, [2,bleed], ["vampire"])
 #----------------------------------------------------------------
@@ -657,13 +658,13 @@ stare = Skill("Stare", physic, False, 30, 10, -2, 15,100, 5, [], [""])
 blink = Skill("Blink", physic, True, 5, 5, 1, 0,100, 0, [], ["mark"])
 creepyAtk = Skill("Creep Attack", physic, False, 5, 5, 1, 0,90, 0, [], ["creepyAtk"])
 inhale = Skill("Inhale", air, False, 0, 0, 3, 0,100, 0, [], ["defend", "heal", "trueHit"])
-observe = Skill("Observe", unknown, False, 0, 0, 3, 0,100, 1, [], ["mark", "mark", "mark", "mark", "mark", "mark", "nodam", "trueHit"])
+observe = Skill("Observe", unknown, False, 0, 0, 3, 2, 100, 1, [], ["mark", "mark", "mark", "mark", "mark", "mark", "nodam", "trueHit"])
 exhale = Skill("Exhale", air, False, 5, 10, 3, 0,90, 0, [], ["mark", "hitAll"])
 #------------------------------------------------------------------------
 sneeze = Skill("Sneeze", acid, False, 14, 6, 6, 0,90, 1, [2, poison], [""])
 
-eggon = Skill("Egg On", normal, True, 0, 0, 10, 0,100, 2, [1, rebuff], ["trueHit"])
-rebuke = Skill("Rebuke", normal, True, 0, 0, 10, 0,100, 1, [], ["removeEff", "removeUff", "trueHit"])
+eggon = Skill("Egg On", normal, True, 0, 0, 10, 10, 100, 2, [1, rebuff], ["trueHit"])
+rebuke = Skill("Rebuke", normal, True, 0, 0, 10, 2, 100, 1, [], ["removeEff", "removeUff", "trueHit"])
 
 blast = Skill("Blast", tech, False, 20, 20, 5, 8, 95, 2, [2, burn], [""])
 fission = Skill("Fission", fire, False, 20, 40, -1, 0, 90, 0, [2, burn], ["powerDown", "fullmana"])
@@ -759,8 +760,6 @@ Okuu = Char("Okuu", [fire, tech], 500, 15, 50, 30, 10, 1, 5, 5, 1, 0, [bludgeon,
 Lapis = Char("Lapis", [astral], 400, 20, 20, 10, 10, 4, 5, 20, 1, 0, [chains, voidSnap, earthStage, moonStage, otherStage, earthenVortex, chaosVortex, astralVortex], "3 worlds", "Assets/battlers/lapis.png", [6,7], "")
 
 Koishi = Char("Koishi", [unknown], 400, 10, 55, 20, 75, 10, 6, 10, 1, 0, [antiPhysic, mindReading, neverThere, erase, voidSnap], "", "", [], "")
-
-
 
 Alpha = Char("Alpha", [normal, earth, fighting], 500, 50, -50, 30, 5, 5, 0, 10, 1, 0, [basicAtk, slash, cleave, bladeFlash, revenge, mend, defend], "", "Assets/battlers/alpha.png", [8,4], "")
 Siv = Char("Siv", [normal, earth, dark, physic, chaos, magic], 250, 0, 50, 0, 38, 5, 7, 10, 1, 0, [basicAtk, chaosBolt, setFire, forceShield, chaosBeam, meditate, lifePact, shroud], "", "Assets/battlers/siv.png", [4,2], "")
