@@ -388,7 +388,6 @@ class Effect(object):
 	def buildNew(self):
 		neweff = Effect(self.effect)
 		return neweff
-		
 				
 burn = Effect("burn")
 magicmute = Effect("magicMute")
@@ -408,7 +407,9 @@ earthStagef = Effect("earthStage")
 otherStagef = Effect("otherStage")
 moonStagef = Effect("moonStage")
 guarded = Effect("guarded")
+
 neverTheref = Effect("neverThere")
+
 		
 
 class Skill(object):
@@ -443,7 +444,8 @@ class Skill(object):
 			hit += 2
 
 		if random.randint(1,100) < hit or "trueHit" in self.spec:
-		
+			critical, effective = False, False
+
 			if self.phys:
 				damage = (user.str + self.atk+ random.randint(0, self.var)) - target.con
 			else:
@@ -451,16 +453,18 @@ class Skill(object):
 				
 			for i in target.types:
 				if self.type.name in i.weks:
-					damage *= 2
 					message = " It's super effective!"
+					effective = True
 			for i in target.types:
 				if self.type.name in i.strs:
 					damage /= 2
 					message = " It's not very effective!"
+					effective = False
 					
 			if random.randint(1,30) + user.crit >= 30:
-				damage *= 2
-				message += " CRITICAL HIT!"
+				if effective:
+					message += " CRITICAL HIT!"
+				critical = True
 				if not len(self.effects) == 0:
 					target.effects.append(self.effects[1])
 					
@@ -470,10 +474,14 @@ class Skill(object):
 					
 			if target.ability == "Creepus":
 				user.marks += 1
+				if critical:
+					user.marks += 1
 				
 			for i in self.spec:
 				if i == "vampire":
 					user.hp += damage
+					if critical:
+						user.hp += math.floor(damage/10)
 				if i == "defend":
 					damage = 0
 					user.effects.append(defense.buildNew())
@@ -503,6 +511,8 @@ class Skill(object):
 					target.hp += user.int * 3
 					if target.ability == "3 worlds":
 						target.hp -= user.int * 2
+					if critical:
+						target.hp += user.int
 				if i == "block":
 					damage = 0
 					user.effects.append(block.buildNew())
@@ -518,13 +528,17 @@ class Skill(object):
 					if target.ability == "3 worlds":
 						heal /= 3
 					target.hp += heal
+					if critical:
+						target.hp += math.floor(heal/5)
 				if i == "stare":
 					target.con /=2
 					target.mag /=2
 				if i == "mark":
 					target.marks += 1
+					if critical:
+						target.marks += 1
 				if i == "creepyAtk":
-					damage = target.marks * user.int / target.mag
+					damage = math.floor((user.int * (1.08 ** target.marks))/target.mag)
 				if i == "endeffect":
 					user.effects = []
 				if i == "removeEff":
@@ -539,9 +553,13 @@ class Skill(object):
 				if i == "lifeTransfer":
 					user.hp -= user.hp/4
 					target.hp += (user.hp/4) * 2
+					if critical:
+						target.hp += math.floor(user.hp/5)
 				if i == "powerTransfer":
 					user.power -= user.power
 					target.power += user.power
+					if critical:
+						target.power += 1
 				if i == "meditate":
 					user.effects.append(meditatef)
 				if i == "dodgeUp":
@@ -571,8 +589,12 @@ class Skill(object):
 					target.effects.append(guarded)
 				if i == "mindReading":
 					user.dodgeChance += 5
+					if critical:
+						user.dodgeChance += 1
+
 				if i == "neverThere":
 					user.effects.append(neverTheref)
+
 
 			if user.ability == "Frenzy" and user.hp <= user.maxhp/5:
 				damage *= 1.25
@@ -581,6 +603,10 @@ class Skill(object):
 				if target.ability == "3 worlds":
 					damage /= 3
 				
+				if effective:
+					damage *= 2
+				if critical:
+					damage *= 2
 				if damage < 0 or "nodam" in self.spec:
 					damage = 0
 
@@ -614,9 +640,9 @@ powerDrain = Skill("Power Drain", astral, False, 25, 25, -10, 0,100, 2, [], ["po
 slash = Skill("Slash", normal, True, 10, 10, 3, 5,90, 0, [], [""])
 bite = Skill("Bite", normal, True, 15, 5, 0, 5,92, 0, [4,bleed], [""])
 kick = Skill("Kick", fighting, True, 15, 10, 4, 0,90, 1, [], [""])
-dodge = Skill("Dodge", fighting, True, 0, 0, 10, 0,100, 2, [], ["trueHit", "dodgeUp"])
-rip = Skill("Rip", dark, True, 20, 10, -1, 0,90, 4, [1,bleed], [""])
-consumeFlesh = Skill("Consume Flesh", blood, True, 30, 5, -5, 0,90, 3, [2,bleed], ["vampire"])
+dodge = Skill("Dodge", fighting, True, 0, 0, 10, 10, 100, 2, [], ["trueHit", "dodgeUp"])
+rip = Skill("Rip", dark, True, 20, 15, -1, 0,90, 3, [1,bleed], [""])
+consumeFlesh = Skill("Consume Flesh", blood, True, 30, 8, -5, 0,90, 3, [2,bleed], ["vampire"])
 #----------------------------------------------------------------
 chaosBolt = Skill("Chaos Bolt", chaos, False, 10, 20, 1, 0,90, 1, [], [""])
 setFire = Skill("Set Fire", fire, False, 5, 20, -1, 0,90, 3, [3,burn], ["hitAll"])
@@ -649,14 +675,14 @@ psionicRadiance = Skill("Psionic Radiance", physic, False, 30, 10, -2, 3,100, 3,
 stare = Skill("Stare", physic, False, 30, 10, -2, 15,100, 5, [], [""])
 blink = Skill("Blink", physic, True, 5, 5, 1, 0,100, 0, [], ["mark"])
 creepyAtk = Skill("Creep Attack", physic, False, 5, 5, 1, 0,90, 0, [], ["creepyAtk"])
-inhale = Skill("Inhale", air, False, 0, 0, 3, 0,100, 0, [], ["defend", "heal"])
-observe = Skill("Observe", unknown, False, 0, 0, 3, 0,100, 1, [], ["mark", "mark", "mark", "mark", "mark", "mark", "nodam", "trueHit"])
-exhale = Skill("Exhale", air, False, 5, 10, 3, 0,90, 0, [], ["mark"])
+inhale = Skill("Inhale", air, False, 0, 0, 3, 0,100, 0, [], ["defend", "heal", "trueHit"])
+observe = Skill("Observe", unknown, False, 0, 0, 3, 2, 100, 1, [], ["mark", "mark", "mark", "mark", "mark", "mark", "nodam", "trueHit"])
+exhale = Skill("Exhale", air, False, 5, 10, 3, 0,90, 0, [], ["mark", "hitAll"])
 #------------------------------------------------------------------------
 sneeze = Skill("Sneeze", acid, False, 14, 6, 6, 0,90, 1, [2, poison], [""])
 
-eggon = Skill("Egg On", normal, True, 0, 0, 10, 0,100, 2, [1, rebuff], ["trueHit"])
-rebuke = Skill("Rebuke", normal, True, 0, 0, 10, 0,100, 1, [], ["removeEff", "removeUff", "trueHit"])
+eggon = Skill("Egg On", normal, True, 0, 0, 10, 10, 100, 2, [1, rebuff], ["trueHit"])
+rebuke = Skill("Rebuke", normal, True, 0, 0, 10, 2, 100, 1, [], ["removeEff", "removeUff", "trueHit"])
 
 blast = Skill("Blast", tech, False, 20, 20, 5, 8, 95, 2, [2, burn], [""])
 fission = Skill("Fission", fire, False, 20, 40, -1, 0, 90, 0, [2, burn], ["powerDown", "fullmana"])
@@ -754,15 +780,13 @@ Lapis = Char("Lapis", [astral], 400, 20, 20, 10, 10, 4, 5, 20, 1, 0, [chains, vo
 
 Koishi = Char("Koishi", [unknown], 400, 10, 55, 20, 75, 10, 6, 30, 1, 0, [colorfulBullet,mindReading, antiPhysic, neverThere, erase, mend, voidSnap], "", "Assets/battlers/komeiji.png", [7,7], "")
 
-
-
 Alpha = Char("Alpha", [normal, earth, fighting], 500, 50, -50, 30, 5, 5, 0, 10, 1, 0, [basicAtk, slash, cleave, bladeFlash, revenge, mend, defend], "", "Assets/battlers/alpha.png", [8,4], "")
 Siv = Char("Siv", [normal, earth, dark, physic, chaos, magic], 250, 0, 50, 0, 38, 5, 7, 10, 1, 0, [basicAtk, chaosBolt, setFire, forceShield, chaosBeam, meditate, lifePact, shroud], "", "Assets/battlers/siv.png", [4,2], "")
 
 Durric = Char("Durric", [earth, light, fighting, physic], 1000, 25, 25, 75, 25, 0, 0, 1, 1, 0, [basicAtk, forceShield, cleave, obsidianBlast, recover, psionicRadiance, mend, takeBlow], "Regen", "Assets/battlers/Durric.png", [4, 4], "")
 
 Coo33 = Char("Coo33", [dark, blood], 250, 50, 0, 30, 0, 10, 10, 10, 5, 0, [basicAtk, slash, bite, kick, dodge, rip, consumeFlesh, defend], "Blood hunt", "Assets/battlers/Coo33.png", [3,3], "")
-CoosomeJoe = Char("Coosome Joe", [light, tech], 500, 25, 25, 25, 25, 5, 2, 10, 1, 0, [basicAtk, bludgeon, erase, create, confuse, planAhead, mend, defend], "", "Assets/battlers/Coosome.png",  [3, 4], "")
+CoosomeJoe = Char("Coosome Joe", [light, tech], 500, 25, 25, 25, 25, 5, 2, 10, 1, 0, [basicAtk, bludgeon, erase, create, confuse, planAhead, mend, defend], "Frenzy", "Assets/battlers/Coosome.png",  [3, 4], "")
 Catsome = Char("Catsome", [light, ghost, physic], 1000, 10, 35, 10, 15, 5, 5, 10, 1, 0, [slash, bite, eggon, rebuke, mend, recover], "Cuteness", "Assets/battlers/catsome.png",[6,9], "")
 
 Creep = Char("Creepy Bald Guy", [physic, unknown], 750, 10, 10, 15, 50, 0, 0, 0, 1, 0, [creepyAtk, blink, stare, inhale, exhale, observe], "Creepus", "Assets/battlers/Creepy_Bald_Guy.png", [3, 15], "")
