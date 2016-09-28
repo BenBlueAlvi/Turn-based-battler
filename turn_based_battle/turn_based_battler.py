@@ -414,7 +414,8 @@ guarded = Effect("guarded")
 
 neverTheref = Effect("neverThere")
 
-		
+negeff = [burn, magicmute, bleed, poison, confusion]
+poseff = [defense, forceshield, immortal, block, rebuff, meditatef, planAheadf, dodgeUp, earthStagef, otherStagef, moonStagef]
 
 class Skill(object):
 	def __init__(self, name, type, phys, atk, var, spd, crit, hitChance, cost, effects, spec):
@@ -642,8 +643,8 @@ meteorStorm = Skill("Meteor Storm", astral, False, 100, 50, -100, 0,75, 7, [2, b
 block = Skill("Block", fighting, True, 0, 0, 10, 0,100, 1, [], ["block", "trueHit"])
 powerDrain = Skill("Power Drain", astral, False, 25, 25, -10, 0,100, 2, [], ["powerdrain", "trueHit"])
 #-----------------------------------------------------------
-slash = Skill("Slash", normal, True, 10, 10, 3, 5,90, 0, [], [""])
-bite = Skill("Bite", normal, True, 15, 5, 0, 5,92, 0, [4,bleed], [""])
+slash = Skill("Slash", normal, True, 11, 10, 3, 5,90, 0, [], [""])
+bite = Skill("Bite", normal, True, 10, 5, 0, 5,92, 0, [4,bleed], [""])
 kick = Skill("Kick", fighting, True, 15, 10, 4, 0,90, 1, [], [""])
 dodge = Skill("Dodge", fighting, True, 0, 0, 10, 10, 100, 2, [], ["trueHit", "dodgeUp"])
 rip = Skill("Rip", dark, True, 20, 15, -1, 0,90, 3, [1,bleed], [""])
@@ -755,6 +756,9 @@ class Char(object):
 		self.basex = 0
 		self.ym = 1
 		self.guarder = "hi"
+		#AI stuff
+		self.savingfor = "none"
+		self.nextattack = ""
 		
 	def buildNew(self):
 		newchar = Char(self.name, self.types, self.hp, self.str, self.int, self.con, self.mag, self.agil, self.crit, self.dodgeChance, self.lvl, self.xp, self.skills, self.ability, pygame.transform.scale(pygame.image.load(self.image), [50, 50]), self.cords, pygame.transform.scale(pygame.image.load(self.image), [42, 42]))
