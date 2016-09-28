@@ -88,12 +88,11 @@ def printb(text):
 	
 	newtext = font.render(text,True,BLACK)
 	log.append(newtext)
-	print "PRINT"
+
 	if not printing:
 		disptext = newtext
 		timer = 90
-		print "ING"
-		print "timer", timer
+		
 		
 
 
@@ -827,14 +826,17 @@ class Battle(object):
 		powergiven = False
 		pickenm = False
 		increment = 0
-		
+		mult = False
 		mincrement = 0
 		thesebattlers = []
 		battling = True
 		ready = False
 		mouse_down = False
 		printing = False
-			
+		limit = 6
+		if mult == False:
+			limit = 3
+		
 		thesebattlers += player1.battlers + player2.battlers
 		x = 0
 		y = 0
