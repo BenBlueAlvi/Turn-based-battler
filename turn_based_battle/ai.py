@@ -1,5 +1,5 @@
 import random
-#thisbattler.goskill, thisbattler.target = runAI(thisbattler, battlers1, battlers2)
+#thisbattler = runAI(thisbattler, battlers1, battlers2)
 
 #Make note that hitall effect needs to be applied in your ai.
 #take in thisbattler, battlers1, battlers2
@@ -99,4 +99,4 @@ def runAI(player, battlersL, battlersR):
 				player.target = [consort[0]]
 
 
-	return player.goskill, player.target
+	return player
