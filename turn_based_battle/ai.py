@@ -39,21 +39,15 @@ def runAI(player, battlersL, battlersR):
 				if i in player.effects:
 					player.savingfor = "rebuke"
 			if player.savingfor == "none" and random.randint(0, 1) == 1:
-				player.savingfor == "eggon"
+				player.savingfor = "eggon"
 			if rebuff in player.effects or player.savingfor == "none":
-				player.savingfor == "attack"
+				player.savingfor = "attack"
 				prefferedtarget = "enemy"
 				
 		if allies >= 2:
 			pass
 
 		#applying savingfor
-		if player.savingfor == "attack":
-			player.savingfor = "none"
-			rand = random.randint(0, 1)
-			player.goskill = player.skills[rand]
-			if player.crit >= 8:
-				player.goskill = player.skills[1]
 		if player.savingfor == "rebuke" and player.power >= 1:
 			player.goskill = player.skills[3]
 			player.savingfor = "none"
@@ -61,7 +55,10 @@ def runAI(player, battlersL, battlersR):
 			player.goskill = player.skills[2]
 			player.savingfor = "none"
 		else:
-			pass
+			rand, prefferedtarget = random.randint(0, 1), "enemy"
+			player.goskill = player.skills[rand]
+			if player.crit >= 8:
+				player.goskill = player.skills[1]
 
 		#setting target
 		if prefferedtarget == "self":
@@ -76,14 +73,11 @@ def runAI(player, battlersL, battlersR):
 	if player.name == "Coo33":
 		#selecting skill
 		rand = random.randint(0, 1)
-		if player.savingfor == "none":
-			if player.hp <= 250:
+		if player.savingfor == "none" or player.hp <= 200:
+			if player.hp <= 250 or rand == 0:
 				player.savingfor = "consume"
 			else:
-				if rand == 0:
-					player.savingfor = "consume"
-				else:
-					player.savingfor = "rip"
+				player.savingfor = "rip"
 		#using a powerful attack
 		if player.power >= 3:
 			if player.savingfor == "consume" or player.crit >= 30:
@@ -92,7 +86,7 @@ def runAI(player, battlersL, battlersR):
 				player.goskill, player.savingfor, player.target = player.skills[5], "none", [hpsort[len(hpsort)-1]]
 		#if not enough power to use
 		else:
-			player.savingfor, player.goskill = "none", player.skills[rand]
+			player.goskill = player.skills[rand]
 			if player.crit >= 8:
 				player.goskill, player.target = player.skills[1], [hpsort[len(hpsort)-1]]
 			else:
