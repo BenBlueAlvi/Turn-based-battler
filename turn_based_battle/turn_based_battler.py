@@ -644,8 +644,8 @@ block = Skill("Block", fighting, True, 0, 0, 10, 0,100, 1, [], ["block", "trueHi
 powerDrain = Skill("Power Drain", astral, False, 25, 25, -10, 0,100, 2, [], ["powerdrain", "trueHit"])
 #-----------------------------------------------------------
 slash = Skill("Slash", normal, True, 11, 10, 3, 5,90, 0, [], [""])
-bite = Skill("Bite", normal, True, 10, 5, 0, 5,92, 0, [4,bleed], [""])
-kick = Skill("Kick", fighting, True, 15, 10, 4, 0,90, 1, [], [""])
+bite = Skill("Bite", normal, True, 10, 5, 0, 5, 92, 0, [4,bleed], [""])
+kick = Skill("Kick", fighting, True, 20, 5, 4, 0, 70, 1, [], [""])
 dodge = Skill("Dodge", fighting, True, 0, 0, 10, 10, 100, 2, [], ["trueHit", "dodgeUp"])
 rip = Skill("Rip", dark, True, 20, 15, -1, 0,90, 3, [1,bleed], [""])
 consumeFlesh = Skill("Consume Flesh", blood, True, 30, 8, -5, 0,90, 3, [2,bleed], ["vampire"])
