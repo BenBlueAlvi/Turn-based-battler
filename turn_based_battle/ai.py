@@ -11,21 +11,24 @@ def runAI(player, battlersL, battlersR):
 		consort.append(i)
 		dmgtaken.append(i)
 		hptotal.append(i)
-	#Sorted Constitution
+	#Least to greatest Constitution of opponents
 	for i in range(len(consort)):
 		for j in range(len(consort)-1-i):
 			if consort[j].con < consort[j+1].con:
 				consort[j], consort[j+1] = consort[j+1], consort[j]
-	#greatest to least damage taken
+	#greatest to least damage taken of allies
 	for i in range(len(dmgtaken)):
 		for j in range(len(dmgtaken)-1-i):
 			if dmgtaken[j].maxhp-dmgtaken[j].hp < dmgtaken[j+1].maxhp-dmgtaken[j+1].hp:
 				dmgtaken[j], dmgtaken[j+1] = dmgtaken[j+1], dmgtaken[j]
-	#greatest to least hp
+	#greatest to least hp of allies
 	for i in range(len(hptotal)):
 		for j in range(len(hptotal)-1-i):
 			if hptotal[j].hp < hptotal[j+1].hp:
 				hptotal[j], hptotal[j+1] = hptotal[j+1], hptotal[j]
+	
+	rand = random.randint(0, 1)
+
 	#Suggested order:
 	'''
 	test quantity of allies and other related stuff
@@ -33,7 +36,6 @@ def runAI(player, battlersL, battlersR):
 	see if you are there
 	if not, use basic attack
 	'''
-
 	if player.name == "Catsome":
 		allies, prefferedtarget = len(battlersR), "self"
 
@@ -53,24 +55,45 @@ def runAI(player, battlersL, battlersR):
 		
 		#Multiple allies
 		if allies >= 2:
+			#heal ally if somewhat low hp
 			if player.savingfor == "none" or player.savingfor == "heal":
 				for i in hptotal:
 					if i.hp < 800:
 						player.savingfor = "heal"
-						player.target = i
-				if player.hp <= 200:
-					player.prefferedtarget = "self"
-
+						player.nextattack = i
+						player.prefferedtarget = "ally"
+				if defs.CoosomeJoe in battlersR or defs.Coo33 in battlersR:
+					for i in hptotal:
+						if i.hp < 700 and i.name == "Coo33" or i.hp < 700 and i.name == "Coosome Joe":
+							player.savingfor = "heal"
+							player.nextattack = i
+							player.prefferedtarget = "ally"
+				if player.hp <= 200 and random.randint(0, 2) == 1:
+					player.prefferedtarget, player.savingfor = "self", "heal"
+			#rebuke if ally has negative effect
+			for i in hptotal:
+				for x in defs.negeff:
+					if x in i.effects:
+						player.savingfor = "rebuke"
+						player.nextattack = i
+						prefferedtarget = "ally"
+			#Egging on of allies
+			if player.savingfor == "none" and rand == 1:
+				player.savingfor = "eggon"
+				player.target = [battlersR[random.randint(0, len(battlersR)-1)]]
 
 		#applying savingfor
-		if player.savingfor == "rebuke" and player.power >= 1:
-			player.goskill = player.skills[3]
-			player.savingfor = "none"
 		elif player.savingfor == "eggon" and player.power >= 2:
 			player.goskill = player.skills[2]
 			player.savingfor = "none"
+		if player.savingfor == "heal" and player.power >= 3:
+			player.goskill = player.skills[4]
+			player.savingfor = "none"
+		if player.savingfor == "rebuke" and player.power >= 1:
+			player.goskill = player.skills[3]
+			player.savingfor = "none"
 		else:
-			rand, prefferedtarget = random.randint(0, 1), "enemy"
+			prefferedtarget = "enemy"
 			player.goskill = player.skills[rand]
 			if player.crit >= 8:
 				player.goskill = player.skills[1]
@@ -83,11 +106,13 @@ def runAI(player, battlersL, battlersR):
 				player.target = [dmgtaken[len(dmgtaken)-1]]
 			else:
 				player.target = [consort[0]]
+		if prefferedtarget == "ally":
+			player.target = [player.nextattack]
 
 
 	if player.name == "Coo33":
 		#selecting skill
-		rand = random.randint(0, 1)
+		
 		if player.savingfor == "none" or player.hp <= 200:
 			if player.hp <= 250 or rand == 0:
 				player.savingfor = "consume"
