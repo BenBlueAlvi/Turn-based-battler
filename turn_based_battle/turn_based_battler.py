@@ -5,6 +5,7 @@ import random
 import time
 import math
 import pyganim
+import ai
 from decimal import *
 
 from pygame.locals import *
@@ -12,7 +13,7 @@ from pygame.locals import *
 
 clock = pygame.time.Clock()
 pygame.mixer.init()
-music = pygame.mixer.music.load("reformat.ogg")
+#music = pygame.mixer.music.load("reformat.ogg")
 
 # Define some colors
 BLACK = (0, 0, 0)
@@ -815,18 +816,19 @@ class Arena(object):
 		self.img = img
 		
 class Battle(object):
-	def __init__(self, battlers1, battlers2, arena, dialog):
+	def __init__(self, battlers1, battlers2, arena, dialog, mult):
 		self.battlers1 = battlers1
 		self.battlers2 = battlers2
 		self.arena = arena
 		self.dialog = dialog
+		self.mult = mult
 	def battle(self):
 		global timer
 		thebattler = 0
 		powergiven = False
 		pickenm = False
 		increment = 0
-		mult = False
+	
 		mincrement = 0
 		thesebattlers = []
 		battling = True
@@ -834,10 +836,10 @@ class Battle(object):
 		mouse_down = False
 		printing = False
 		limit = 6
-		if mult == False:
+		if self.mult == False:
 			limit = 3
 		
-		thesebattlers += player1.battlers + player2.battlers
+		thesebattlers += self.battlers1 + player2.battlers
 		x = 0
 		y = 0
 		for i in thesebattlers:
@@ -984,10 +986,10 @@ class Battle(object):
 							
 							if "hitAll" in  thisbattler.goskill.spec:
 								thisbattler.target = []
-								if thisbattler in player1.battlers:
-									thisbattler.target = player2.battlers
-								elif thisbattler in player2.battlers:
-									thisbattler.target = player1.battlers
+								if thisbattler in battlers1:
+									thisbattler.target = self.battlers2
+								elif thisbattler in battlers2:
+									thisbattler.target = self.battlers1
 							
 							thebattler += 1
 							
@@ -1004,7 +1006,12 @@ class Battle(object):
 			for i in thesebattlers:
 				agillist.append(i)
 			#print "thebattler:", thebattler
-			if thebattler >= len(thesebattlers):
+			if thebattler >= limit:
+				if self.mult == False:
+					for i in self.battlers2:
+						ai.theAi = runAi(i, battlers1, battlers2)
+						i.goskill = theAi[0]
+						i.target = theAi[1]
 				#sorting
 				for i in range(len(agillist)):
 					for j in range(len(agillist)-1-i):
@@ -1044,8 +1051,8 @@ class Battle(object):
 		
 		#player
 		#animation:
-			if not printing and not thebattler >= len(thesebattlers):
-				if thisbattler in player1.battlers:
+			if not printing and not thebattler >= limit:
+				if thisbattler in self.battlers1:
 					thisbattler.x += 50
 					if not thisbattler.x == thisbattler.basex + 50:
 						thisbattler.x = thisbattler.basex + 50
@@ -1070,7 +1077,7 @@ class Battle(object):
 				
 				if i.hp > 0:
 					try:
-						if not i == thesebattlers[thebattler] and not thebattler >= len(thesebattlers):
+						if not i == thesebattlers[thebattler] and not thebattler >= limit:
 							gScreen.blit(i.image,[x * 550 + 50, y * 100 + 50])
 					except:
 						gScreen.blit(i.image,[x * 550 + 50, y * 100 + 50])
@@ -1106,21 +1113,21 @@ class Battle(object):
 					
 				#reset character here
 				
-			for i in player1.battlers:
+			for i in self.battlers1:
 				if i.hp <= 0:
-					player1.battlers.remove(i)
+					self.battlers1.remove(i)
 					
-			for i in player2.battlers:
+			for i in self.battlers2:
 				if i.hp <= 0:
-					player2.battlers.remove(i)
+					self.battlers2.remove(i)
 					
-			if len(player1.battlers) == 0:
+			if len(self.battlers1) == 0:
 				printb("Player 2 WINS!")
 				print "Player 2 Wins"
 				player1.battlers.append([NO, NO, NO])
 				break
 				
-			elif len(player2.battlers) == 0:
+			elif len(self.battlers2) == 0:
 				printb("Player 1 WINS!")
 				print "Player 1 Wins"
 				player2.battlers.append([NO, NO, NO])
@@ -1355,7 +1362,8 @@ while not done:
 		if thisplayer == player2:
 			if mouse_down:
 				
-				theBattle = Battle(player1.battlers, player2.battlers, "", "")
+				theBattle = Battle(player1.battlers, player2.battlers, "", "", False)
+	
 				theBattle.battle()
 				
 				
