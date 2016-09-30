@@ -4,7 +4,9 @@ import random
 #Make note that hitall effect needs to be applied in your ai.
 #take in thisbattler, battlers1, battlers2
 def runAI(player, battlersL, battlersR):
-
+	
+	
+	
 	consort, hpsort = [], []
 	for i in battlersL:
 		consort.append(i)
