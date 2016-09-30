@@ -5,13 +5,12 @@ import defs
 #Make note that hitall effect needs to be applied in your ai.
 #take in thisbattler, battlers1, battlers2
 def runAI(player, battlersL, battlersR):
-
 	consort, dmgtaken, hptotal = [], [], []
 	for i in battlersL:
 		consort.append(i)
 		dmgtaken.append(i)
 		hptotal.append(i)
-	#
+	#Sorted Constitution
 	for i in range(len(consort)):
 		for j in range(len(consort)-1-i):
 			if consort[j].con < consort[j+1].con:
