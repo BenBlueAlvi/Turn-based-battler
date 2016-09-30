@@ -68,8 +68,7 @@ selector1 = pygame.image.load("assets/ui/selector1.png")
 selector2 = pygame.image.load("assets/ui/selector2.png")
 selector3 = pygame.image.load("assets/ui/selector3.png")
 
-printing = False
-log = []
+
 
 
 
@@ -81,19 +80,8 @@ def bubble_sort(items):
 				items[j], items[j+1] = items[j+1], items[j] 
 	return items
 
-timer = 0
-def printb(text):
-	global disptext
-	global printing
-	global log
-	global timer
-	
-	newtext = font.render(text,True,BLACK)
-	log.append(newtext)
 
-	if not printing:
-		disptext = newtext
-		timer = 90
+
 		
 		
 
@@ -150,7 +138,7 @@ class Battle(object):
 		self.dialog = dialog
 		self.mult = mult
 	def battle(self):
-		global timer
+		
 		thebattler = 0
 		powergiven = False
 		pickenm = False
@@ -161,7 +149,7 @@ class Battle(object):
 		battling = True
 		ready = False
 		mouse_down = False
-		printing = False
+		defs.printing = False
 		limit = 6
 		if self.mult == False:
 			limit = 3
@@ -203,18 +191,23 @@ class Battle(object):
 			if not thisbattler.updated:
 			
 				for i in thisbattler.effects:
+					for k in thesebattlers:
+						if k.ability == "watch them burn" and i == defs.burn:
+						
+							i.canend = False
+							i.damage *= 2
 					i.update(thisbattler)
 				if thisbattler.ability == "Unidentifiable":
 					thisbattler.marks = 0
 				if thisbattler.ability == "Radiation":
 					for l in thesebattlers:
 						l.hp -= 25
-					printb(thisbattler.name + "'s radiation hurt everyone!")
+					defs.printb(thisbattler.name + "'s radiation hurt everyone!")
 					
 
 				if thisbattler.ability == "Regen":
 					thisbattler.hp += 25
-					printb(thisbattler.name + " is healing themself!")
+					defs.printb(thisbattler.name + " is healing themself!")
 				
 					
 				thisbattler.power += 1
@@ -320,6 +313,7 @@ class Battle(object):
 							
 							thebattler += 1
 							
+							
 							pickenm = False
 						y += 1
 										
@@ -347,18 +341,18 @@ class Battle(object):
 					pass
 					#print i.target
 				if len(agillist[increment].target) > 1:
-					if not printing:
+					if not defs.printing:
 						agillist[increment].goskill.use(agillist[increment],agillist[increment].target[mincrement])
 					
 						if mincrement > 2:
 							agillist[increment].power -= agillist[increment].goskill.cost
 					
 				else:
-					if not printing:
+					if not defs.printing:
 						agillist[increment].goskill.use(agillist[increment],agillist[increment].target[0])
 						agillist[increment].power -= agillist[increment].goskill.cost
 						
-				if not printing:
+				if not defs.printing:
 					if len(agillist[increment].target) > 1:
 						mincrement+=1
 						if mincrement > 2:
@@ -377,7 +371,7 @@ class Battle(object):
 		
 		#player
 		#animation:
-			if not printing and not thebattler >= limit:
+			if not thebattler >= len(thesebattlers):
 				if thisbattler in self.battlers1:
 					thisbattler.x += 50
 					if not thisbattler.x == thisbattler.basex + 50:
@@ -403,7 +397,7 @@ class Battle(object):
 				
 				if i.hp > 0:
 					try:
-						if not i == thesebattlers[thebattler] and not thebattler >= limit:
+						if not i == thesebattlers[thebattler]: #and not thebattler >= len(thesebattlers):
 							gScreen.blit(i.image,[x * 550 + 50, y * 100 + 50])
 					except:
 						gScreen.blit(i.image,[x * 550 + 50, y * 100 + 50])
@@ -448,26 +442,26 @@ class Battle(object):
 					self.battlers2.remove(i)
 					
 			if len(self.battlers1) == 0:
-				printb("Player 2 WINS!")
+				defs.printb("Player 2 WINS!")
 				print "Player 2 Wins"
 				player1.battlers.append([NO, NO, NO])
 				break
 				
 			elif len(self.battlers2) == 0:
-				printb("Player 1 WINS!")
+				defs.printb("Player 1 WINS!")
 				print "Player 1 Wins"
 				player2.battlers.append([NO, NO, NO])
 				break
-			print "THE TIMER:", timer
-			if timer > 0:
-				timer -= 1
-				gScreen.blit(disptext, [10, 320])
-				printing = True
+			print "THE TIMER:", defs.timer
+			if defs.timer > 0:
+				defs.timer -= 1
+				gScreen.blit(defs.disptext, [10, 320])
+				defs.printing = True
 				pygame.draw.rect(gScreen, BLACK, [0,350,700,150])
 			
-			if timer <= 0:
-				printing = False
-				timer = 0
+			if defs.timer <= 0:
+				defs.printing = False
+				defs.timer = 0
 			
 			if thebattler == len(thesebattlers):
 				pygame.draw.rect(gScreen, BLACK, [0,350,700,150])

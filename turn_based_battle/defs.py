@@ -1,6 +1,7 @@
 import pygame
 import time
 import random
+import math
 
 
 BLACK = (0, 0, 0)
@@ -19,6 +20,21 @@ def bubble_sort(items):
 		for j in range(len(items)-1-i):
 			if items[j] > items[j+1]:
 				items[j], items[j+1] = items[j+1], items[j] 
+log =[]				
+timer = 0
+printing = False			
+def printb(text):
+	global disptext
+	global printing
+	global log
+	global timer
+	
+	newtext = font.render(text,True,BLACK)
+	log.append(newtext)
+
+	if not printing:
+		disptext = newtext
+		timer = 90
 				
 
 class Type(object):
@@ -60,23 +76,21 @@ class Effect(object):
 		self.effect = effect
 		self.endeffect = 0
 		self.img = pygame.image.load("Assets/ui/" + effect + ".png")
-		
+		self.canend = True
+		self.damage =0
 	def update(self, target):
 		if self.effect == "burn":
-			damage = 25 + random.randint(1, 25)
+			self.damage = 25 + random.randint(1, 25)
 			self.endeffect = random.randint(1,3)
-			for i in thesebattlers:
-				if i.ability == "watch them burn":
-					self.endeffect = 0
-					damage *= 2
+			
 
 			
 
-			target.hp -= damage
-			printb(target.name + " is on fire!   " + target.name + " takes " + str(damage) + " damage")
+			target.hp -= self.damage
+			printb(target.name + " is on fire!   " + target.name + " takes " + str(self.damage) + " damage")
 		
 			
-			if self.endeffect == 2:
+			if self.endeffect == 2 and self.canend:
 				printb(target.name + " put out the fire!")
 				target.effects.remove(self)
 				
@@ -392,7 +406,7 @@ class Skill(object):
 						user.hp += math.floor(damage/10)
 				if i == "defend":
 					damage = 0
-					user.effects.append(defs.defense.buildNew())
+					user.effects.append(defense.buildNew())
 				if i == "powerUp":
 					damage = 0
 					user.power += 2
@@ -406,14 +420,14 @@ class Skill(object):
 					user.con += 6
 					user.mag += 6
 				if i == "Shield":
-					user.effects.append(defs.forceshield.buildNew())
+					user.effects.append(forceshield.buildNew())
 				if i == "atkUp":
 					damage = 0
-					user.effects.append(defs.planAheadf)
+					user.effects.append(planAheadf)
 				if i == "division":
 					damage = target.hp/5
 				if i == "immortal":
-					user.effects.append(defs.immortal.buildNew())
+					user.effects.append(immortal.buildNew())
 				if i == "heal":
 					damage = 0
 					target.hp += user.int * 3
@@ -423,7 +437,7 @@ class Skill(object):
 						target.hp += user.int
 				if i == "block":
 					damage = 0
-					user.effects.append(defs.block.buildNew())
+					user.effects.append(block.buildNew())
 				if i == "powerdrain":
 					damage = 0 
 					user.power += target.power
@@ -450,7 +464,9 @@ class Skill(object):
 				if i == "endeffect":
 					user.effects = []
 				if i == "removeEff":
-					target.effects = []
+					for j in negeff:
+						if j in target.effects:
+							target.effects.remove(j)
 				if i == "removeUff":
 					target.con = target.basecon
 					target.mag = target.basemag
@@ -469,15 +485,15 @@ class Skill(object):
 					if critical:
 						target.power += 1
 				if i == "meditate":
-					user.effects.append(defs.meditatef)
+					user.effects.append(meditatef)
 				if i == "dodgeUp":
-					user.effects.append(defs.dodgeUp)
+					user.effects.append(dodgeUp)
 				if i == "otherStage":
-					user.effects.append(defs.otherStagef)
+					user.effects.append(otherStagef)
 				if i == "earthStage":
-					user.effects.append(defs.earthStagef)
+					user.effects.append(earthStagef)
 				if i == "moonStage":
-					user.effects.append(defs.moonStagef)
+					user.effects.append(moonStagef)
 				if i == "againstOdds":
 					if user in player1.battlers:
 						for b in player2.battlers:
@@ -494,14 +510,14 @@ class Skill(object):
 					damage = math.floor(damage) - target.con
 				if i == "takeBlow":
 					target.guarder = user
-					target.effects.append(defs.guarded)
+					target.effects.append(guarded)
 				if i == "mindReading":
 					user.dodgeChance += 5
 					if critical:
 						user.dodgeChance += 1
 
 				if i == "neverThere":
-					user.effects.append(defs.neverTheref)
+					user.effects.append(neverTheref)
 
 
 			if user.ability == "Frenzy" and user.hp <= user.maxhp/5:
@@ -595,7 +611,7 @@ rebuke = Skill("Rebuke", normal, True, 0, 0, 10, 2, 100, 1, [], ["removeEff", "r
 
 blast = Skill("Blast", tech, False, 20, 20, 5, 8, 95, 2, [2, burn], [""])
 fission = Skill("Fission", fire, False, 20, 40, -1, 0, 90, 0, [2, burn], ["powerDown", "fullmana"])
-fusion = Skill("Fusion", fire, False, 1, 40, -1, 0, 90, 1, [2,burn], ["powerUp"])
+fusion = Skill("Fusion", fire, False, 1, 40, -1, 0, 100, 1, [2,burn], ["powerUp"])
 
 lifeTransfer = Skill("Life Transfer", blood, False, 0, 0, 10, 0,100, 2, [], ["lifeTransfer", "nodam"])
 powerTransfer = Skill("Power Transfer", tech, False, 0, 0, 10, 0, 100, 0, [], ["powerTransfer", "nodam"])

@@ -1,5 +1,6 @@
 import random
 import defs
+import math
 #thisbattler = runAI(thisbattler, battlers1, battlers2)
 
 #Make note that hitall effect needs to be applied in your ai.
@@ -46,7 +47,7 @@ def runAI(player, battlersL, battlersR):
 					player.savingfor = "rebuke"
 			if player.savingfor == "none" and random.randint(0, 1) == 1:
 				player.savingfor = "eggon"
-			if rebuff in player.effects or player.savingfor == "none":
+			if defs.rebuff in player.effects or player.savingfor == "none":
 				player.savingfor = "attack"
 				prefferedtarget = "enemy"
 		
