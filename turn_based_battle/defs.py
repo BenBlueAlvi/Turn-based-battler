@@ -606,7 +606,7 @@ exhale = Skill("Exhale", air, False, 5, 10, 3, 0,90, 0, [], ["mark", "hitAll"])
 #------------------------------------------------------------------------
 sneeze = Skill("Sneeze", acid, False, 14, 6, 6, 0,90, 1, [2, poison], [""])
 
-eggon = Skill("Egg On", normal, True, 0, 0, 10, 10, 100, 2, [1, rebuff], ["trueHit"])
+eggon = Skill("Egg On", normal, True, 0, 0, 10, 10, 100, 2, [1, rebuff], ["trueHit", "nodam"])
 rebuke = Skill("Rebuke", normal, True, 0, 0, 10, 2, 100, 1, [], ["removeEff", "removeUff", "trueHit"])
 
 blast = Skill("Blast", tech, False, 20, 20, 5, 8, 95, 2, [2, burn], [""])
@@ -668,7 +668,7 @@ class Char(object):
 		self.marks = 0
 		self.power = 0
 		self.menuImg = menuImg
-		self.goskill = "hoi"
+		self.goskill = nothing
 		self.target = ["bob"]
 		self.updated = False
 		self.x = 0

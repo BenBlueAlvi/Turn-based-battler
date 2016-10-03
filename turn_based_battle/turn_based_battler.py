@@ -143,7 +143,7 @@ class Battle(object):
 		powergiven = False
 		pickenm = False
 		increment = 0
-	
+		aiSet = False
 		mincrement = 0
 		thesebattlers = []
 		battling = True
@@ -155,6 +155,11 @@ class Battle(object):
 			limit = 3
 		
 		thesebattlers += self.battlers1 + self.battlers2
+		for i in self.battlers1:
+			print i.name
+		for i in self.battlers2:
+			print i.name
+
 		x = 0
 		y = 0
 		for i in thesebattlers:
@@ -301,14 +306,14 @@ class Battle(object):
 							mouse_down = False
 						
 						if ready:
-							print thisbattler.target[0]
+							print thisbattler.target[0].name
 							ready = False
 							
 							if "hitAll" in  thisbattler.goskill.spec:
 								thisbattler.target = []
-								if thisbattler in battlers1:
+								if thisbattler in self.battlers1:
 									thisbattler.target = self.battlers2
-								elif thisbattler in battlers2:
+								elif thisbattler in self.battlers2:
 									thisbattler.target = self.battlers1
 							
 							thebattler += 1
@@ -329,17 +334,18 @@ class Battle(object):
 			#print "thebattler:", thebattler
 			if thebattler >= limit:
 				if self.mult == False:
-					for i in self.battlers2:
-						i = ai.runAI(i, self.battlers1, self.battlers2)
-						
+					if aiSet == False:
+						for i in self.battlers2:
+							i = ai.runAI(i, self.battlers1, self.battlers2)
+							print i.name + ", saving for: "+ i.savingfor + ". Using: " + i.goskill.name
+							aiSet = True
 				#sorting
 				for i in range(len(agillist)):
 					for j in range(len(agillist)-1-i):
+						
 						if agillist[j].agil + agillist[j].goskill.spd  < agillist[j+1].agil + agillist[j+1].goskill.spd:
 							agillist[j], agillist[j+1] = agillist[j+1], agillist[j] 
-				for i in agillist:
-					pass
-					#print i.target
+				
 				if len(agillist[increment].target) > 1:
 					if not defs.printing:
 						agillist[increment].goskill.use(agillist[increment],agillist[increment].target[mincrement])
@@ -351,7 +357,7 @@ class Battle(object):
 					if not defs.printing:
 						agillist[increment].goskill.use(agillist[increment],agillist[increment].target[0])
 						agillist[increment].power -= agillist[increment].goskill.cost
-						
+			
 				if not defs.printing:
 					if len(agillist[increment].target) > 1:
 						mincrement+=1
@@ -363,9 +369,10 @@ class Battle(object):
 					if increment > len(thesebattlers) - 1:
 						increment = 0
 						thebattler = 0
-					
+						aiSet = False
 						for i in thesebattlers:
 							i.updated = False
+
 
 		# --- Drawing code should go here
 		
@@ -452,7 +459,7 @@ class Battle(object):
 				print "Player 1 Wins"
 				player2.battlers.append([NO, NO, NO])
 				break
-			print "THE TIMER:", defs.timer
+			#print "THE TIMER:", defs.timer
 			if defs.timer > 0:
 				defs.timer -= 1
 				gScreen.blit(defs.disptext, [10, 320])
