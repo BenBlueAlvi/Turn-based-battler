@@ -113,7 +113,25 @@ class SpreetSheet(object):
 
 turn = 0
 
+def hitDetect(pt1, pt2, pt3, pt4):
+	'''Determine if 2 rectangles overlap. Rect 1 is defined as pt1 & pt2. Rect 2 is defined as pt3 & pt4.
+	Each point is a 2-tuple with the x & y: pt1 = (32, 55)'''
 
+	# Test upper left point
+	if pt4[0]>pt1[0]>pt3[0]and pt4[1]>pt1[1]>pt3[1]:
+		return True
+
+	# Test lower right point
+	if pt4[0]>pt2[0]>pt3[0]and pt4[1]>pt2[1]>pt3[1]:
+		return True
+
+	# Test lower left point
+	if pt4[0]>pt1[0]>pt3[0]and pt4[1]>pt2[1]>pt3[1]:
+		return True
+
+	# Test upper right point
+	if pt4[0]>pt2[0]>pt3[0]and pt4[1]>pt1[1]>pt3[1]:
+		return True
 
 
 
@@ -129,7 +147,10 @@ class Arena(object):
 		self.name = name
 		self.effect = effect
 		self.img = img
+
 		
+		
+
 class Battle(object):
 	def __init__(self, battlers1, battlers2, arena, dialog, mult):
 		self.battlers1 = battlers1
@@ -407,6 +428,7 @@ class Battle(object):
 						if not i == thesebattlers[thebattler]: #and not thebattler >= len(thesebattlers):
 							gScreen.blit(i.image,[x * 550 + 50, y * 100 + 50])
 					except:
+						print i.image
 						gScreen.blit(i.image,[x * 550 + 50, y * 100 + 50])
 					
 					pygame.draw.rect(gScreen, RED, [x* 550 + 50, y* 100 + 25,int(i.hp) / 20,5])
@@ -480,6 +502,116 @@ class Battle(object):
 			clock.tick(60)
 
 
+CatsomeFight = Battle([], [defs.NO, defs.Catsome.buildNew(), defs.NO], "", "", False)
+			
+class Stage(object):
+	def __init__(self, name, playerbattlers, battles, cords):
+		self.name = name
+		self.battles = battles
+		self.cords = cords
+		self.completed = False
+	def run(self):
+		for i in self.battles:
+			i.battlers1 = self.playerbattlers
+		for i in self.battles:
+			i.battle()
+		
+		
+
+st1 = Stage("", "", [CatsomeFight], [317,48])
+st2 = Stage("", "", [], [280, 221])
+st3 = Stage("", "", [], [393,292])
+st4 = Stage("", "", [], [540,313])
+st5 = Stage("", "", [], [675,240])
+st6 = Stage("", "", [], [720,360])
+st7 = Stage("", "", [], [523,431])
+st8 = Stage("", "", [], [359,516])
+		
+
+class World(object):
+	def __init__(self, stages):
+		self.stages = stages
+		self.cords = [0,0]
+		self.image = pygame.image.load("Assets/ui/maptest.png")
+		self.vel = [0,0]
+	
+		
+	def run(self, mult):
+		mouse_down = False
+		running = True
+		while running:
+			for event in pygame.event.get(): 
+				if event.type == pygame.QUIT: 
+					running = False
+				elif event.type == pygame.MOUSEBUTTONDOWN:
+					mouse_down = True
+				
+				elif event.type == pygame.MOUSEBUTTONUP:
+					mouse_down = False
+				if event.type == pygame.KEYDOWN:
+		
+					if event.key == K_w:
+				
+						self.vel[1] = 5
+					
+					if event.key == K_d:
+				
+						self.vel[0] = -5
+					
+					if event.key == K_s:
+				
+						self.vel[1] = -5
+					
+					if event.key == K_a:
+				
+						self.vel[0] = 5
+					
+				elif event.type == pygame.KEYUP:
+			
+					if event.key == pygame.K_d or event.key == pygame.K_a:
+				
+						self.vel[0] =0
+					if event.key == pygame.K_w or event.key == pygame.K_s:
+				
+						self.vel[1] =0
+				
+			mouse_pos = pygame.mouse.get_pos()
+			
+			for i in self.stages:
+				
+				pygame.draw.rect(gScreen, RED, [i.cords[0], i.cords[1], 16,16])
+				if hitDetect(mouse_pos, mouse_pos, [i.cords[0] + self.cords[0], i.cords[1]+ self.cords[1]], [i.cords[0] + 16, i.cords[1] + 16]):
+					if mouse_down:
+						i.playerbattlers = CharSelect(mult)
+						i.run()
+						i.completed = True
+					
+					
+			
+			self.cords[0] += self.vel[0]
+			self.cords[1] += self.vel[1]
+			gScreen.fill(BLACK)
+			
+			gScreen.blit(self.image, [self.cords[0], self.cords[1]])
+			
+			for i in self.stages:
+				
+				pygame.draw.rect(gScreen, RED, [i.cords[0] + self.cords[0], i.cords[1] + self.cords[1], 16,16])
+			
+			if mouse_down:
+				gScreen.blit(mouse_pointer2,mouse_pos)
+			else:
+				gScreen.blit(mouse_pointer,mouse_pos)
+   
+			pygame.display.flip()
+   
+  
+			clock.tick(60)
+		
+
+theWorld = World([st1])
+
+
 class Player(object):
 	def __init__(self, name):
 		self.acbattler = defs.NOT.buildNew()
@@ -532,227 +664,217 @@ def dispSkills(player):
 	gScreen.blit(font.render(player.name + "'s turn", True, (255,255,255)), [75, 476])
 	
 
-def hitDetect(pt1, pt2, pt3, pt4):
-	'''Determine if 2 rectangles overlap. Rect 1 is defined as pt1 & pt2. Rect 2 is defined as pt3 & pt4.
-	Each point is a 2-tuple with the x & y: pt1 = (32, 55)'''
 
-	# Test upper left point
-	if pt4[0]>pt1[0]>pt3[0]and pt4[1]>pt1[1]>pt3[1]:
-		return True
-
-	# Test lower right point
-	if pt4[0]>pt2[0]>pt3[0]and pt4[1]>pt2[1]>pt3[1]:
-		return True
-
-	# Test lower left point
-	if pt4[0]>pt1[0]>pt3[0]and pt4[1]>pt2[1]>pt3[1]:
-		return True
-
-	# Test upper right point
-	if pt4[0]>pt2[0]>pt3[0]and pt4[1]>pt1[1]>pt3[1]:
-		return True
 		
-dispchar2 = defs.NO		
+
+def CharSelect(mult):
+	done = False
+	dispchar2 = defs.NO		
 	
-battling = False
+	battling = False
 
-thesebattlers = []
-thisplayer = player1
-
-while not done:
-	for event in pygame.event.get(): 
-		if event.type == pygame.QUIT: 
-			done = True 
-		elif event.type == pygame.MOUSEBUTTONDOWN:
-			mouse_down = True
+	thesebattlers = []
+	thisplayer = player1
+	mouse_down = False
+	while not done:
+		for event in pygame.event.get(): 
+			if event.type == pygame.QUIT: 
+				done = True 
+			elif event.type == pygame.MOUSEBUTTONDOWN:
+				mouse_down = True
+				
+			elif event.type == pygame.MOUSEBUTTONUP:
+				mouse_down = False
+				
+			elif event.type == pygame.KEYDOWN:
+					if event.key == K_UP:
+						thisplayer.y3 -= 1
+						if thisplayer.y3 < 0:
+							thisplayer.y3 = 15
+					if event.key == K_DOWN:
+						thisplayer.y3 += 1
+						if thisplayer.y3 > 15:
+							thisplayer.y3 = 0
+					if event.key == K_LEFT:
+						thisplayer.x3 -= 1
+						if thisplayer.x3 < 0:
+							thisplayer.x3 = 23
+					if event.key == K_RIGHT:
+						thisplayer.x3 += 1
+						if thisplayer.x3 > 23:
+							thisplayer.x3 = 0
+					if event.key == K_w:
+						thisplayer.y1 -= 1
+						if thisplayer.y1 < 0:
+							thisplayer.y1 = 15
+					if event.key == K_s:
+						thisplayer.y1 += 1
+						if thisplayer.y1 > 15:
+							thisplayer.y1 = 0
+					if event.key == K_a:
+						thisplayer.x1 -= 1
+						if thisplayer.x1 < 0:
+							thisplayer.x1 = 23
+					if event.key == K_d:
+						thisplayer.x1 += 1
+						if thisplayer.x1 > 23:
+							thisplayer.x1 = 0
+					if event.key == K_i:
+						thisplayer.y2 -= 1
+						if thisplayer.y2 < 0:
+							thisplayer.y2 = 15
+					if event.key == K_k:
+						thisplayer.y2 += 1
+						if thisplayer.y2 > 15:
+							thisplayer.y2 = 0
+					if event.key == K_j:
+						thisplayer.x2 -= 1
+						if thisplayer.x2 < 0:
+							thisplayer.x2 = 23
+					if event.key == K_l:
+						thisplayer.x2 += 1
+						if thisplayer.x2 > 23:
+							thisplayer.x2 = 0
+				
+		mouse_pos = pygame.mouse.get_pos()
+		y = 0
+		x = 0
+		for i in range(384):
 			
-		elif event.type == pygame.MOUSEBUTTONUP:
-			mouse_down = False
+			if x > 23:
+				x = 0
+				y += 1
 			
-		elif event.type == pygame.KEYDOWN:
-				if event.key == K_UP:
-					thisplayer.y3 -= 1
-					if thisplayer.y3 < 0:
-						thisplayer.y3 = 15
-				if event.key == K_DOWN:
-					thisplayer.y3 += 1
-					if thisplayer.y3 > 15:
-						thisplayer.y3 = 0
-				if event.key == K_LEFT:
-					thisplayer.x3 -= 1
-					if thisplayer.x3 < 0:
-						thisplayer.x3 = 23
-				if event.key == K_RIGHT:
-					thisplayer.x3 += 1
-					if thisplayer.x3 > 23:
-						thisplayer.x3 = 0
-				if event.key == K_w:
-					thisplayer.y1 -= 1
-					if thisplayer.y1 < 0:
-						thisplayer.y1 = 15
-				if event.key == K_s:
-					thisplayer.y1 += 1
-					if thisplayer.y1 > 15:
-						thisplayer.y1 = 0
-				if event.key == K_a:
-					thisplayer.x1 -= 1
-					if thisplayer.x1 < 0:
-						thisplayer.x1 = 23
-				if event.key == K_d:
-					thisplayer.x1 += 1
-					if thisplayer.x1 > 23:
-						thisplayer.x1 = 0
-				if event.key == K_i:
-					thisplayer.y2 -= 1
-					if thisplayer.y2 < 0:
-						thisplayer.y2 = 15
-				if event.key == K_k:
-					thisplayer.y2 += 1
-					if thisplayer.y2 > 15:
-						thisplayer.y2 = 0
-				if event.key == K_j:
-					thisplayer.x2 -= 1
-					if thisplayer.x2 < 0:
-						thisplayer.x2 = 23
-				if event.key == K_l:
-					thisplayer.x2 += 1
-					if thisplayer.x2 > 23:
-						thisplayer.x2 = 0
+			for f in unlockedchars:
+				if thisplayer.x1 == f.cords[0] and thisplayer.y1 == f.cords[1]:
+					
+					dispchar = f
+					
+					thisplayer.battlers[0] = f.reBuild()
+					break
+					
+				else:
+					dispchar = defs.NO
+					thisplayer.battlers[0] = defs.NO
+
+			x += 1
 			
-	mouse_pos = pygame.mouse.get_pos()
-	y = 0
-	x = 0
-	for i in range(384):
+		y = 0
+		x = 0
+		for i in range(384):
+			
+			if x > 23:
+				x = 0
+				y += 1
+			
+			for f in unlockedchars:
+				if thisplayer.x2 == f.cords[0] and thisplayer.y2 == f.cords[1]:
+					
+					dispchar2 = f
+					
+					thisplayer.battlers[1] = f.reBuild()
+					break
 		
-		if x > 23:
-			x = 0
-			y += 1
-		
-		for f in unlockedchars:
-			if thisplayer.x1 == f.cords[0] and thisplayer.y1 == f.cords[1]:
-				
-				dispchar = f
-				
-				thisplayer.battlers[0] = f.reBuild()
-				break
-				
-			else:
-				dispchar = defs.NO
-				thisplayer.battlers[0] = defs.NO
+				else:
+					dispchar2 = defs.NO
+					thisplayer.battlers[1] = defs.NO
 
-		x += 1
-		
-	y = 0
-	x = 0
-	for i in range(384):
-		
-		if x > 23:
-			x = 0
-			y += 1
-		
-		for f in unlockedchars:
-			if thisplayer.x2 == f.cords[0] and thisplayer.y2 == f.cords[1]:
-				
-				dispchar2 = f
-				
-				thisplayer.battlers[1] = f.reBuild()
-				break
-	
-			else:
-				dispchar2 = defs.NO
-				thisplayer.battlers[1] = defs.NO
+			x += 1
+			
+		y = 0
+		x = 0
+		for i in range(384):
+			
+			if x > 23:
+				x = 0
+				y += 1
+			for f in unlockedchars:
+				if thisplayer.x3 == f.cords[0] and thisplayer.y3 == f.cords[1]:
+					
+					dispchar2 = f
+					
+					thisplayer.battlers[2] = f.reBuild()
+					break
+					
+				else:
+					dispchar2 = defs.NO
+					thisplayer.battlers[2] = defs.NO
 
-		x += 1
-		
-	y = 0
-	x = 0
-	for i in range(384):
-		
-		if x > 23:
-			x = 0
-			y += 1
-		for f in unlockedchars:
-			if thisplayer.x3 == f.cords[0] and thisplayer.y3 == f.cords[1]:
-				
-				dispchar2 = f
-				
-				thisplayer.battlers[2] = f.reBuild()
-				break
-				
-			else:
-				dispchar2 = defs.NO
-				thisplayer.battlers[2] = defs.NO
+			x += 1
 
-		x += 1
-
-	if hitDetect(mouse_pos, mouse_pos, [529, 434], [698, 498]):
-		if thisplayer == player2:
+		if hitDetect(mouse_pos, mouse_pos, [529, 434], [698, 498]):
+			if thisplayer == player2:
+				if mouse_down:
+					
+					theBattle = Battle(player1.battlers, player2.battlers, "", "", False)
+		
+					theBattle.battle()
+					
+					
+					
+					
 			if mouse_down:
-				
-				theBattle = Battle(player1.battlers, player2.battlers, "", "", False)
-	
-				theBattle.battle()
-				
-				
-		if mouse_down:
-			thisplayer = player2
-			mouse_down = False
-			time.sleep(1)
-	
-	
-	gScreen.fill(WHITE)
-	gScreen.blit(menuui, [0, 0])
-	x = 0
-	y = 0
-	
-	for i in range(384):
-		loaded = False
-		if x > 23:
-			x = 0
-			y += 1
+				if mult == False:
+					return player1.battlers
+				else:
+					thisplayer = player2
+					mouse_down = False
+					time.sleep(1)
 		
-		for f in unlockedchars:
-			if f.cords[0] == x and f.cords[1] == y:
-				gScreen.blit(f.img, [3 + 22*x,3 + 22*y])
-				loaded = True
 		
-		if not loaded:
-			gScreen.blit(lockedchar, [3 + 22*x,3 + 22*y])
+		gScreen.fill(WHITE)
+		gScreen.blit(menuui, [0, 0])
+		x = 0
+		y = 0
+		
+		for i in range(384):
 			loaded = False
-				
-		x += 1
+			if x > 23:
+				x = 0
+				y += 1
 			
-	gScreen.blit(selector1, [thisplayer.x1*22 + 1, thisplayer.y1*22 + 1])
-	gScreen.blit(selector2, [thisplayer.x2*22 + 1, thisplayer.y2*22 + 1])
-	gScreen.blit(selector3, [thisplayer.x3*22 + 1, thisplayer.y3*22 + 1])
-	
-	for i in range(len(thisplayer.battlers)):
-	
-		localbattler = thisplayer.battlers[i]
-	
-		gScreen.blit(dispchar2.image, [644, 370])
-	
-		gScreen.blit(localbattler.menuImg, [4, i * 47 + 359])
-		gScreen.blit(font.render(localbattler.name, True, BLACK), [56, i * 47 + 359])
+			for f in unlockedchars:
+				if f.cords[0] == x and f.cords[1] == y:
+					gScreen.blit(f.img, [3 + 22*x,3 + 22*y])
+					loaded = True
+			
+			if not loaded:
+				gScreen.blit(lockedchar, [3 + 22*x,3 + 22*y])
+				loaded = False
+					
+			x += 1
+				
+		gScreen.blit(selector1, [thisplayer.x1*22 + 1, thisplayer.y1*22 + 1])
+		gScreen.blit(selector2, [thisplayer.x2*22 + 1, thisplayer.y2*22 + 1])
+		gScreen.blit(selector3, [thisplayer.x3*22 + 1, thisplayer.y3*22 + 1])
 		
-		atypes = ""
-		for f in localbattler.types:
-			atypes += f.name + " "
-		gScreen.blit(font.render(atypes, True, BLACK), [56, i * 47 + 375])
-		gScreen.blit(font.render("Str: " + str(localbattler.str) + "   Con: " + str(localbattler.con) + "   Int: " + str(localbattler.int) + "   Mdf: " + str(localbattler.mag) + "   Agil: " + str(localbattler.agil) + "   Crit: " + str(localbattler.crit), True, BLACK), [56, i * 47 + 391])
-	
-	if mouse_down:
-		gScreen.blit(mouse_pointer2,mouse_pos)
-	else:
-		gScreen.blit(mouse_pointer,mouse_pos)
-	
-	testAnim.blit(gScreen, [0,0])
+		for i in range(len(thisplayer.battlers)):
+		
+			localbattler = thisplayer.battlers[i]
+		
+			gScreen.blit(dispchar2.image, [644, 370])
+		
+			gScreen.blit(localbattler.menuImg, [4, i * 47 + 359])
+			gScreen.blit(font.render(localbattler.name, True, BLACK), [56, i * 47 + 359])
+			
+			atypes = ""
+			for f in localbattler.types:
+				atypes += f.name + " "
+			gScreen.blit(font.render(atypes, True, BLACK), [56, i * 47 + 375])
+			gScreen.blit(font.render("Str: " + str(localbattler.str) + "   Con: " + str(localbattler.con) + "   Int: " + str(localbattler.int) + "   Mdf: " + str(localbattler.mag) + "   Agil: " + str(localbattler.agil) + "   Crit: " + str(localbattler.crit), True, BLACK), [56, i * 47 + 391])
+		
+		if mouse_down:
+			gScreen.blit(mouse_pointer2,mouse_pos)
+		else:
+			gScreen.blit(mouse_pointer,mouse_pos)
+		
+		testAnim.blit(gScreen, [0,0])
 
-	pygame.display.flip()	
-	clock.tick(60)
+		pygame.display.flip()	
+		clock.tick(60)
 	
 	
-	
+theWorld.run(False)
 #--------------------------------------------------------------------------------------------------------------------------------------------------		
 #--------------------------------------------------------------------------------------------------------------------------------------------------	
 #--------------------------------------------------------------------------------------------------------------------------------------------------	
