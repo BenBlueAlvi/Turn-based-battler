@@ -63,12 +63,11 @@ ghost = Type("Ghost", ["Physic", "Magic"], ["Fighting", "Normal"])
 magic = Type("Magic", ["Fighting", "Astral"], ["Chaos"])
 astral = Type("Astral", ["Chaos"], ["Ghost", "Tech"])
 
-
 physic = Type("Physic",["Normal", "astral"], ["Fighting"])
 tech = Type("Tech", ["Electric", "Acid", "Astral"], ["Earth", "Chaos"])
 unknown = Type("Unknown", ["none"], ["none"])
 chaos = Type("Chaos", ["Tech"], ["Physic"])
-
+minion = Type("Minion", ["none"], ["none"])
 
 				
 class Effect(object):
@@ -602,12 +601,12 @@ blink = Skill("Blink", physic, True, 5, 5, 1, 0,100, 0, [], ["mark"])
 creepyAtk = Skill("Creep Attack", physic, False, 5, 5, 1, 0,90, 0, [], ["creepyAtk"])
 inhale = Skill("Inhale", air, False, 0, 0, 3, 0,100, 0, [], ["defend", "heal", "trueHit"])
 observe = Skill("Observe", unknown, False, 0, 0, 3, 2, 100, 1, [], ["mark", "mark", "mark", "mark", "mark", "mark", "nodam", "trueHit"])
-exhale = Skill("Exhale", air, False, 5, 10, 3, 0,90, 0, [], ["mark", "hitAll"])
+exhale = Skill("Exhale", air, False, 5, 10, 3, 0, 85, 0, [], ["mark", "hitAll"])
 #------------------------------------------------------------------------
 sneeze = Skill("Sneeze", acid, False, 14, 6, 6, 0,90, 1, [2, poison], [""])
 
 eggon = Skill("Egg On", normal, True, 0, 0, 10, 10, 100, 2, [1, rebuff], ["trueHit", "nodam"])
-rebuke = Skill("Rebuke", normal, True, 0, 0, 10, 2, 100, 1, [], ["removeEff", "removeUff", "trueHit"])
+rebuke = Skill("Rebuke", normal, True, 0, 0, 10, 2, 100, 1, [], ["removeEff", "removeUff", "trueHit", "nodam"])
 
 blast = Skill("Blast", tech, False, 20, 20, 5, 8, 95, 2, [2, burn], [""])
 fission = Skill("Fission", fire, False, 20, 40, -1, 0, 90, 0, [2, burn], ["powerDown", "fullmana"])
@@ -632,8 +631,6 @@ antiPhysic = Skill("Anti Physic", unknown, False, 30, 20, 5, 15, 90, 2, [], [""]
 mindReading = Skill("Mind Reading", physic, False, 20, 20, 5, 2, 100, 1, [], ["mindReading"])
 neverThere = Skill("Never There", physic, False, 0,0, 20, 0, 100, 2, [], ["trueHit", "neverThere"])
 colorfulBullet = Skill("colorfulBullet", magic, False, 10,5, 1, 2, 90, 0, [], [""])
-
-
 
 
 class Char(object):
@@ -677,9 +674,11 @@ class Char(object):
 		self.basex = 0
 		self.ym = 1
 		self.guarder = "hi"
+		self.misc = 0
 		#AI stuff
 		self.savingfor = "none"
 		self.nextattack = ""
+		self.aimisc = 0
 		
 	def buildNew(self):
 		newchar = Char(self.name, self.types, self.hp, self.str, self.int, self.con, self.mag, self.agil, self.crit, self.dodgeChance, self.lvl, self.xp, self.skills, self.ability, pygame.transform.scale(pygame.image.load(self.image), [50, 50]), self.cords, pygame.transform.scale(pygame.image.load(self.image), [42, 42]))
@@ -692,7 +691,7 @@ class Char(object):
 		newchar.img = self.image
 		return newchar
 		
-NOT = Char("???", [unknown], 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, [], "", "Assets/battlers/locked.png", [-1,0], "")
+NOT = Char("???", [unknown], 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, [nothing], "", "Assets/battlers/locked.png", [-1,0], "")
 
 Mage = Char("Meigis", [normal, chaos], 500, 5, 15, 5, 15, 4, 0, 10, 1, 0, [basicAtk, fireBall, waterSpout, airBlast, earthShot, defend], "", "Assets/battlers/Mage.png", [5,0], "")
 
@@ -723,5 +722,9 @@ Creep = Char("Creepy Bald Guy", [physic, unknown], 750, 10, 10, 15, 50, 0, 0, 0,
 KnowingEye = Char("Knowing Eye", [physic, unknown, astral], 750, 0, 75, 0, 75, 5, 6, 5, 1, 0, [creepyAtk, observe, meditate, magicMute, forceShield, create], "Creepus", "Assets/battlers/wip.png", [4, 15], "")
 
 Protagonist = Char("Protagonist", [normal], 750, 15, 15, 20, 10, 2, 6, 5, 1, 0, [basicAtk, powerStrike, meditate, planAhead, eggon, takeBlow, mend, againstOdds], "Frenzy", "Assets/battlers/wip.png", [1,1], "")
+
+Worshipper = Char("Worshipper", [magic, chaos, minion], 300, 5, 15, 6, 10, 0, 0, 0, 1, 0, [basicAtk, fireBall, powerTransfer, lifeTransfer, meditate], "Frenzy", "Assets/battlers/wip.png", [2,0], "")
+miniCreep = Char("Creepy Bald Guy", [physic, unknown, minion], 300, 6, 6, 8, 10, 0, 0, 0, 1, 0, [creepyAtk, blink, stare, inhale, exhale, observe], "Creepus", "Assets/battlers/Creepy_Bald_Guy.png", [3, 14], "")
+
 
 NO = NOT.buildNew()	
