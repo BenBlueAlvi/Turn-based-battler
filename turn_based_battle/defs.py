@@ -74,7 +74,7 @@ class Effect(object):
 	def __init__(self, effect):
 		self.effect = effect
 		self.endeffect = 0
-		self.img = pygame.image.load("Assets/ui/" + effect + ".png")
+		self.img = pygame.image.load("Assets/ui/effects/" + effect + ".png")
 		self.canend = True
 		self.damage =0
 	def update(self, target):
