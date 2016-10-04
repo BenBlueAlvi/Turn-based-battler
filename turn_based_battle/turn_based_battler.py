@@ -120,7 +120,7 @@ turn = 0
 
 
 	
-unlockedchars = [defs.Koishi.buildNew(), defs.Lapis.buildNew(), defs.Flan.buildNew(), defs.Okuu.buildNew(), defs.Nue.buildNew(), defs.Scarlet.buildNew(), defs.Mage.buildNew(), defs.Mouther.buildNew(), defs.Nic.buildNew(), defs.Siv.buildNew(), defs.Coo33.buildNew(), defs.CoosomeJoe.buildNew(), defs.Epic.buildNew(), defs.Alpha.buildNew(), defs.Durric.buildNew(), defs.Creep.buildNew(), defs.Catsome.buildNew(), defs.KnowingEye.buildNew(), defs.Protagonist.buildNew()]			
+unlockedchars = [defs.Koishi.buildNew(), defs.Lapis.buildNew(), defs.Flan.buildNew(), defs.Okuu.buildNew(), defs.Nue.buildNew(), defs.Scarlet.buildNew(), defs.Mage.buildNew(), defs.Mouther.buildNew(), defs.Nic.buildNew(), defs.Siv.buildNew(), defs.Coo33.buildNew(), defs.CoosomeJoe.buildNew(), defs.Epic.buildNew(), defs.Alpha.buildNew(), defs.Durric.buildNew(), defs.Creep.buildNew(), defs.Catsome.buildNew(), defs.KnowingEye.buildNew(), defs.Protagonist.buildNew(), defs.Worshipper.buildNew(), defs.miniCreep.buildNew()]			
 
 #as off yet, not used
 
@@ -337,7 +337,7 @@ class Battle(object):
 					if aiSet == False:
 						for i in self.battlers2:
 							i = ai.runAI(i, self.battlers1, self.battlers2)
-							print i.name + ", saving for: "+ i.savingfor + ". Using: " + i.goskill.name
+							print i.name + " has "+str(i.power)+" power, saving for: "+ i.savingfor + ". Using: " + i.goskill.name + " on " + i.target[0].name
 							aiSet = True
 				#sorting
 				for i in range(len(agillist)):

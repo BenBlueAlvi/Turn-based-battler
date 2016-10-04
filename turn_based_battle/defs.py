@@ -573,7 +573,7 @@ setFire = Skill("Set Fire", fire, False, 5, 20, -1, 0,90, 3, [3,burn], ["hitAll"
 forceShield = Skill("Force Shield", magic, False, 0, 0, -2, 0,100, 2, [], ["shield", "nodam", "trueHit"])
 summon = Skill("Summon", magic, False, 0, 0, -4, 0,100, 4, [], ["trueHit"])
 chaosBeam = Skill("Chaos Beam", chaos, False, 20, 20, -10, 0,94, 0, [], ["fullmana"])
-meditate = Skill("Meditate", magic, False, 0, 0, 0, 0,100, -1, [], ["nodam", "trueHit", "meditate"])
+meditate = Skill("Meditate", magic, False, 0, 0, 0, 0,100, 0, [], ["nodam", "trueHit", "meditate"])
 lifePact = Skill("Life Pact", blood, False, 0, 0, -2, 0,100, 4, [], ["lifepact", "trueHit"])
 shroud = Skill("Shroud", dark, False, 0, 0, 10, 0,100, 2, [], ["shroud", "trueHit"])
 #-------------------------------------------------------------------

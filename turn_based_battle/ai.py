@@ -20,7 +20,7 @@ def runAI(player, battlersL, battlersR):
 	#Least to greatest Constitution of opponents
 	for i in range(len(consort)):
 		for j in range(len(consort)-1-i):
-			if consort[j].con < consort[j+1].con:
+			if consort[j].con > consort[j+1].con:
 				consort[j], consort[j+1] = consort[j+1], consort[j]
 	#Least to greatest Magic defence of opponents
 	for i in range(len(mgdsort)):
@@ -53,37 +53,41 @@ def runAI(player, battlersL, battlersR):
 	'''
 
         if player.name == "Worshipper":
-                #set up target
-                if player.aimisc == 0 or player.misc != True:
-                        #player.misc is if the worshipper is supporting
-                        player.misc = False
-                        for i in battlersR:
-                                if not defs.minion in i.types:
-                                        player.misc = True
-                                        try:
-                                                if player.aimisc.int + player.aimisc.str < i.int + i.str:
-                                                        player.aimisc = i
-                                        except:
-                                                player.aimisc = i
-                        if player.aimisc == 0:
-                                player.aimisc = player
-                if player.aimisc.hp <= 0:
-                        player.misc = False
-                #do the stuff
-                if player.misc:
-                        player.goskill, player.target = player.skills[4], [player.aimisc]
-                        if player.aimisc.hp <= 200:
-                                player.savingfor = "lifetransfer"
-                        else:
-                                player.savingfor = "powertransfer"
-                        if player.power >= 2 and player.savingfor == "lifetransfer":
-                                pass
+            #set up target
+            if player.aimisc == 0 or player.misc != True:
+                #player.misc is if the worshipper is supporting
+                player.misc = False
+                for i in battlersR:
+                    if not defs.minion in i.types:
+                        player.misc = True
+                        try:
+                            if player.aimisc.int + player.aimisc.str < i.int + i.str:
+                                player.aimisc = i
+                        except:
+                            player.aimisc = i
+                        print "now worshipping: "+i.name
+                if player.aimisc == 0:
+                    player.aimisc = player
+            if player.aimisc.hp <= 0:
+                player.misc = False
+            #do the stuff
+            if player.misc:
+                player.goskill, player.target = player.skills[4], [player.aimisc]
+                if player.aimisc.hp <= 200:
+                    player.savingfor = "lifetransfer"
                 else:
-                        player.target = [battlersL[random.randint(0, len(battlersL))]]
-                        if player.power >= 2:
-                                player.goskill = player.skills[1]
-                        else:
-                                player.goskill = player.skills[0]
+                    player.savingfor = "powertransfer"
+                if player.power >= 2 and player.savingfor == "lifetransfer":
+                    player.goskill = player.skills[3]
+                if player.power >= 5 and player.savingfor == "powertransfer":
+                	player.goskill = player.skills[2]
+
+            else:
+                player.target = [battlersL[random.randint(0, len(battlersL))]]
+                if player.power >= 2:
+                    player.goskill = player.skills[1]
+                else:
+                    player.goskill = player.skills[0]
                         
         if player.name == "Creepy Bald Guy":
                 support = False
@@ -198,7 +202,7 @@ def runAI(player, battlersL, battlersR):
 		#if not enough power to use
 		else:
 			player.goskill = player.skills[rand]
-			if player.crit >= 8:
+			if player.crit >= 15:
 				player.goskill, player.target = player.skills[1], [dmgtaken[len(dmgtaken)-1]]
 			else:
 				player.target = [consort[0]]
