@@ -158,6 +158,7 @@ class Battle(object):
 		self.arena = arena
 		self.dialog = dialog
 		self.mult = mult
+		
 	def battle(self):
 		
 		thebattler = 0
@@ -675,8 +676,9 @@ def dispSkills(player):
 
 
 		
-
+aitest = False
 def CharSelect(mult):
+	global aitest
 	done = False
 	dispchar2 = defs.NO		
 	
@@ -814,7 +816,8 @@ def CharSelect(mult):
 		if hitDetect(mouse_pos, mouse_pos, [529, 434], [698, 498]):
 			if thisplayer == player2:
 				if mouse_down:
-					
+					if aitest:
+						mult = False
 					theBattle = Battle(player1.battlers, player2.battlers, "", "", mult)
 		
 					theBattle.battle()
@@ -823,7 +826,7 @@ def CharSelect(mult):
 					
 					
 			if mouse_down:
-				if mult == False:
+				if mult == False and aitest == False:
 					return player1.battlers
 				else:
 					thisplayer = player2
@@ -905,28 +908,46 @@ done = False
 while not done:
 
 	for event in pygame.event.get(): 
-	  if event.type == pygame.QUIT: 
-		 done = True 
-
-
-	screen.fill(WHITE)
-	gScreen.draw.rect(gScreen, RED, [10,50,16,16])
-	gScreen.blit(font.render("Multiplayer",True,BLACK), [10,50])
-	gScreen.draw.rect(gScreen, GREEN, [42,50,16,16])
-	gScreen.blit(font.render("Story",True,BLACK), [10,50])
+		if event.type == pygame.QUIT: 
+			done = True 
+		elif event.type == pygame.MOUSEBUTTONDOWN:
+			mouse_down = True
+				
+		elif event.type == pygame.MOUSEBUTTONUP:
+			mouse_down = False
+	mouse_pos = pygame.mouse.get_pos()
+	gScreen.fill(WHITE)
+	pygame.draw.rect(gScreen, RED, [10,50,16,16])
+	gScreen.blit(font.render("Multiplayer",True,BLACK), [10,65])
+	pygame.draw.rect(gScreen, GREEN, [60,50,16,16])
+	gScreen.blit(font.render("Story",True,BLACK), [60,35])
+	pygame.draw.rect(gScreen, BLUE, [110,50,16,16])
+	gScreen.blit(font.render("Ai testing",True,BLACK), [110,35])
 	if hitDetect(mouse_pos, mouse_pos, [10,50], [26, 66]):
 		if mouse_down:
 			mult = True
 			CharSelect(mult)
 			mouse_down = False
-	if hitDetect(mouse_pos, mouse_pos, [42,50], [58, 66]):
+	if hitDetect(mouse_pos, mouse_pos, [60,50], [60 + 16, 66]):
 		if mouse_down:
 			mult = False
-			World.run(mult)
+			theWorld.run(mult)
 			mouse_down = False
+			
+	if hitDetect(mouse_pos, mouse_pos, [110,50], [110 +16, 66]):
+		if mouse_down:
+			mult = True
+			aitest = True
+			CharSelect(mult)
+			mouse_down = False
+			
 		
 
-
+	
+	if mouse_down:
+			gScreen.blit(mouse_pointer2,mouse_pos)
+	else:
+		gScreen.blit(mouse_pointer,mouse_pos)
 
 	pygame.display.flip()
 
