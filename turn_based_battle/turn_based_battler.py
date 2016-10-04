@@ -168,6 +168,7 @@ class Battle(object):
 		mincrement = 0
 		thesebattlers = []
 		battling = True
+		talking = True
 		ready = False
 		mouse_down = False
 		defs.printing = False
@@ -190,6 +191,9 @@ class Battle(object):
 			i.basex = x * 550 + 50
 			i.basey = y * 100 + 50
 			y += 1
+		
+		
+			
 		
 		
 		while battling:
@@ -494,6 +498,11 @@ class Battle(object):
 			
 			if thebattler == len(thesebattlers):
 				pygame.draw.rect(gScreen, BLACK, [0,350,700,150])
+			if talking:
+				pygame.draw.rect(gScreen, BLACK, [0,350,700,150])
+				for i in self.dialog:
+					printc(i, 5, thesebattlers)
+				talking = False
 		
 			# --- Go ahead and update the screen with what we've drawn.
 			pygame.display.flip()
@@ -502,7 +511,7 @@ class Battle(object):
 			clock.tick(60)
 
 
-CatsomeFight = Battle([], [defs.NO, defs.Catsome.buildNew(), defs.NO], "", "", False)
+CatsomeFight = Battle([], [defs.NO, defs.Catsome.buildNew(), defs.NO], "", [], False)
 			
 class Stage(object):
 	def __init__(self, name, playerbattlers, battles, cords):
@@ -806,7 +815,7 @@ def CharSelect(mult):
 			if thisplayer == player2:
 				if mouse_down:
 					
-					theBattle = Battle(player1.battlers, player2.battlers, "", "", False)
+					theBattle = Battle(player1.battlers, player2.battlers, "", "", mult)
 		
 					theBattle.battle()
 					
@@ -874,7 +883,16 @@ def CharSelect(mult):
 		clock.tick(60)
 	
 	
-theWorld.run(False)
+
+
+
+
+
+
+
+
+
+
 #--------------------------------------------------------------------------------------------------------------------------------------------------		
 #--------------------------------------------------------------------------------------------------------------------------------------------------	
 #--------------------------------------------------------------------------------------------------------------------------------------------------	
@@ -883,6 +901,40 @@ theWorld.run(False)
 #--------------------------------------------------------------------------------------------------------------------------------------------------	
 #--------------------------------------------------------------------------------------------------------------------------------------------------	
 #--------------------------------------------------------------------------------------------------------------------------------------------------	
+done = False
+while not done:
+
+	for event in pygame.event.get(): 
+	  if event.type == pygame.QUIT: 
+		 done = True 
+
+
+	screen.fill(WHITE)
+	gScreen.draw.rect(gScreen, RED, [10,50,16,16])
+	gScreen.blit(font.render("Multiplayer",True,BLACK), [10,50])
+	gScreen.draw.rect(gScreen, GREEN, [42,50,16,16])
+	gScreen.blit(font.render("Story",True,BLACK), [10,50])
+	if hitDetect(mouse_pos, mouse_pos, [10,50], [26, 66]):
+		if mouse_down:
+			mult = True
+			CharSelect(mult)
+			mouse_down = False
+	if hitDetect(mouse_pos, mouse_pos, [42,50], [58, 66]):
+		if mouse_down:
+			mult = False
+			World.run(mult)
+			mouse_down = False
+		
+
+
+
+	pygame.display.flip()
+
+
+	clock.tick(60)
+
+
+
 	
 
 		

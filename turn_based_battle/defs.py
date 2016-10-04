@@ -35,7 +35,21 @@ def printb(text):
 	if not printing:
 		disptext = newtext
 		timer = 90
-				
+
+def printc(text, battler, thesebattlers):
+	global disptextc
+	global printingc
+	global logc
+	global timerc
+	
+	newtextc = font.render(text,True,BLACK)
+	logc.append(newtextc)
+
+	
+	disptextc = newtextc
+	timerc = 90
+	for i in range(timerc):
+		gScreen.blit(disptextc, [thesebattlers[battler].x, thesebattlers[battler].y + 10])
 
 class Type(object):
 	def __init__(self, name, weks, strs):
