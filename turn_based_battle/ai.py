@@ -27,12 +27,12 @@ def runAI(player, battlersL, battlersR):
 		for j in range(len(mgdsort)-1-i):
 			if mgdsort[j].mag < mgdsort[j+1].mag:
 				mgdsort[j], mgdsort[j+1] = mgdsort[j+1], mgdsort[j]
-        #Greatest to Least potential damage of enemies
+		#Greatest to Least potential damage of enemies
 	for i in range(len(potdam)):
 		for j in range(len(potdam)-1-i):
 			if potdam[j].int + potdam[j].str > potdam[j+1].int + potdam[j+1].str:
 				potdam[j], potdam[j+1] = potdam[j+1], potdam[j]
-        #allies
+		#allies
 	hptotal = []
 	for i in battlersR:
 		hptotal.append(i)
@@ -58,63 +58,63 @@ def runAI(player, battlersL, battlersR):
 	if not, use basic attack
 	'''
 
-        if player.name == "Worshipper":
-            #set up target
-            if player.aimisc == 0 or player.misc != True:
-                #player.misc is if the worshipper is supporting
-                player.misc = False
-                for i in battlersR:
-                    if not defs.minion in i.types:
-                        player.misc = True
-                        try:
-                            if player.aimisc.int + player.aimisc.str < i.int + i.str:
-                                player.aimisc = i
-                        except:
-                            player.aimisc = i
-                        print "now worshipping: "+i.name
-                if player.aimisc == 0:
-                    player.aimisc = player
-            if player.aimisc.hp <= 0:
-                player.misc = False
-            #do the stuff
-            if player.misc:
-                player.goskill, player.target = player.skills[4], [player.aimisc]
-                if player.aimisc.hp <= 200:
-                    player.savingfor = "lifetransfer"
-                else:
-                    player.savingfor = "powertransfer"
-                if player.power >= 2 and player.savingfor == "lifetransfer":
-                    player.goskill = player.skills[3]
-                if player.power >= 5 and player.savingfor == "powertransfer":
-                	player.goskill = player.skills[2]
+	if player.name == "Worshipper":
+		#set up target
+		if player.aimisc == 0 or player.misc != True:
+			#player.misc is if the worshipper is supporting
+			player.misc = False
+			for i in battlersR:
+				if not defs.minion in i.types:
+					player.misc = True
+					try:
+						if player.aimisc.int + player.aimisc.str < i.int + i.str:
+							player.aimisc = i
+					except:
+						player.aimisc = i
+					print "now worshipping: "+i.name
+			if player.aimisc == 0:
+				player.aimisc = player
+		if player.aimisc.hp <= 0:
+			player.misc = False
+		#do the stuff
+		if player.misc:
+			player.goskill, player.target = player.skills[4], [player.aimisc]
+			if player.aimisc.hp <= 200:
+				player.savingfor = "lifetransfer"
+			else:
+				player.savingfor = "powertransfer"
+			if player.power >= 2 and player.savingfor == "lifetransfer":
+				player.goskill = player.skills[3]
+			if player.power >= 5 and player.savingfor == "powertransfer":
+				player.goskill = player.skills[2]
 
-            else:
-                player.target = [battlersL[random.randint(0, len(battlersL))]]
-                if player.power >= 2:
-                    player.goskill = player.skills[1]
-                else:
-                    player.goskill = player.skills[0]
-                        
-        if player.name == "Creepy Bald Guy":
-                support = False
-                for i in battlersR:
-                        if i.name == "Knowing Eye":
-                                support = True
-                if support:
-                        player.goskill = player.skills[5]
-                        player.target = [potdam[0]]
-                else:
-                        player.target = [battlersL[random.randint(0, len(battlersL))]]
-                        if player.target.mag > player.target.con:
-                                player.goskill = player.skills[1]
-                        else:
-                                player.goskill = player.skills[2]
-                                if player.power >= 5:
-                                        player.goskill = player.skills[2]
-                        if rand == 1:
-                                player.goskill = player.skills[4]
-                        if player.hp < 100 and rand == 0:
-                                player.goskill = player.skills[3]
+		else:
+			player.target = [battlersL[random.randint(0, len(battlersL))]]
+			if player.power >= 2:
+				player.goskill = player.skills[1]
+			else:
+				player.goskill = player.skills[0]
+						
+	if player.name == "Creepy Bald Guy":
+		support = False
+		for i in battlersR:
+			if i.name == "Knowing Eye":
+				support = True
+		if support:
+			player.goskill = player.skills[5]
+			player.target = [potdam[0]]
+		else:
+			player.target = [battlersL[random.randint(0, len(battlersL))]]
+			if player.target.mag > player.target.con:
+				player.goskill = player.skills[1]
+			else:
+				player.goskill = player.skills[2]
+				if player.power >= 5:
+					player.goskill = player.skills[2]
+			if rand == 1:
+				player.goskill = player.skills[4]
+			if player.hp < 100 and rand == 0:
+				player.goskill = player.skills[3]
 	
 	if player.name == "Catsome":
 		allies, prefferedtarget = len(allies), "self"
@@ -169,7 +169,7 @@ def runAI(player, battlersL, battlersR):
 			player.goskill = player.skills[4]
 			player.savingfor = "none"
 			if prefferedtarget != "self":
-                                prefferedtarget = "ally"
+								prefferedtarget = "ally"
 		if player.savingfor == "rebuke" and player.power >= 1:
 			player.goskill = player.skills[3]
 			player.savingfor = "none"
