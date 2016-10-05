@@ -41,7 +41,13 @@ def runAI(player, battlersL, battlersR):
 		for j in range(len(hptotal)-1-i):
 			if hptotal[j].hp < hptotal[j+1].hp:
 				hptotal[j], hptotal[j+1] = hptotal[j+1], hptotal[j]
-	
+
+
+
+	allies = battlersR
+	for i in allies:
+		if i == defs.NO:
+			allies.remove(i)
 	rand = random.randint(0, 1)
 
 	#Suggested order:
@@ -111,7 +117,7 @@ def runAI(player, battlersL, battlersR):
                                 player.goskill = player.skills[3]
 	
 	if player.name == "Catsome":
-		allies, prefferedtarget = len(battlersR), "self"
+		allies, prefferedtarget = len(allies), "self"
 
 		#solo
 		if allies == 1 and player.savingfor == "none":
