@@ -219,7 +219,7 @@ class Battle(object):
 			mouse_pos = pygame.mouse.get_pos()
 		
 			#health-=0.01
-			print thisbattler.name + "'s turn"
+			
 			if not thisbattler.updated:
 			
 				for i in thisbattler.effects:
@@ -247,7 +247,7 @@ class Battle(object):
 				thisbattler.y = thisbattler.basey
 				thisbattler.updated = True
 				
-			if thisbattler.hp > 0:
+			if thisbattler.hp > 0 and thebattler < limit:
 				for i in thisbattler.skills:
 
 					if x > 1:
@@ -363,35 +363,8 @@ class Battle(object):
 				if self.mult == False:
 					if aiSet == False:
 						for i in self.battlers2:
-							if not i.updated:
-							
-								for l in i.effects:
-									for k in thesebattlers:
-										if k.ability == "watch them burn" and l == defs.burn:
-										
-											l.canend = False
-											l.damage *= 2
-									l.update(thisbattler)
-								if i.ability == "Unidentifiable":
-									i.marks = 0
-								if i.ability == "Radiation":
-									for l in thesebattlers:
-										l.hp -= 25
-									defs.printb(i.name + "'s radiation hurt everyone!")
-									
-
-								if i.ability == "Regen":
-									i.hp += 25
-									defs.printb(i.name + " is healing themself!")
-								
-									
-								i.power += 1
-								i.x = i.basex
-								i.y = i.basey
-								i.updated = True
-						
-							
 							i = ai.runAI(i, self.battlers1, self.battlers2)
+							
 							print i.name + " has "+str(i.power)+" power, saving for: "+ i.savingfor + ". Using: " + i.goskill.name + " on " + i.target[0].name
 							aiSet = True
 				#sorting
@@ -400,6 +373,10 @@ class Battle(object):
 						
 						if agillist[j].agil + agillist[j].goskill.spd  < agillist[j+1].agil + agillist[j+1].goskill.spd:
 							agillist[j], agillist[j+1] = agillist[j+1], agillist[j] 
+				
+				if agillist[increment].goskill == defs.nothing:
+					agillist[increment] = ai.runAI(agillist[increment], self.battlers1, self.battlers2)
+					
 				
 				if len(agillist[increment].target) > 1:
 					if not defs.printing:
@@ -421,11 +398,14 @@ class Battle(object):
 							increment += 1
 					else:
 						increment += 1
+						
 					if increment > len(thesebattlers) - 1:
 						increment = 0
 						thebattler = 0
 						aiSet = False
 						for i in thesebattlers:
+							i.updated = False
+						for i in self.battlers2:
 							i.updated = False
 
 
@@ -462,7 +442,7 @@ class Battle(object):
 						if not i == thesebattlers[thebattler]: #and not thebattler >= len(thesebattlers):
 							gScreen.blit(i.image,[x * 550 + 50, y * 100 + 50])
 					except:
-						print i.image
+						
 						gScreen.blit(i.image,[x * 550 + 50, y * 100 + 50])
 					
 					pygame.draw.rect(gScreen, RED, [x* 550 + 50, y* 100 + 25,int(i.hp) / 20,5])
@@ -549,6 +529,7 @@ class Stage(object):
 		self.battles = battles
 		self.cords = cords
 		self.completed = False
+		self.locked = True
 	def run(self):
 		for i in self.battles:
 			i.battlers1 = self.playerbattlers
@@ -558,6 +539,7 @@ class Stage(object):
 		
 
 st1 = Stage("", "", [CatsomeFight], [317,48])
+st1.locked = False
 st2 = Stage("", "", [], [280, 221])
 st3 = Stage("", "", [], [393,292])
 st4 = Stage("", "", [], [540,313])
@@ -621,9 +603,11 @@ class World(object):
 				pygame.draw.rect(gScreen, RED, [i.cords[0], i.cords[1], 16,16])
 				if hitDetect(mouse_pos, mouse_pos, [i.cords[0] + self.cords[0], i.cords[1]+ self.cords[1]], [i.cords[0] + 16, i.cords[1] + 16]):
 					if mouse_down:
-						i.playerbattlers = CharSelect(mult)
-						i.run()
-						i.completed = True
+						if i.locked == False and i.completed == False:
+							i.playerbattlers = CharSelect(mult)
+							i.run()
+							i.completed = True
+							
 					
 					
 			

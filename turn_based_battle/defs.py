@@ -202,7 +202,9 @@ class Effect(object):
 			self.endeffect += 1
 			
 		if self.effect == "meditate":
-			
+			print self
+			for i in target.effects:
+				print i
 			printb(target.name + " is meditating!")
 			target.power += 3
 			target.con -= 10
@@ -498,15 +500,15 @@ class Skill(object):
 					if critical:
 						target.power += 1
 				if i == "meditate":
-					user.effects.append(meditatef)
+					user.effects.append(meditatef.buildNew())
 				if i == "dodgeUp":
-					user.effects.append(dodgeUp)
+					user.effects.append(dodgeUp.buildNew())
 				if i == "otherStage":
-					user.effects.append(otherStagef)
+					user.effects.append(otherStagef.buildNew())
 				if i == "earthStage":
-					user.effects.append(earthStagef)
+					user.effects.append(earthStagef.buildNew())
 				if i == "moonStage":
-					user.effects.append(moonStagef)
+					user.effects.append(moonStagef.buildNew())
 				if i == "againstOdds":
 					if user in player1.battlers:
 						for b in player2.battlers:
@@ -523,14 +525,14 @@ class Skill(object):
 					damage = math.floor(damage) - target.con
 				if i == "takeBlow":
 					target.guarder = user
-					target.effects.append(guarded)
+					target.effects.append(guarded.buildNew())
 				if i == "mindReading":
 					user.dodgeChance += 5
 					if critical:
 						user.dodgeChance += 1
 
 				if i == "neverThere":
-					user.effects.append(neverTheref)
+					user.effects.append(neverTheref.buildNew())
 
 
 			if user.ability == "Frenzy" and user.hp <= user.maxhp/5:
@@ -632,11 +634,11 @@ powerTransfer = Skill("Power Transfer", tech, False, 0, 0, 10, 0, 100, 0, [], ["
 earthStage = Skill("Earth Stage", astral, False, 10, 15, 10, 0, 100, 0, [], ["trueHit","hitAll","earthStage"])
 moonStage = Skill("Moon Stage", astral, False, 10, 15, 10, 0, 100, 0, [], ["trueHit","hitAll","moonStage"])
 otherStage = Skill("Otherworld Stage", astral, False, 10, 15, 10, 0, 100, 0, [], ["trueHit","hitAll","otherStage"])
-voidSnap = Skill("Void Snap", astral, False, 20, 10, 4, 5, 97, 1, [2,bleed], [""])
+voidSnap = Skill("Void Snap", astral, False, 30, 10, 4, 5, 97, 1, [2,bleed], [""])
 chains = Skill("Chains", normal, True, 30, 2, 1, 5, 90, 1, [], [""])
-earthenVortex = Skill("Earthen Vortex", earth, False, 30, 40, 5, 6, 90, 2, [], [""])
-astralVortex = Skill("Astral Vortex", astral, False, 50, 40, 5, 6, 90, 3, [], [""])
-chaosVortex = Skill("Chaos Vortex", chaos, False, 20, 60, 5, 6, 90, 2, [], [""])
+earthenVortex = Skill("Earthen Vortex", earth, False, 30, 40, 5, 6, 90, 2, [], ["hitAll"])
+astralVortex = Skill("Astral Vortex", astral, False, 50, 40, 5, 6, 90, 3, [], ["hitAll"])
+chaosVortex = Skill("Chaos Vortex", chaos, False, 20, 60, 5, 6, 90, 2, [], ["hitAll"])
 
 againstOdds = Skill("Against The Odds", light, True, 0, 10, 3, 13, 90, 7, [], ["againstOdds"])
 takeBlow = Skill("Take The Blow", fighting, True, 0, 0, 12, 10, 100, 1, [], ["takeBlow", "trueHit", "nodam"])
@@ -645,6 +647,7 @@ antiPhysic = Skill("Anti Physic", unknown, False, 30, 20, 5, 15, 90, 2, [], [""]
 mindReading = Skill("Mind Reading", physic, False, 20, 20, 5, 2, 100, 1, [], ["mindReading"])
 neverThere = Skill("Never There", physic, False, 0,0, 20, 0, 100, 2, [], ["trueHit", "neverThere"])
 colorfulBullet = Skill("colorfulBullet", magic, False, 10,5, 1, 2, 90, 0, [], [""])
+never = Skill("And Never Come Back", unknown, False, 200, 50, 20, 5, 100, 7, [], ["trueHit"])
 
 
 class Char(object):
@@ -677,7 +680,7 @@ class Char(object):
 		self.basedodgeChance = dodgeChance
 		self.ability = ability
 		self.marks = 0
-		self.power = 0
+		self.power = 1
 		self.menuImg = menuImg
 		self.goskill = nothing
 		self.target = ["bob"]
@@ -721,7 +724,7 @@ Nue = Char("Nue", [astral, dark], 300, 25, 40, 10, 50, 4, 15, 10, 1, 0, [basicAt
 Okuu = Char("Okuu", [fire, tech], 500, 15, 50, 30, 10, 1, 5, 5, 1, 0, [bludgeon, blast, fusion, fission, nuke, forceShield, recover], "Radiation", "Assets/battlers/reiji.png", [3,7], "")
 Lapis = Char("Lapis", [astral], 400, 20, 20, 10, 10, 4, 5, 20, 1, 0, [chains, voidSnap, earthStage, moonStage, otherStage, earthenVortex, chaosVortex, astralVortex], "3 worlds", "Assets/battlers/lapis.png", [6,7], "")
 
-Koishi = Char("Koishi", [unknown], 400, 10, 55, 20, 75, 10, 6, 30, 1, 0, [colorfulBullet,mindReading, antiPhysic, neverThere, erase, mend, voidSnap], "", "Assets/battlers/komeiji.png", [7,7], "")
+Koishi = Char("Koishi", [unknown], 400, 10, 55, 20, 75, 10, 6, 30, 1, 0, [colorfulBullet,mindReading, antiPhysic, neverThere, never, recover, voidSnap], "", "Assets/battlers/komeiji.png", [7,7], "")
 
 Alpha = Char("Alpha", [normal, earth, fighting], 500, 50, -50, 30, 5, 5, 0, 10, 1, 0, [basicAtk, slash, cleave, bladeFlash, revenge, mend, defend], "", "Assets/battlers/alpha.png", [8,4], "")
 Siv = Char("Siv", [normal, earth, dark, physic, chaos, magic], 250, 0, 50, 0, 38, 5, 7, 10, 1, 0, [basicAtk, chaosBolt, setFire, forceShield, chaosBeam, meditate, lifePact, shroud], "", "Assets/battlers/siv.png", [4,2], "")
