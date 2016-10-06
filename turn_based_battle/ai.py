@@ -57,6 +57,37 @@ def runAI(player, battlersL, battlersR):
 	see if you are there
 	if not, use basic attack
 	'''
+	if player.name == "Lapis":
+		if player.savingfor == "none" and player.hp >= player.maxhp - player.max / 3 and rand == 0:
+			player.goskill, player.target = player.skills[4], [battlersL] 
+			player.savingfor = "astral vortex"
+		if player.savingfor == "none" and player.hp >= player.maxhp - player.max / 3 and rand == 1:
+			player.goskill, player.target = player.skills[3], [battlersL] 
+			player.savingfor = "chaos vortex"
+		if player.savingfor == "none" and player.hp >= player.maxhp - (player.max / 3) * 2:
+			player.goskill, player.target = player.skills[2], [battlersL]
+			player.savingfor = "earth vortex"
+		if player.savingfor == "astral vortex":
+			if player.power >= player.skills[7].cost:
+				player.goskill, player.target = player.skills[7], [battlersL]
+			else:
+				player.goskill, player.target = player.skills[0], [potdam[0]]
+		if player.savingfor == "chaos vortex":
+			if player.power >= player.skills[5].cost:
+				player.goskill, player.target = player.skills[5], [battlersL]
+			else:
+				player.goskill, player.target = player.skills[0], [potdam[0]]
+		if player.savingfor == "earthen vortex" and player.hp > player.max / 4:
+			if player.power >= player.skills[6].cost:
+				player.goskill, player.target = player.skills[6], [battlersL]
+			else:
+				player.goskill, player.target = player.skills[0], [potdam[0]]
+		else:
+			player.goskill, player.target = player.skills[1], [potdam[0]]
+				
+		
+	
+	
 
 	if player.name == "Worshipper":
 		#set up target
@@ -89,7 +120,7 @@ def runAI(player, battlersL, battlersR):
 				player.goskill = player.skills[2]
 
 		else:
-			player.target = [battlersL[random.randint(0, len(battlersL))]]
+			player.target = [battlersL[random.randint(0, len(battlersL)-1)]]
 			if player.power >= 2:
 				player.goskill = player.skills[1]
 			else:
@@ -105,7 +136,7 @@ def runAI(player, battlersL, battlersR):
 			player.target = [potdam[0]]
 		else:
 			player.target = [battlersL[random.randint(0, len(battlersL))]]
-			if player.target.mag > player.target.con:
+			if player.target[0].mag > player.target[0].con:
 				player.goskill = player.skills[1]
 			else:
 				player.goskill = player.skills[2]
