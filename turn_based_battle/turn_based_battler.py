@@ -219,6 +219,7 @@ class Battle(object):
 			mouse_pos = pygame.mouse.get_pos()
 		
 			#health-=0.01
+			print thisbattler.name + "'s turn"
 			if not thisbattler.updated:
 			
 				for i in thisbattler.effects:
@@ -362,6 +363,34 @@ class Battle(object):
 				if self.mult == False:
 					if aiSet == False:
 						for i in self.battlers2:
+							if not i.updated:
+							
+								for l in i.effects:
+									for k in thesebattlers:
+										if k.ability == "watch them burn" and l == defs.burn:
+										
+											l.canend = False
+											l.damage *= 2
+									l.update(thisbattler)
+								if i.ability == "Unidentifiable":
+									i.marks = 0
+								if i.ability == "Radiation":
+									for l in thesebattlers:
+										l.hp -= 25
+									defs.printb(i.name + "'s radiation hurt everyone!")
+									
+
+								if i.ability == "Regen":
+									i.hp += 25
+									defs.printb(i.name + " is healing themself!")
+								
+									
+								i.power += 1
+								i.x = i.basex
+								i.y = i.basey
+								i.updated = True
+						
+							
 							i = ai.runAI(i, self.battlers1, self.battlers2)
 							print i.name + " has "+str(i.power)+" power, saving for: "+ i.savingfor + ". Using: " + i.goskill.name + " on " + i.target[0].name
 							aiSet = True
