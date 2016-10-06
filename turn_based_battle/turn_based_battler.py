@@ -159,6 +159,7 @@ class Battle(object):
 		self.arena = arena
 		self.dialog = dialog
 		self.mult = mult
+		
 	def battle(self):
 		
 		thebattler = 0
@@ -169,6 +170,7 @@ class Battle(object):
 		mincrement = 0
 		thesebattlers = []
 		battling = True
+		talking = True
 		ready = False
 		mouse_down = False
 		defs.printing = False
@@ -193,6 +195,9 @@ class Battle(object):
 			y += 1
 		
 		
+			
+		
+		
 		while battling:
 
 			gScreen.fill(WHITE)
@@ -215,6 +220,7 @@ class Battle(object):
 			mouse_pos = pygame.mouse.get_pos()
 		
 			#health-=0.01
+			print thisbattler.name + "'s turn"
 			if not thisbattler.updated:
 			
 				for i in thisbattler.effects:
@@ -358,6 +364,34 @@ class Battle(object):
 				if self.mult == False:
 					if aiSet == False:
 						for i in self.battlers2:
+							if not i.updated:
+							
+								for l in i.effects:
+									for k in thesebattlers:
+										if k.ability == "watch them burn" and l == defs.burn:
+										
+											l.canend = False
+											l.damage *= 2
+									l.update(thisbattler)
+								if i.ability == "Unidentifiable":
+									i.marks = 0
+								if i.ability == "Radiation":
+									for l in thesebattlers:
+										l.hp -= 25
+									defs.printb(i.name + "'s radiation hurt everyone!")
+									
+
+								if i.ability == "Regen":
+									i.hp += 25
+									defs.printb(i.name + " is healing themself!")
+								
+									
+								i.power += 1
+								i.x = i.basex
+								i.y = i.basey
+								i.updated = True
+						
+							
 							i = ai.runAI(i, self.battlers1, self.battlers2)
 							print i.name + " has "+str(i.power)+" power, saving for: "+ i.savingfor + ". Using: " + i.goskill.name + " on " + i.target[0].name
 							aiSet = True
@@ -495,6 +529,11 @@ class Battle(object):
 			
 			if thebattler == len(thesebattlers):
 				pygame.draw.rect(gScreen, BLACK, [0,350,700,150])
+			if talking:
+				pygame.draw.rect(gScreen, BLACK, [0,350,700,150])
+				for i in self.dialog:
+					printc(i, 5, thesebattlers)
+				talking = False
 		
 			# --- Go ahead and update the screen with what we've drawn.
 			pygame.display.flip()
@@ -517,6 +556,10 @@ Coo33Fight = Battle([], [defs.NO, defs.Catsome.buildNew(), defs.CoosomeJoe.build
 
 Coo33Fight = Battle([], [defs.CoosomeJoe.buildNew(), defs.Coo33.buildNew(), defs.Catsome.buildNew()], "", CooDial, False)
 
+<<<<<<< HEAD
+=======
+CatsomeFight = Battle([], [defs.NO, defs.Catsome.buildNew(), defs.NO], "", [], False)
+>>>>>>> origin/master
 			
 class Stage(object):
 	def __init__(self, name, playerbattlers, battles, cords):
@@ -680,8 +723,9 @@ def dispSkills(player):
 
 
 		
-
+aitest = False
 def CharSelect(mult):
+	global aitest
 	done = False
 	dispchar2 = defs.NO		
 	
@@ -819,8 +863,9 @@ def CharSelect(mult):
 		if hitDetect(mouse_pos, mouse_pos, [529, 434], [698, 498]):
 			if thisplayer == player2:
 				if mouse_down:
-					
-					theBattle = Battle(player1.battlers, player2.battlers, "", "", False)
+					if aitest:
+						mult = False
+					theBattle = Battle(player1.battlers, player2.battlers, "", "", mult)
 		
 					theBattle.battle()
 					
@@ -828,7 +873,7 @@ def CharSelect(mult):
 					
 					
 			if mouse_down:
-				if mult == False:
+				if mult == False and aitest == False:
 					return player1.battlers
 				else:
 					thisplayer = player2
@@ -888,7 +933,16 @@ def CharSelect(mult):
 		clock.tick(60)
 	
 	
-theWorld.run(False)
+
+
+
+
+
+
+
+
+
+
 #--------------------------------------------------------------------------------------------------------------------------------------------------		
 #--------------------------------------------------------------------------------------------------------------------------------------------------	
 #--------------------------------------------------------------------------------------------------------------------------------------------------	
@@ -897,6 +951,58 @@ theWorld.run(False)
 #--------------------------------------------------------------------------------------------------------------------------------------------------	
 #--------------------------------------------------------------------------------------------------------------------------------------------------	
 #--------------------------------------------------------------------------------------------------------------------------------------------------	
+done = False
+while not done:
+
+	for event in pygame.event.get(): 
+		if event.type == pygame.QUIT: 
+			done = True 
+		elif event.type == pygame.MOUSEBUTTONDOWN:
+			mouse_down = True
+				
+		elif event.type == pygame.MOUSEBUTTONUP:
+			mouse_down = False
+	mouse_pos = pygame.mouse.get_pos()
+	gScreen.fill(WHITE)
+	pygame.draw.rect(gScreen, RED, [10,50,16,16])
+	gScreen.blit(font.render("Multiplayer",True,BLACK), [10,65])
+	pygame.draw.rect(gScreen, GREEN, [60,50,16,16])
+	gScreen.blit(font.render("Story",True,BLACK), [60,35])
+	pygame.draw.rect(gScreen, BLUE, [110,50,16,16])
+	gScreen.blit(font.render("Ai testing",True,BLACK), [110,35])
+	if hitDetect(mouse_pos, mouse_pos, [10,50], [26, 66]):
+		if mouse_down:
+			mult = True
+			CharSelect(mult)
+			mouse_down = False
+	if hitDetect(mouse_pos, mouse_pos, [60,50], [60 + 16, 66]):
+		if mouse_down:
+			mult = False
+			theWorld.run(mult)
+			mouse_down = False
+			
+	if hitDetect(mouse_pos, mouse_pos, [110,50], [110 +16, 66]):
+		if mouse_down:
+			mult = True
+			aitest = True
+			CharSelect(mult)
+			mouse_down = False
+			
+		
+
+	
+	if mouse_down:
+			gScreen.blit(mouse_pointer2,mouse_pos)
+	else:
+		gScreen.blit(mouse_pointer,mouse_pos)
+
+	pygame.display.flip()
+
+
+	clock.tick(60)
+
+
+
 	
 
 		
