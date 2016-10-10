@@ -696,6 +696,7 @@ class Char(object):
 		self.savingfor = "none"
 		self.nextattack = ""
 		self.aimisc = 0
+		self.isAi = False
 		
 	def buildNew(self):
 		newchar = Char(self.name, self.types, self.hp, self.str, self.int, self.con, self.mag, self.agil, self.crit, self.dodgeChance, self.lvl, self.xp, self.skills, self.ability, pygame.transform.scale(pygame.image.load(self.image), [50, 50]), self.cords, pygame.transform.scale(pygame.image.load(self.image), [42, 42]))

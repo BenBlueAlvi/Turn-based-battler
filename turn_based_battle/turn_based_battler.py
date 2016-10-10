@@ -177,7 +177,7 @@ class Battle(object):
 		textc = font.render(" ",True,BLACK)
 		limit = 6
 		if self.mult == False:
-			limit = 3
+			limit = 6
 		
 		thesebattlers += self.battlers1 + self.battlers2
 		for i in self.battlers1:
@@ -311,7 +311,7 @@ class Battle(object):
 				thisbattler.y = thisbattler.basey
 				thisbattler.updated = True
 				
-			if thisbattler.hp > 0:
+			if thisbattler.hp > 0 and not thisbattler.isAi:
 				for i in thisbattler.skills:
 
 					if x > 1:
@@ -419,45 +419,17 @@ class Battle(object):
 				pickenm = False
 				ready = False
 			
+			if thisbattler.isAi:
+				thisbattler = ai.runAI(thisbattler, self.battlers1, self.battlers2)
+
+				print thisbattler.name + " has "+str(thisbattler.power)+" power, saving for: "+ thisbattler.savingfor + ". Using: " + thisbattler.goskill.name + " on " + thisbattler.target[0].name
+			
+
 			agillist = []
 			for i in thesebattlers:
 				agillist.append(i)
 			#print "thebattler:", thebattler
 			if thebattler >= limit:
-				if self.mult == False:
-					if aiSet == False:
-						for i in self.battlers2:
-							if not i.updated:
-							
-								for l in i.effects:
-									for k in thesebattlers:
-										if k.ability == "watch them burn" and l == defs.burn:
-										
-											l.canend = False
-											l.damage *= 2
-									l.update(thisbattler)
-								if i.ability == "Unidentifiable":
-									i.marks = 0
-								if i.ability == "Radiation":
-									for l in thesebattlers:
-										l.hp -= 25
-									defs.printb(i.name + "'s radiation hurt everyone!")
-									
-
-								if i.ability == "Regen":
-									i.hp += 25
-									defs.printb(i.name + " is healing themself!")
-								
-									
-								i.power += 1
-								i.x = i.basex
-								i.y = i.basey
-								i.updated = True
-						
-							
-							i = ai.runAI(i, self.battlers1, self.battlers2)
-							print i.name + " has "+str(i.power)+" power, saving for: "+ i.savingfor + ". Using: " + i.goskill.name + " on " + i.target[0].name
-							aiSet = True
 				#sorting
 				for i in range(len(agillist)):
 					for j in range(len(agillist)-1-i):
@@ -615,6 +587,8 @@ class Dialoge(object):
 		self.inbattle = inb
 		self.lossbattle = losb
 		self.winbattle = winb
+
+NoDial = Dialoge([[0, ""]],{0:[""], 1:[""], 2:[""], 3:[""], 4:[""], 5:[""]},[[0, ""]],[[0, ""]])
 
 CatDial = Dialoge([[1, "Are you this 'Catosme' i've heard so much about?"], [4, "Yes, that is one title I reply to..."], [4, "Anyway, have you seen a little friend of mine running about?"], [1, "I was sent here by it to avenge it."], [4, "So it wants you to try to hit on me?"], [1, "Please no."], [4, "So we're going to skip the formalities", "and get right to the good parts, eh?"]], {4:["Come on, I know you can hit me harder than that!", "Looks hot over there, how about taking some of that off?", "ah, so THATS your weak spot!"]}, [[4, "Ah, that was nice being on top."], [1, "What is it with you and innuendos?"], [4, "I guess it's just one of the things in me."]], [[4, "Ah, I give! Safe word, Safe word!"], [1, "Please stop with the innuendos."]])
 CatsomeFight = Battle([], [defs.NO, defs.Catsome.buildNew(), defs.NO], "", CatDial, False)
@@ -930,7 +904,9 @@ def CharSelect(mult):
 				if mouse_down:
 					if aitest:
 						mult = False
-					theBattle = Battle(player1.battlers, player2.battlers, "", "", mult)
+						for i in player2.battlers:
+							i.isAi = True
+					theBattle = Battle(player1.battlers, player2.battlers, "", NoDial, mult)
 		
 					theBattle.battle()
 					
