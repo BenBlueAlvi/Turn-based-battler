@@ -235,8 +235,10 @@ class Battle(object):
 						x += 1
 					
 					
+					if k.hp > 0:
 					
-					gScreen.blit(k.image,[x * 550 + 50, y * 100 + 50])
+					
+						gScreen.blit(k.image,[x * 550 + 50, y * 100 + 50])
 					
 					y += 1
 						
