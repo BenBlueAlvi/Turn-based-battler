@@ -46,7 +46,7 @@ gScreen = pygame.display.set_mode(size)
 font = pygame.font.SysFont('Calibri', 15, True, False)
 text = font.render("hi",True,BLACK)
  
-pygame.display.set_caption("My Game")
+pygame.display.set_caption("TBB: To Be Renamed")
 
 #pygame.mixer.music.play(-1, 0.0)
 pygame.mouse.set_visible(False)
@@ -174,6 +174,7 @@ class Battle(object):
 		ready = False
 		mouse_down = False
 		defs.printing = False
+		textc = font.render(" ",True,BLACK)
 		limit = 6
 		if self.mult == False:
 			limit = 3
@@ -195,7 +196,67 @@ class Battle(object):
 			y += 1
 		
 		
+		
+	
+		
 			
+			
+			
+
+			
+		for i in self.dialog.prebattle:
+			textc, text = [], []
+			for l in range(len(i)):
+				if l == 0:
+					speaker = i[l]
+					print speaker
+				else:
+					textc.append(font.render(i[l],True,BLACK))
+					text.append(i[l])
+					
+					
+			talking = 0
+			while talking <= 120* len(textc):
+				gScreen.fill(WHITE)
+				pygame.draw.rect(gScreen, BLACK, [0,350,700,150])
+				talking += 1
+				if thesebattlers[speaker] in self.battlers1:
+					for l in range(len(textc)):
+						gScreen.blit(textc[l-1], [thesebattlers[speaker].basex, thesebattlers[speaker].basey - (30 + ((l-1) * font.size(text[l-1])[1]))])
+				else:
+					for l in range(len(textc)):
+						gScreen.blit(textc[l-1], [thesebattlers[speaker].basex - font.size(text[l-1])[0], thesebattlers[speaker].basey - (30 + ((l-1) * font.size(text[l-1])[1]))])
+				
+				x = 0
+				y = 0
+				for k in thesebattlers:	
+					if y > 2:
+						y = 0
+						x += 1
+					
+					
+					
+					gScreen.blit(k.image,[x * 550 + 50, y * 100 + 50])
+					
+					y += 1
+						
+				
+						 
+						
+						
+				
+				pygame.display.flip()
+				clock.tick(60)
+					
+					
+			
+			# --- Go ahead and update the screen with what we've drawn.
+			pygame.display.flip()
+	 
+			# --- Limit to 60 frames per second
+			clock.tick(60)
+		
+		
 		
 		
 		while battling:
@@ -220,7 +281,7 @@ class Battle(object):
 			mouse_pos = pygame.mouse.get_pos()
 		
 			#health-=0.01
-			print thisbattler.name + "'s turn"
+			
 			if not thisbattler.updated:
 			
 				for i in thisbattler.effects:
@@ -508,13 +569,15 @@ class Battle(object):
 			if len(self.battlers1) == 0:
 				defs.printb("Player 2 WINS!")
 				print "Player 2 Wins"
-				player1.battlers.append([NO, NO, NO])
+				for b in thesebattlers:
+					b = b.reBuild()
 				break
 				
 			elif len(self.battlers2) == 0:
 				defs.printb("Player 1 WINS!")
 				print "Player 1 Wins"
-				player2.battlers.append([NO, NO, NO])
+				for b in thesebattlers:
+					b = b.reBuild()
 				break
 			#print "THE TIMER:", defs.timer
 			if defs.timer > 0:
@@ -529,11 +592,13 @@ class Battle(object):
 			
 			if thebattler == len(thesebattlers):
 				pygame.draw.rect(gScreen, BLACK, [0,350,700,150])
-			if talking:
-				pygame.draw.rect(gScreen, BLACK, [0,350,700,150])
-				for i in self.dialog:
-					printc(i, 5, thesebattlers)
-				talking = False
+			
+			
+			
+			
+			
+				
+				
 		
 			# --- Go ahead and update the screen with what we've drawn.
 			pygame.display.flip()
@@ -556,7 +621,7 @@ Coo33Fight = Battle([], [defs.NO, defs.Catsome.buildNew(), defs.CoosomeJoe.build
 
 Coo33Fight = Battle([], [defs.CoosomeJoe.buildNew(), defs.Coo33.buildNew(), defs.Catsome.buildNew()], "", CooDial, False)
 
-CatsomeFight = Battle([], [defs.NO, defs.Catsome.buildNew(), defs.NO], "", [], False)
+
 
 			
 class Stage(object):
