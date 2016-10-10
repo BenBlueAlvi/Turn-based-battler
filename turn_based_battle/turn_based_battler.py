@@ -252,320 +252,312 @@ class Battle(object):
 					
 					
 			
-			# --- Go ahead and update the screen with what we've drawn.
-			pygame.display.flip()
-	 
-			# --- Limit to 60 frames per second
-			clock.tick(60)
+			
 		
 		
 		
 		
 		while battling:
-
-			gScreen.fill(WHITE)
-			try:
-				thisbattler = thesebattlers[thebattler]
-			except:
-				pass
-				
-			for event in pygame.event.get(): 
-				if event.type == pygame.QUIT: 
-					done = True 
-					battling = False
-				elif event.type == pygame.MOUSEBUTTONDOWN:
-					mouse_down = True
-				
-				elif event.type == pygame.MOUSEBUTTONUP:
-					mouse_down = False
-					
-			# --- Game logic should go here
-			mouse_pos = pygame.mouse.get_pos()
-		
-			#health-=0.01
-			
-			if not thisbattler.updated:
-			
-				for i in thisbattler.effects:
+			for p in thesebattlers:
+				#update effects and all that good stuff
+				for i in p.effects:
 					for k in thesebattlers:
 						if k.ability == "watch them burn" and i == defs.burn:
 						
 							i.canend = False
 							i.damage *= 2
-					i.update(thisbattler)
-				if thisbattler.ability == "Unidentifiable":
-					thisbattler.marks = 0
-				if thisbattler.ability == "Radiation":
+					i.update(p)
+				if p.ability == "Unidentifiable":
+					p.marks = 0
+				if p.ability == "Radiation":
 					for l in thesebattlers:
 						l.hp -= 25
-					defs.printb(thisbattler.name + "'s radiation hurt everyone!")
+					defs.printb(p.name + "'s radiation hurt everyone!")
 					
 
-				if thisbattler.ability == "Regen":
-					thisbattler.hp += 25
-					defs.printb(thisbattler.name + " is healing themself!")
+				if p.ability == "Regen":
+					p.hp += 25
+					defs.printb(p.name + " is healing themself!")
 				
 					
-				thisbattler.power += 1
-				thisbattler.x = thisbattler.basex
-				thisbattler.y = thisbattler.basey
-				thisbattler.updated = True
-				
-			if thisbattler.hp > 0 and not thisbattler.isAi:
-				for i in thisbattler.skills:
+				p.power += 1
+				p.x = p.basex
+				p.y = p.basey
 
-					if x > 1:
-						x = 0
-						y += 1
 
-					if hitDetect(mouse_pos, mouse_pos,[330 + x*175, y*30 + 370], [330 + x*175 + 165, y*30 + 370 + 25]):
-						if mouse_down:
+
+				while not ready and not p.isAi:
+					gScreen.fill(WHITE)
+					for event in pygame.event.get(): 
+						if event.type == pygame.QUIT: 
+							done = True 
+							battling = False
+						elif event.type == pygame.MOUSEBUTTONDOWN:
+							mouse_down = True
+						
+						elif event.type == pygame.MOUSEBUTTONUP:
 							mouse_down = False
-							if True:
-								selected = False
-								if x == 0 and y ==0:
-									if thisbattler.skills[0].cost <= thisbattler.power:
-										thisbattler.goskill = thisbattler.skills[0]
-										selected = True
-									
-								if x == 1 and y == 0:
-									if thisbattler.skills[1].cost <= thisbattler.power:
-										thisbattler.goskill = thisbattler.skills[1]
-										selected = True
+							
+					mouse_pos = pygame.mouse.get_pos()
+					
+					#displaying and picking skills
+					for i in p.skills:
+
+						if x > 1:
+							x = 0
+							y += 1
+
+						if hitDetect(mouse_pos, mouse_pos,[330 + x*175, y*30 + 370], [330 + x*175 + 165, y*30 + 370 + 25]):
+							if mouse_down:
+								mouse_down = False
+								if True:
+									selected = False
+									if x == 0 and y ==0:
+										if p.skills[0].cost <= p.power:
+											p.goskill = p.skills[0]
+											selected = True
 										
-								if x == 0 and y == 1:
-									if thisbattler.skills[2].cost <= thisbattler.power:
-										thisbattler.goskill = thisbattler.skills[2]
-										selected = True
-								if x == 1 and y == 1:
-									if thisbattler.skills[3].cost <= thisbattler.power:
-										thisbattler.goskill = thisbattler.skills[3]
-										selected = True
-								if x == 0 and y == 2:
-									if thisbattler.skills[4].cost <= thisbattler.power:
-										thisbattler.goskill = thisbattler.skills[4]
-										selected = True
-								if x == 1 and y == 2:
-									if thisbattler.skills[5].cost <= thisbattler.power:
-										thisbattler.goskill = thisbattler.skills[5]
-										selected = True
-								if x == 0 and y == 3:
-									if thisbattler.skills[6].cost <= thisbattler.power:
-										thisbattler.goskill = thisbattler.skills[6]
-										selected = True
-								if x == 1 and y == 3:
-									if thisbattler.skills[7].cost <= thisbattler.power:
-										thisbattler.goskill = thisbattler.skills[7]
-										selected = True
-										
-								if selected:
-									mouse_down = False
-									print "skill picked:", thisbattler.goskill.name
-									pickenm = True
-					x += 1
-				
-				x = 0
-				y = 0					
-				if pickenm:	
-					thisbattler.target = ["nul"]
-					for i in thesebattlers:
+									if x == 1 and y == 0:
+										if p.skills[1].cost <= p.power:
+											p.goskill = p.skills[1]
+											selected = True
+											
+									if x == 0 and y == 1:
+										if p.skills[2].cost <= p.power:
+											p.goskill = p.skills[2]
+											selected = True
+									if x == 1 and y == 1:
+										if p.skills[3].cost <= p.power:
+											p.goskill = p.skills[3]
+											selected = True
+									if x == 0 and y == 2:
+										if p.skills[4].cost <= p.power:
+											p.goskill = p.skills[4]
+											selected = True
+									if x == 1 and y == 2:
+										if p.skills[5].cost <= p.power:
+											p.goskill = p.skills[5]
+											selected = True
+									if x == 0 and y == 3:
+										if p.skills[6].cost <= p.power:
+											p.goskill = p.skills[6]
+											selected = True
+									if x == 1 and y == 3:
+										if p.skills[7].cost <= p.power:
+											p.goskill = p.skills[7]
+											selected = True
+											
+									if selected:
+										mouse_down = False
+										print "skill picked:", p.goskill.name
+										pickenm = True
+						x += 1
+					
+					x = 0
+					y = 0					
+					if pickenm:	
+						p.target = ["nul"]
+						for i in thesebattlers:
+							if y > 2:
+								y = 0
+								x += 1
+								
+							if hitDetect(mouse_pos, mouse_pos, (x *550 + 50, y * 100 + 50), (x * 550 + 50 + 50, y* 100 + 50 + 50)):
+							
+								if mouse_down:
+									if x == 0 and y == 0:
+										p.target[0] = thesebattlers[0]
+										ready = True
+									if x == 0 and y == 1:
+										p.target[0] = thesebattlers[1]
+										ready = True
+									if x == 0 and y == 2:
+										p.target[0] = thesebattlers[2]
+										ready = True
+									if x == 1 and y == 0:
+										p.target[0] = thesebattlers[3]
+										ready = True
+									if x == 1 and y == 1:
+										p.target[0] = thesebattlers[4]
+										ready = True
+									if x == 1 and y == 2:
+										p.target[0] = thesebattlers[5]
+										ready = True
+								mouse_down = False
+							
+							if ready:
+								print p.target[0].name
+								ready = False
+								
+								if "hitAll" in  p.goskill.spec:
+									p.target = []
+									if p in self.battlers1:
+										p.target = self.battlers2
+									elif p in self.battlers2:
+										p.target = self.battlers1
+								
+								pickenm = False
+							y += 1
+											
+					else:
+						p.goskill = defs.nothing
+						pickenm = False
+						ready = False
+
+
+					#----------------
+					if not thebattler >= len(thesebattlers):
+						if p in self.battlers1:
+							p.x += 50
+							if not p.x == p.basex + 50:
+								p.x = p.basex + 50
+						else: 
+							p.x -= 50
+							if not p.x == p.basex - 50:
+								p.x = p.basex - 50
+						
+						
+						p.y += p.ym
+						if p.y >= p.basey + 5 or p.y <= p.basey - 5:
+							p.ym *= -1
+						
+						gScreen.blit(p.image, [p.x, p.y])
+
+					x = 0
+					y = 0
+					for i in thesebattlers:	
 						if y > 2:
 							y = 0
 							x += 1
-							
-						if hitDetect(mouse_pos, mouse_pos, (x *550 + 50, y * 100 + 50), (x * 550 + 50 + 50, y* 100 + 50 + 50)):
 						
-							if mouse_down:
-								if x == 0 and y == 0:
-									thisbattler.target[0] = thesebattlers[0]
-									ready = True
-								if x == 0 and y == 1:
-									thisbattler.target[0] = thesebattlers[1]
-									ready = True
-								if x == 0 and y == 2:
-									thisbattler.target[0] = thesebattlers[2]
-									ready = True
-								if x == 1 and y == 0:
-									thisbattler.target[0] = thesebattlers[3]
-									ready = True
-								if x == 1 and y == 1:
-									thisbattler.target[0] = thesebattlers[4]
-									ready = True
-								if x == 1 and y == 2:
-									thisbattler.target[0] = thesebattlers[5]
-									ready = True
-							mouse_down = False
-						
-						if ready:
-							print thisbattler.target[0].name
-							ready = False
+						if i.hp > 0:
+							try:
+								if not i == thesebattlers[thebattler]: #and not thebattler >= len(thesebattlers):
+									gScreen.blit(i.image,[x * 550 + 50, y * 100 + 50])
+							except:
+								print i.image
+								gScreen.blit(i.image,[x * 550 + 50, y * 100 + 50])
 							
-							if "hitAll" in  thisbattler.goskill.spec:
-								thisbattler.target = []
-								if thisbattler in self.battlers1:
-									thisbattler.target = self.battlers2
-								elif thisbattler in self.battlers2:
-									thisbattler.target = self.battlers1
-							
-							thebattler += 1
+							pygame.draw.rect(gScreen, RED, [x* 550 + 50, y* 100 + 25,int(i.hp) / 20,5])
+							 
+							for f in range(len(i.effects)):
+								
+								gScreen.blit(i.effects[f].img, [x* 550 + 40 - f * 10, y * 100 + 25])
 							
 							
-							pickenm = False
 						y += 1
-										
-			else:
-				thisbattler.goskill = defs.nothing
-				thebattler += 1
-				pickenm = False
-				ready = False
-			
-			if thisbattler.isAi:
-				thisbattler = ai.runAI(thisbattler, self.battlers1, self.battlers2)
+					#ANIMATIONS!
+					
+					pygame.draw.rect(gScreen, BLACK, [0,350,700,150])
+					#pygame.draw.rect(gScreen, WHITE, [10,360,300,50])
+					gScreen.blit(health_border, [10, 360])
+					pygame.draw.rect(gScreen, GREY, [320, 360, 370, 130])
+				
+					x = 0
+					y = 0
 
-				print thisbattler.name + " has "+str(thisbattler.power)+" power, saving for: "+ thisbattler.savingfor + ". Using: " + thisbattler.goskill.name + " on " + thisbattler.target[0].name
+					if p.hp > 0:
+						dispSkills(p)
+					
+					if mouse_down:
+						gScreen.blit(mouse_pointer2,mouse_pos)
+					else:
+						gScreen.blit(mouse_pointer,mouse_pos)
+					for i in thesebattlers:
+						if i.hp <= 0:
+							i.effects.append(defs.death)
+							
+						#reset character here
+						
+					for i in self.battlers1:
+						if i.hp <= 0:
+							self.battlers1.remove(i)
+							
+					for i in self.battlers2:
+						if i.hp <= 0:
+							self.battlers2.remove(i)
+							
+					if len(self.battlers1) == 0:
+						defs.printb("Player 2 WINS!")
+						print "Player 2 Wins"
+						for b in thesebattlers:
+							b = b.reBuild()
+						break
+						
+					elif len(self.battlers2) == 0:
+						defs.printb("Player 1 WINS!")
+						print "Player 1 Wins"
+						for b in thesebattlers:
+							b = b.reBuild()
+						break
+					#print "THE TIMER:", defs.timer
+					if defs.timer > 0:
+						defs.timer -= 1
+						gScreen.blit(defs.disptext, [10, 320])
+						defs.printing = True
+						pygame.draw.rect(gScreen, BLACK, [0,350,700,150])
+					
+					if defs.timer <= 0:
+						defs.printing = False
+						defs.timer = 0
+					
+					if thebattler == len(thesebattlers):
+						pygame.draw.rect(gScreen, BLACK, [0,350,700,150])
+
+
+					pygame.display.flip()
+			 
+					# --- Limit to 60 frames per second
+					clock.tick(60)
+					
+				if p.isAi:
+					p = ai.runAI(p, self.battlers1, self.battlers2)
+					print p.name + " has "+str(p.power)+" power, saving for: "+ p.savingfor + ". Using: " + p.goskill.name + " on " + p.target[0].name
 			
 
 			agillist = []
 			for i in thesebattlers:
 				agillist.append(i)
 			#print "thebattler:", thebattler
-			if thebattler >= limit:
-				#sorting
-				for i in range(len(agillist)):
-					for j in range(len(agillist)-1-i):
-						
-						if agillist[j].agil + agillist[j].goskill.spd  < agillist[j+1].agil + agillist[j+1].goskill.spd:
-							agillist[j], agillist[j+1] = agillist[j+1], agillist[j] 
-				
-				if len(agillist[increment].target) > 1:
-					if not defs.printing:
-						agillist[increment].goskill.use(agillist[increment],agillist[increment].target[mincrement])
+			for i in range(len(agillist)):
+				for j in range(len(agillist)-1-i):
 					
-						if mincrement > 2:
-							agillist[increment].power -= agillist[increment].goskill.cost
-					
-				else:
-					if not defs.printing:
-						agillist[increment].goskill.use(agillist[increment],agillist[increment].target[0])
-						agillist[increment].power -= agillist[increment].goskill.cost
+					if agillist[j].agil + agillist[j].goskill.spd  < agillist[j+1].agil + agillist[j+1].goskill.spd:
+						agillist[j], agillist[j+1] = agillist[j+1], agillist[j] 
 			
+			if len(agillist[increment].target) > 1:
 				if not defs.printing:
-					if len(agillist[increment].target) > 1:
-						mincrement+=1
-						if mincrement > 2:
-							mincrement = 0
-							increment += 1
-					else:
+					agillist[increment].goskill.use(agillist[increment],agillist[increment].target[mincrement])
+				
+					if mincrement > 2:
+						agillist[increment].power -= agillist[increment].goskill.cost
+				
+			else:
+				if not defs.printing:
+					agillist[increment].goskill.use(agillist[increment],agillist[increment].target[0])
+					agillist[increment].power -= agillist[increment].goskill.cost
+		
+			if not defs.printing:
+				if len(agillist[increment].target) > 1:
+					mincrement+=1
+					if mincrement > 2:
+						mincrement = 0
 						increment += 1
-					if increment > len(thesebattlers) - 1:
-						increment = 0
-						thebattler = 0
-						aiSet = False
-						for i in thesebattlers:
-							i.updated = False
+				else:
+					increment += 1
+				if increment > len(thesebattlers) - 1:
+					increment = 0
+					thebattler = 0
+					aiSet = False
+					for i in thesebattlers:
+						i.updated = False
 
 
 		# --- Drawing code should go here
 		
 		#player
 		#animation:
-			if not thebattler >= len(thesebattlers):
-				if thisbattler in self.battlers1:
-					thisbattler.x += 50
-					if not thisbattler.x == thisbattler.basex + 50:
-						thisbattler.x = thisbattler.basex + 50
-				else: 
-					thisbattler.x -= 50
-					if not thisbattler.x == thisbattler.basex - 50:
-						thisbattler.x = thisbattler.basex - 50
-				
-				
-				thisbattler.y += thisbattler.ym
-				if thisbattler.y >= thisbattler.basey + 5 or thisbattler.y <= thisbattler.basey - 5:
-					thisbattler.ym *= -1
-				
-				gScreen.blit(thisbattler.image, [thisbattler.x, thisbattler.y])
-
-			x = 0
-			y = 0
-			for i in thesebattlers:	
-				if y > 2:
-					y = 0
-					x += 1
-				
-				if i.hp > 0:
-					try:
-						if not i == thesebattlers[thebattler]: #and not thebattler >= len(thesebattlers):
-							gScreen.blit(i.image,[x * 550 + 50, y * 100 + 50])
-					except:
-						print i.image
-						gScreen.blit(i.image,[x * 550 + 50, y * 100 + 50])
-					
-					pygame.draw.rect(gScreen, RED, [x* 550 + 50, y* 100 + 25,int(i.hp) / 20,5])
-					 
-					for f in range(len(i.effects)):
-						
-						gScreen.blit(i.effects[f].img, [x* 550 + 40 - f * 10, y * 100 + 25])
-					
-					
-				y += 1
-			#ANIMATIONS!
 			
-			pygame.draw.rect(gScreen, BLACK, [0,350,700,150])
-			#pygame.draw.rect(gScreen, WHITE, [10,360,300,50])
-			gScreen.blit(health_border, [10, 360])
-			pygame.draw.rect(gScreen, GREY, [320, 360, 370, 130])
-		
-			x = 0
-			y = 0
-
-			if thisbattler.hp > 0:
-				dispSkills(thisbattler)
-			
-			if mouse_down:
-				gScreen.blit(mouse_pointer2,mouse_pos)
-			else:
-				gScreen.blit(mouse_pointer,mouse_pos)
-			for i in thesebattlers:
-				if i.hp <= 0:
-					i.effects.append(defs.death)
-					
-				#reset character here
-				
-			for i in self.battlers1:
-				if i.hp <= 0:
-					self.battlers1.remove(i)
-					
-			for i in self.battlers2:
-				if i.hp <= 0:
-					self.battlers2.remove(i)
-					
-			if len(self.battlers1) == 0:
-				defs.printb("Player 2 WINS!")
-				print "Player 2 Wins"
-				for b in thesebattlers:
-					b = b.reBuild()
-				break
-				
-			elif len(self.battlers2) == 0:
-				defs.printb("Player 1 WINS!")
-				print "Player 1 Wins"
-				for b in thesebattlers:
-					b = b.reBuild()
-				break
-			#print "THE TIMER:", defs.timer
-			if defs.timer > 0:
-				defs.timer -= 1
-				gScreen.blit(defs.disptext, [10, 320])
-				defs.printing = True
-				pygame.draw.rect(gScreen, BLACK, [0,350,700,150])
-			
-			if defs.timer <= 0:
-				defs.printing = False
-				defs.timer = 0
-			
-			if thebattler == len(thesebattlers):
-				pygame.draw.rect(gScreen, BLACK, [0,350,700,150])
 			
 			
 			
