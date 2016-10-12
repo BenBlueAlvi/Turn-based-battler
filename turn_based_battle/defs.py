@@ -14,6 +14,27 @@ GREY = (100,100,100)
 pygame.init()
 font = pygame.font.SysFont('Calibri', 15, True, False)
 
+class Music(object):
+	def __init__(self, musicc):
+		self.musicc = musicc
+		self.playing = True
+		
+	def play(self):
+		if self.playing:
+			pygame.mixer.music.stop()
+			pygame.mixer.music.load(self.musicc)
+			pygame.mixer.music.play(-1, 0.0)
+			#pygame.mixer.music.set_endevent(intodone)
+		self.playing = False
+	def reset(self):
+		self.playing = True
+	def stop(self):
+		pygame.mixer.music.stop
+		
+		
+cattheme = Music("Assets/music/Raxxo_Patchy_Aid.ogg")
+cootheme = Music("Assets/music/Raxxo_Stand_Your_Ground.ogg")
+
 def bubble_sort(items):
 	""" Implementation of bubble sort """
 	for i in range(len(items)):
@@ -50,6 +71,8 @@ def printc(text, battler, thesebattlers):
 	timerc = 90
 	for i in range(timerc):
 		gScreen.blit(disptextc, [thesebattlers[battler].x, thesebattlers[battler].y + 10])
+		
+
 
 class Type(object):
 	def __init__(self, name, weks, strs):
@@ -714,6 +737,8 @@ NOT = Char("???", [unknown], 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, [nothing], "", "Asset
 Mage = Char("Meigis", [normal, chaos], 500, 5, 15, 5, 15, 4, 0, 10, 1, 0, [basicAtk, fireBall, waterSpout, airBlast, earthShot, defend], "", "Assets/battlers/Mage.png", [5,0], "")
 
 Mouther = Char("Mouther", [earth], 500, 20, 0, 10, 5, 4, 0, 10, 1, 0, [basicAtk, bite, consumeFlesh, defend], "", "Assets/battlers/Mouther.png", [4,0], "")
+
+Maice = Char("Maice", [normal], 500, 15, 15, 10, 10, 6, 2, 11, 1, 0, [basicAtk, slash, bite, eggon], "", "Assets/battlers/wip.png", [3, 0], "") 
 
 Nic = Char("Nic", [chaos], 500, 15, 50, 10, 25, 4, 0, 10, 1, 0, [basicAtk, magicMute, shardSwarm, powerUp, defend], "", "Assets/battlers/nic.png", [5,8], "")
 Epic = Char("Epic", [tech], 1000, 25, 50, 35, 45, 7, 10, 10, 1, 0, [basicAtk,energiBeam, wellspring, defend], "", "Assets/battlers/epic.png", [7,8], "")

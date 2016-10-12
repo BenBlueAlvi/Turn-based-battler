@@ -13,8 +13,14 @@ from pygame.locals import *
 
 
 clock = pygame.time.Clock()
+
+pygame.mixer.pre_init(22050, -16, 3, 8)
 pygame.mixer.init()
-#music = pygame.mixer.music.load("reformat.ogg")
+
+
+
+musicPlay = True
+
 
 # Define some colors
 BLACK = (0, 0, 0)
@@ -961,6 +967,9 @@ def CharSelect(mult):
 			gScreen.blit(mouse_pointer,mouse_pos)
 		
 		testAnim.blit(gScreen, [0,0])
+		
+		defs.cootheme.play()
+		defs.cattheme.reset()
 
 		pygame.display.flip()	
 		clock.tick(60)
@@ -1028,6 +1037,8 @@ while not done:
 			gScreen.blit(mouse_pointer2,mouse_pos)
 	else:
 		gScreen.blit(mouse_pointer,mouse_pos)
+		
+	defs.cattheme.play()
 
 	pygame.display.flip()
 
