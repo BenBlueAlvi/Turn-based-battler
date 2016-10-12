@@ -158,10 +158,10 @@ class Arena(object):
 		
 
 class Battle(object):
-	def __init__(self, battlers1, battlers2, arena, dialog, mult):
+	def __init__(self, battlers1, battlers2, arena, dialog, mult, music):
 		self.battlers1 = battlers1
 		self.battlers2 = battlers2
-
+		self.music = music
 		self.arena = arena
 		self.dialog = dialog
 		self.mult = mult
@@ -591,11 +591,11 @@ class Dialoge(object):
 NoDial = Dialoge([[0, ""]],{0:[""], 1:[""], 2:[""], 3:[""], 4:[""], 5:[""]},[[0, ""]],[[0, ""]])
 
 CatDial = Dialoge([[1, "Are you this 'Catosme' i've heard so much about?"], [4, "Yes, that is one title I reply to..."], [4, "Anyway, have you seen a little friend of mine running about?"], [1, "I was sent here by it to avenge it."], [4, "So it wants you to try to hit on me?"], [1, "Please no."], [4, "So we're going to skip the formalities", "and get right to the good parts, eh?"]], {4:["Come on, I know you can hit me harder than that!", "Looks hot over there, how about taking some of that off?", "ah, so THATS your weak spot!"]}, [[4, "Ah, that was nice being on top."], [1, "What is it with you and innuendos?"], [4, "I guess it's just one of the things in me."]], [[4, "Ah, I give! Safe word, Safe word!"], [1, "Please stop with the innuendos."]])
-CatsomeFight = Battle([], [defs.NO, defs.Catsome.buildNew(), defs.NO], "", CatDial, False)
+CatsomeFight = Battle([], [defs.NO, defs.Catsome.buildNew(), defs.NO], "", CatDial, False, defs.cattheme)
 CooDial = Dialoge([[5, "Ah, Coosome! it's been a while!"], [4, "Indeed it has, Cat."], [1, "You know him?"], [5, "Of course! We are all over each other!"], [4, "What Cat means to say, is that we are one and the same."], [5, "We stick together! so Lets have a FOURSOME!"], [1, "But who else is joining me?"], [2, "I'll stand in for Catsome. Lets do this."]], {4:[""], 5:["Come on, I know you can hit me harder than that!", "Looks hot over there, how about taking some of that off?", "Hit 'em there! thats his weak spot!"]}, [[4, "You fought well.", "But not well enough."], [5, "Is that really all? I'm not satisfied yet."]], [[4, "Nice one, you fought well there."], [5, "Is it done already? I'm not quite satisfied yet..."]])
-Coo33Fight = Battle([], [defs.NO, defs.Catsome.buildNew(), defs.CoosomeJoe.buildNew()], "", CooDial, False)
+Coo33Fight = Battle([], [defs.NO, defs.Catsome.buildNew(), defs.CoosomeJoe.buildNew()], "", CooDial, False, defs.cootheme)
 
-Coo33Fight = Battle([], [defs.CoosomeJoe.buildNew(), defs.Coo33.buildNew(), defs.Catsome.buildNew()], "", CooDial, False)
+Coo33Fight = Battle([], [defs.CoosomeJoe.buildNew(), defs.Coo33.buildNew(), defs.Catsome.buildNew()], "", CooDial, False, defs.cootheme)
 
 
 
