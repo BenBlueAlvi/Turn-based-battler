@@ -165,6 +165,15 @@ class Battle(object):
 		self.arena = arena
 		self.dialog = dialog
 		self.mult = mult
+		if not self.mult:
+			for i in self.battlers2:
+				i.isAi = True
+		for i in self.battlers1:
+			if i.name == "???":
+				i.isAi = True
+		for i in self.battlers2:
+			if i.name == "???":
+				i.isAi = True
 		
 	def battle(self):
 		
@@ -223,15 +232,15 @@ class Battle(object):
 					
 			talking = 0
 			while talking <= 120* len(textc):
-				gScreen.fill(WHITE)
+				defs.gScreen.fill(WHITE)
 				pygame.draw.rect(gScreen, BLACK, [0,350,700,150])
 				talking += 1
 				if thesebattlers[speaker] in self.battlers1:
 					for l in range(len(textc)):
-						gScreen.blit(textc[l-1], [thesebattlers[speaker].basex, thesebattlers[speaker].basey - (30 + ((l-1) * font.size(text[l-1])[1]))])
+						defs.gScreen.blit(textc[l-1], [thesebattlers[speaker].basex, thesebattlers[speaker].basey - (30 + ((l-1) * font.size(text[l-1])[1]))])
 				else:
 					for l in range(len(textc)):
-						gScreen.blit(textc[l-1], [thesebattlers[speaker].basex - font.size(text[l-1])[0], thesebattlers[speaker].basey - (30 + ((l-1) * font.size(text[l-1])[1]))])
+						defs.gScreen.blit(textc[l-1], [thesebattlers[speaker].basex - font.size(text[l-1])[0], thesebattlers[speaker].basey - (30 + ((l-1) * font.size(text[l-1])[1]))])
 				
 				x = 0
 				y = 0
@@ -244,7 +253,7 @@ class Battle(object):
 					if k.hp > 0:
 					
 					
-						gScreen.blit(k.image,[x * 550 + 50, y * 100 + 50])
+						defs.gScreen.blit(k.image,[x * 550 + 50, y * 100 + 50])
 					
 					y += 1
 						
@@ -289,15 +298,16 @@ class Battle(object):
 				p.power += 1
 				p.x = p.basex
 				p.y = p.basey
-
+				ready, selected = False, False
 
 
 				while not ready and not p.isAi:
-					gScreen.fill(WHITE)
+					defs.gScreen.fill(WHITE)
 					for event in pygame.event.get(): 
 						if event.type == pygame.QUIT: 
-							done = True 
+							ready = True							
 							battling = False
+							break
 						elif event.type == pygame.MOUSEBUTTONDOWN:
 							mouse_down = True
 						
@@ -393,7 +403,6 @@ class Battle(object):
 							
 							if ready:
 								print p.target[0].name
-								ready = False
 								
 								if "hitAll" in  p.goskill.spec:
 									p.target = []
@@ -404,30 +413,24 @@ class Battle(object):
 								
 								pickenm = False
 							y += 1
-											
-					else:
-						p.goskill = defs.nothing
-						pickenm = False
-						ready = False
 
 
 					#----------------
-					if not thebattler >= len(thesebattlers):
-						if p in self.battlers1:
-							p.x += 50
-							if not p.x == p.basex + 50:
-								p.x = p.basex + 50
-						else: 
-							p.x -= 50
-							if not p.x == p.basex - 50:
-								p.x = p.basex - 50
-						
-						
-						p.y += p.ym
-						if p.y >= p.basey + 5 or p.y <= p.basey - 5:
-							p.ym *= -1
-						
-						gScreen.blit(p.image, [p.x, p.y])
+					if p in self.battlers1:
+						p.x += 50
+						if not p.x == p.basex + 50:
+							p.x = p.basex + 50
+					else: 
+						p.x -= 50
+						if not p.x == p.basex - 50:
+							p.x = p.basex - 50
+					
+					
+					p.y += p.ym
+					if p.y >= p.basey + 5 or p.y <= p.basey - 5:
+						p.ym *= -1
+					
+					defs.gScreen.blit(p.image, [p.x, p.y])
 
 					x = 0
 					y = 0
@@ -437,18 +440,19 @@ class Battle(object):
 							x += 1
 						
 						if i.hp > 0:
-							try:
-								if not i == thesebattlers[thebattler]: #and not thebattler >= len(thesebattlers):
-									gScreen.blit(i.image,[x * 550 + 50, y * 100 + 50])
-							except:
-								print i.image
-								gScreen.blit(i.image,[x * 550 + 50, y * 100 + 50])
+							
+								
+							
+							if not i == p:
+								defs.gScreen.blit(i.image,[x * 550 + 50, y * 100 + 50])
+							
+								
 							
 							pygame.draw.rect(gScreen, RED, [x* 550 + 50, y* 100 + 25,int(i.hp) / 20,5])
 							 
 							for f in range(len(i.effects)):
 								
-								gScreen.blit(i.effects[f].img, [x* 550 + 40 - f * 10, y * 100 + 25])
+								defs.gScreen.blit(i.effects[f].img, [x* 550 + 40 - f * 10, y * 100 + 25])
 							
 							
 						y += 1
@@ -456,7 +460,7 @@ class Battle(object):
 					
 					pygame.draw.rect(gScreen, BLACK, [0,350,700,150])
 					#pygame.draw.rect(gScreen, WHITE, [10,360,300,50])
-					gScreen.blit(health_border, [10, 360])
+					defs.gScreen.blit(health_border, [10, 360])
 					pygame.draw.rect(gScreen, GREY, [320, 360, 370, 130])
 				
 					x = 0
@@ -466,9 +470,9 @@ class Battle(object):
 						dispSkills(p)
 					
 					if mouse_down:
-						gScreen.blit(mouse_pointer2,mouse_pos)
+						defs.gScreen.blit(mouse_pointer2,mouse_pos)
 					else:
-						gScreen.blit(mouse_pointer,mouse_pos)
+						defs.gScreen.blit(mouse_pointer,mouse_pos)
 					for i in thesebattlers:
 						if i.hp <= 0:
 							i.effects.append(defs.death)
@@ -497,15 +501,9 @@ class Battle(object):
 							b = b.reBuild()
 						break
 					#print "THE TIMER:", defs.timer
-					if defs.timer > 0:
-						defs.timer -= 1
-						gScreen.blit(defs.disptext, [10, 320])
-						defs.printing = True
-						pygame.draw.rect(gScreen, BLACK, [0,350,700,150])
 					
-					if defs.timer <= 0:
-						defs.printing = False
-						defs.timer = 0
+					
+					
 					
 					if thebattler == len(thesebattlers):
 						pygame.draw.rect(gScreen, BLACK, [0,350,700,150])
@@ -520,35 +518,37 @@ class Battle(object):
 					p = ai.runAI(p, self.battlers1, self.battlers2)
 					print p.name + " has "+str(p.power)+" power, saving for: "+ p.savingfor + ". Using: " + p.goskill.name + " on " + p.target[0].name
 			
-
+			
 			agillist = []
 			for i in thesebattlers:
 				agillist.append(i)
-			#print "thebattler:", thebattler
 			for i in range(len(agillist)):
 				for j in range(len(agillist)-1-i):
 					
 					if agillist[j].agil + agillist[j].goskill.spd  < agillist[j+1].agil + agillist[j+1].goskill.spd:
 						agillist[j], agillist[j+1] = agillist[j+1], agillist[j] 
 			
-			if len(agillist[increment].target) > 1:
-				if not defs.printing:
-					agillist[increment].goskill.use(agillist[increment],agillist[increment].target[mincrement])
+			for p in agillist:
+				#print "thebattler:", thebattler
 				
+				if len(p.target) > 1:
+					
+					p.goskill.use(p,p.target[mincrement])
+					
 					if mincrement > 2:
-						agillist[increment].power -= agillist[increment].goskill.cost
+						p.power -= p.goskill.cost
+					
+				else:
+					
+					p.goskill.use(p,p.target[0])
+					p.power -= p.goskill.cost
+			
 				
-			else:
-				if not defs.printing:
-					agillist[increment].goskill.use(agillist[increment],agillist[increment].target[0])
-					agillist[increment].power -= agillist[increment].goskill.cost
-		
-			if not defs.printing:
-				if len(agillist[increment].target) > 1:
+				if len(p.target) > 1:
 					mincrement+=1
 					if mincrement > 2:
 						mincrement = 0
-						increment += 1
+					increment += 1
 				else:
 					increment += 1
 				if increment > len(thesebattlers) - 1:
@@ -557,7 +557,9 @@ class Battle(object):
 					aiSet = False
 					for i in thesebattlers:
 						i.updated = False
-
+				
+				
+				
 
 		# --- Drawing code should go here
 		
@@ -684,18 +686,18 @@ class World(object):
 			
 			self.cords[0] += self.vel[0]
 			self.cords[1] += self.vel[1]
-			gScreen.fill(BLACK)
+			defs.gScreen.fill(BLACK)
 			
-			gScreen.blit(self.image, [self.cords[0], self.cords[1]])
+			defs.gScreen.blit(self.image, [self.cords[0], self.cords[1]])
 			
 			for i in self.stages:
 				
 				pygame.draw.rect(gScreen, RED, [i.cords[0] + self.cords[0], i.cords[1] + self.cords[1], 16,16])
 			
 			if mouse_down:
-				gScreen.blit(mouse_pointer2,mouse_pos)
+				defs.gScreen.blit(mouse_pointer2,mouse_pos)
 			else:
-				gScreen.blit(mouse_pointer,mouse_pos)
+				defs.gScreen.blit(mouse_pointer,mouse_pos)
    
 			pygame.display.flip()
    
@@ -742,20 +744,20 @@ def dispSkills(player):
 			x = 0
 			y += 1
 		
-		gScreen.blit(i.text, [330+ 6 + x*175, y*30 + 370 + 5])
+		defs.gScreen.blit(i.text, [330+ 6 + x*175, y*30 + 370 + 5])
 		if i.cost <= player.power:
-			gScreen.blit(i.type.img, [330 + x*175, y*30 + 370])
+			defs.gScreen.blit(i.type.img, [330 + x*175, y*30 + 370])
 		
 		else:
-			gScreen.blit(lockedskill, [330 + x*175, y*30 + 370])
+			defs.gScreen.blit(lockedskill, [330 + x*175, y*30 + 370])
 			
 		x += 1	
 		
 	pygame.draw.rect(gScreen, GREEN, [21,371,player.hp / 278,28])
 	pygame.draw.rect(gScreen, BLUE, [10, 430, player.power * 2, 28])
-	gScreen.blit(font.render("HP: " + str(player.hp), True, (0,0,255)), [75, 376])
-	gScreen.blit(font.render("Power: " + str(player.power), True, (255,255,255)), [75, 426])
-	gScreen.blit(font.render(player.name + "'s turn", True, (255,255,255)), [75, 476])
+	defs.gScreen.blit(font.render("HP: " + str(player.hp), True, (0,0,255)), [75, 376])
+	defs.gScreen.blit(font.render("Power: " + str(player.power), True, (255,255,255)), [75, 426])
+	defs.gScreen.blit(font.render(player.name + "'s turn", True, (255,255,255)), [75, 476])
 	
 
 
@@ -920,8 +922,8 @@ def CharSelect(mult):
 					time.sleep(1)
 		
 		
-		gScreen.fill(WHITE)
-		gScreen.blit(menuui, [0, 0])
+		defs.gScreen.fill(WHITE)
+		defs.gScreen.blit(menuui, [0, 0])
 		x = 0
 		y = 0
 		
@@ -933,43 +935,43 @@ def CharSelect(mult):
 			
 			for f in unlockedchars:
 				if f.cords[0] == x and f.cords[1] == y:
-					gScreen.blit(f.img, [3 + 22*x,3 + 22*y])
+					defs.gScreen.blit(f.img, [3 + 22*x,3 + 22*y])
 					loaded = True
 			
 			if not loaded:
-				gScreen.blit(lockedchar, [3 + 22*x,3 + 22*y])
+				defs.gScreen.blit(lockedchar, [3 + 22*x,3 + 22*y])
 				loaded = False
 					
 			x += 1
 				
-		gScreen.blit(selector1, [thisplayer.x1*22 + 1, thisplayer.y1*22 + 1])
-		gScreen.blit(selector2, [thisplayer.x2*22 + 1, thisplayer.y2*22 + 1])
-		gScreen.blit(selector3, [thisplayer.x3*22 + 1, thisplayer.y3*22 + 1])
+		defs.gScreen.blit(selector1, [thisplayer.x1*22 + 1, thisplayer.y1*22 + 1])
+		defs.gScreen.blit(selector2, [thisplayer.x2*22 + 1, thisplayer.y2*22 + 1])
+		defs.gScreen.blit(selector3, [thisplayer.x3*22 + 1, thisplayer.y3*22 + 1])
 		
 		for i in range(len(thisplayer.battlers)):
 		
 			localbattler = thisplayer.battlers[i]
 		
-			gScreen.blit(dispchar2.image, [644, 370])
+			defs.gScreen.blit(dispchar2.image, [644, 370])
 		
-			gScreen.blit(localbattler.menuImg, [4, i * 47 + 359])
-			gScreen.blit(font.render(localbattler.name, True, BLACK), [56, i * 47 + 359])
+			defs.gScreen.blit(localbattler.menuImg, [4, i * 47 + 359])
+			defs.gScreen.blit(font.render(localbattler.name, True, BLACK), [56, i * 47 + 359])
 			
 			atypes = ""
 			for f in localbattler.types:
 				atypes += f.name + " "
-			gScreen.blit(font.render(atypes, True, BLACK), [56, i * 47 + 375])
-			gScreen.blit(font.render("Str: " + str(localbattler.str) + "   Con: " + str(localbattler.con) + "   Int: " + str(localbattler.int) + "   Mdf: " + str(localbattler.mag) + "   Agil: " + str(localbattler.agil) + "   Crit: " + str(localbattler.crit), True, BLACK), [56, i * 47 + 391])
+			defs.gScreen.blit(font.render(atypes, True, BLACK), [56, i * 47 + 375])
+			defs.gScreen.blit(font.render("Str: " + str(localbattler.str) + "   Con: " + str(localbattler.con) + "   Int: " + str(localbattler.int) + "   Mdf: " + str(localbattler.mag) + "   Agil: " + str(localbattler.agil) + "   Crit: " + str(localbattler.crit), True, BLACK), [56, i * 47 + 391])
 		
 		if mouse_down:
-			gScreen.blit(mouse_pointer2,mouse_pos)
+			defs.gScreen.blit(mouse_pointer2,mouse_pos)
 		else:
-			gScreen.blit(mouse_pointer,mouse_pos)
+			defs.gScreen.blit(mouse_pointer,mouse_pos)
 		
 		testAnim.blit(gScreen, [0,0])
 		
-		defs.cootheme.play()
-		defs.cattheme.reset()
+		defs.cattheme.play()
+		defs.cootheme.reset()
 
 		pygame.display.flip()	
 		clock.tick(60)
@@ -1005,13 +1007,13 @@ while not done:
 		elif event.type == pygame.MOUSEBUTTONUP:
 			mouse_down = False
 	mouse_pos = pygame.mouse.get_pos()
-	gScreen.fill(WHITE)
+	defs.gScreen.fill(WHITE)
 	pygame.draw.rect(gScreen, RED, [10,50,16,16])
-	gScreen.blit(font.render("Multiplayer",True,BLACK), [10,65])
+	defs.gScreen.blit(font.render("Multiplayer",True,BLACK), [10,65])
 	pygame.draw.rect(gScreen, GREEN, [60,50,16,16])
-	gScreen.blit(font.render("Story",True,BLACK), [60,35])
+	defs.gScreen.blit(font.render("Story",True,BLACK), [60,35])
 	pygame.draw.rect(gScreen, BLUE, [110,50,16,16])
-	gScreen.blit(font.render("Ai testing",True,BLACK), [110,35])
+	defs.gScreen.blit(font.render("Ai testing",True,BLACK), [110,35])
 	if hitDetect(mouse_pos, mouse_pos, [10,50], [26, 66]):
 		if mouse_down:
 			mult = True
@@ -1034,11 +1036,11 @@ while not done:
 
 	
 	if mouse_down:
-			gScreen.blit(mouse_pointer2,mouse_pos)
+			defs.gScreen.blit(mouse_pointer2,mouse_pos)
 	else:
-		gScreen.blit(mouse_pointer,mouse_pos)
+		defs.gScreen.blit(mouse_pointer,mouse_pos)
 		
-	defs.cattheme.play()
+	defs.cootheme.play()
 
 	pygame.display.flip()
 

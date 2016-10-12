@@ -58,6 +58,9 @@ def runAI(player, battlersL, battlersR):
 	if not, use basic attack
 	'''
 	
+	if player.name == "???":
+		player.goskill, player.target = player.skills[0], [player]
+	
 	if player.name == "Maice":
 		if len(allies) > 0 and not defs.rebuff in player.effects:
 			player.savingfor = "eggon"

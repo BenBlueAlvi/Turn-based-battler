@@ -4,6 +4,7 @@ import random
 import math
 
 
+
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 GREEN = (0, 255, 0)
@@ -13,7 +14,9 @@ GREY = (100,100,100)
 
 pygame.init()
 font = pygame.font.SysFont('Calibri', 15, True, False)
-
+size = (700, 500)
+gScreen = pygame.display.set_mode(size)
+clock = pygame.time.Clock()
 class Music(object):
 	def __init__(self, musicc):
 		self.musicc = musicc
@@ -49,13 +52,31 @@ def printb(text):
 	global printing
 	global log
 	global timer
+
 	
 	newtext = font.render(text,True,BLACK)
-	log.append(newtext)
+	log.append(text)
 
-	if not printing:
-		disptext = newtext
-		timer = 90
+	
+	disptext = newtext
+	timer = 90
+	for i in range(timer):
+		
+					
+				
+	
+		pygame.draw.rect(gScreen, WHITE, [10, 320, 700, 15])
+		gScreen.blit(disptext, [10, 320])
+		printing = True
+		
+		pygame.draw.rect(gScreen, BLACK, [0,350,700,150])
+		
+		
+			
+		pygame.display.flip()
+		clock.tick(60)
+	
+						
 
 def printc(text, battler, thesebattlers):
 	global disptextc
