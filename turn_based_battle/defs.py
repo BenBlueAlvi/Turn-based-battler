@@ -692,6 +692,7 @@ mindReading = Skill("Mind Reading", physic, False, 20, 20, 5, 2, 100, 1, [], ["m
 neverThere = Skill("Never There", physic, False, 0,0, 20, 0, 100, 2, [], ["trueHit", "neverThere"])
 colorfulBullet = Skill("colorfulBullet", magic, False, 10,5, 1, 2, 90, 0, [], [""])
 never = Skill("And Never Come Back", unknown, False, 200, 50, 20, 5, 100, 7, [], ["trueHit"])
+instantkill = Skill("Insta kill", unknown, False, 99999, 9999, 99, 15, 100, 0, [], ["trueHit"])
 
 
 class Char(object):
@@ -785,7 +786,7 @@ Catsome = Char("Catsome", [light, ghost, physic], 1000, 10, 35, 10, 15, 5, 5, 10
 Creep = Char("Creepy Bald Guy", [physic, unknown], 750, 10, 10, 15, 50, 0, 0, 0, 1, 0, [creepyAtk, blink, stare, inhale, exhale, observe], "Creepus", "Assets/battlers/Creepy_Bald_Guy.png", [3, 15], "")
 KnowingEye = Char("Knowing Eye", [physic, unknown, astral], 750, 0, 75, 0, 75, 5, 6, 5, 1, 0, [creepyAtk, observe, meditate, magicMute, forceShield, create], "Creepus", "Assets/battlers/wip.png", [4, 15], "")
 
-Protagonist = Char("Protagonist", [normal], 750, 15, 15, 20, 10, 2, 6, 5, 1, 0, [basicAtk, powerStrike, meditate, planAhead, eggon, takeBlow, mend, againstOdds], "Frenzy", "Assets/battlers/wip.png", [1,1], "")
+Protagonist = Char("Protagonist", [normal], 750, 15, 15, 20, 10, 2, 6, 5, 1, 0, [basicAtk, powerStrike, meditate, planAhead, eggon, takeBlow, mend, instantkill], "Frenzy", "Assets/battlers/wip.png", [1,1], "")
 
 Worshipper = Char("Worshipper", [magic, chaos, minion], 300, 5, 15, 6, 10, 0, 0, 0, 1, 0, [basicAtk, fireBall, powerTransfer, lifeTransfer, meditate], "Frenzy", "Assets/battlers/wip.png", [2,0], "")
 miniCreep = Char("Creepy Bald Guy", [physic, unknown, minion], 300, 6, 6, 8, 10, 0, 0, 0, 1, 0, [creepyAtk, blink, stare, inhale, exhale, observe], "Creepus", "Assets/battlers/Creepy_Bald_Guy.png", [3, 14], "")

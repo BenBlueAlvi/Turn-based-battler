@@ -181,10 +181,10 @@ class Battle(object):
 		powergiven = False
 		pickenm = False
 		increment = 0
-		aiSet = False
 		mincrement = 0
 		thesebattlers = []
 		battling = True
+		diatimer = 0
 		talking = True
 		ready = False
 		mouse_down = False
@@ -209,16 +209,10 @@ class Battle(object):
 			i.basex = x * 550 + 50
 			i.basey = y * 100 + 50
 			y += 1
-		
-		
-		
-	
-		
-			
-			
-			
+		for i in thesebattlers:
+			if i.name == "???":
+				thesebattlers.remove(i)
 
-			
 		for i in self.dialog.prebattle:
 			textc, text = [], []
 			for l in range(len(i)):
@@ -242,26 +236,11 @@ class Battle(object):
 					for l in range(len(textc)):
 						defs.gScreen.blit(textc[l-1], [thesebattlers[speaker].basex - font.size(text[l-1])[0], thesebattlers[speaker].basey - (30 + ((l-1) * font.size(text[l-1])[1]))])
 				
-				x = 0
-				y = 0
+			
 				for k in thesebattlers:	
-					if y > 2:
-						y = 0
-						x += 1
 					
-					
-					if k.hp > 0:
-					
-					
-						defs.gScreen.blit(k.image,[x * 550 + 50, y * 100 + 50])
-					
-					y += 1
-						
-				
-						 
-						
-						
-				
+					defs.gScreen.blit(k.image,[k.basex, k.basey])
+
 				pygame.display.flip()
 				clock.tick(60)
 					
@@ -273,6 +252,7 @@ class Battle(object):
 		
 		
 		while battling:
+			self.music.play()
 			for p in thesebattlers:
 				#update effects and all that good stuff
 				for i in p.effects:
@@ -299,7 +279,10 @@ class Battle(object):
 				p.x = p.basex
 				p.y = p.basey
 				ready, selected = False, False
-
+				
+				thesedisplays = []
+				for i in range(len(thesebattlers)-1):
+					thesedisplays.append(random.randint(0, len(self.dialog.inbattle[i])-1))
 
 				while not ready and not p.isAi:
 					defs.gScreen.fill(WHITE)
@@ -317,149 +300,133 @@ class Battle(object):
 					mouse_pos = pygame.mouse.get_pos()
 					
 					#displaying and picking skills
-					for i in p.skills:
+					if p.hp > 0:
+						for i in p.skills:
+						
+							if x > 1:
+								x = 0
+								y += 1
 
-						if x > 1:
-							x = 0
-							y += 1
-
-						if hitDetect(mouse_pos, mouse_pos,[330 + x*175, y*30 + 370], [330 + x*175 + 165, y*30 + 370 + 25]):
-							if mouse_down:
-								mouse_down = False
-								if True:
-									selected = False
-									if x == 0 and y ==0:
-										if p.skills[0].cost <= p.power:
-											p.goskill = p.skills[0]
-											selected = True
-										
-									if x == 1 and y == 0:
-										if p.skills[1].cost <= p.power:
-											p.goskill = p.skills[1]
-											selected = True
-											
-									if x == 0 and y == 1:
-										if p.skills[2].cost <= p.power:
-											p.goskill = p.skills[2]
-											selected = True
-									if x == 1 and y == 1:
-										if p.skills[3].cost <= p.power:
-											p.goskill = p.skills[3]
-											selected = True
-									if x == 0 and y == 2:
-										if p.skills[4].cost <= p.power:
-											p.goskill = p.skills[4]
-											selected = True
-									if x == 1 and y == 2:
-										if p.skills[5].cost <= p.power:
-											p.goskill = p.skills[5]
-											selected = True
-									if x == 0 and y == 3:
-										if p.skills[6].cost <= p.power:
-											p.goskill = p.skills[6]
-											selected = True
-									if x == 1 and y == 3:
-										if p.skills[7].cost <= p.power:
-											p.goskill = p.skills[7]
-											selected = True
-											
-									if selected:
-										mouse_down = False
-										print "skill picked:", p.goskill.name
-										pickenm = True
-						x += 1
-					
-					x = 0
-					y = 0					
-					if pickenm:	
-						p.target = ["nul"]
-						for i in thesebattlers:
-							if y > 2:
-								y = 0
-								x += 1
-								
-							if hitDetect(mouse_pos, mouse_pos, (x *550 + 50, y * 100 + 50), (x * 550 + 50 + 50, y* 100 + 50 + 50)):
-							
+							if hitDetect(mouse_pos, mouse_pos,[330 + x*175, y*30 + 370], [330 + x*175 + 165, y*30 + 370 + 25]):
 								if mouse_down:
-									if x == 0 and y == 0:
-										p.target[0] = thesebattlers[0]
-										ready = True
-									if x == 0 and y == 1:
-										p.target[0] = thesebattlers[1]
-										ready = True
-									if x == 0 and y == 2:
-										p.target[0] = thesebattlers[2]
-										ready = True
-									if x == 1 and y == 0:
-										p.target[0] = thesebattlers[3]
-										ready = True
-									if x == 1 and y == 1:
-										p.target[0] = thesebattlers[4]
-										ready = True
-									if x == 1 and y == 2:
-										p.target[0] = thesebattlers[5]
-										ready = True
-								mouse_down = False
-							
-							if ready:
-								print p.target[0].name
-								
-								if "hitAll" in  p.goskill.spec:
-									p.target = []
-									if p in self.battlers1:
-										p.target = self.battlers2
-									elif p in self.battlers2:
-										p.target = self.battlers1
-								
-								pickenm = False
-							y += 1
-
-
-					#----------------
-					if p in self.battlers1:
-						p.x += 50
-						if not p.x == p.basex + 50:
-							p.x = p.basex + 50
-					else: 
-						p.x -= 50
-						if not p.x == p.basex - 50:
-							p.x = p.basex - 50
-					
-					
-					p.y += p.ym
-					if p.y >= p.basey + 5 or p.y <= p.basey - 5:
-						p.ym *= -1
-					
-					defs.gScreen.blit(p.image, [p.x, p.y])
-
-					x = 0
-					y = 0
-					for i in thesebattlers:	
-						if y > 2:
-							y = 0
+									mouse_down = False
+									if True:
+										selected = False
+										if x == 0 and y ==0:
+											if p.skills[0].cost <= p.power:
+												p.goskill = p.skills[0]
+												selected = True
+											
+										if x == 1 and y == 0:
+											if p.skills[1].cost <= p.power:
+												p.goskill = p.skills[1]
+												selected = True
+												
+										if x == 0 and y == 1:
+											if p.skills[2].cost <= p.power:
+												p.goskill = p.skills[2]
+												selected = True
+										if x == 1 and y == 1:
+											if p.skills[3].cost <= p.power:
+												p.goskill = p.skills[3]
+												selected = True
+										if x == 0 and y == 2:
+											if p.skills[4].cost <= p.power:
+												p.goskill = p.skills[4]
+												selected = True
+										if x == 1 and y == 2:
+											if p.skills[5].cost <= p.power:
+												p.goskill = p.skills[5]
+												selected = True
+										if x == 0 and y == 3:
+											if p.skills[6].cost <= p.power:
+												p.goskill = p.skills[6]
+												selected = True
+										if x == 1 and y == 3:
+											if p.skills[7].cost <= p.power:
+												p.goskill = p.skills[7]
+												selected = True
+												
+										if selected:
+											mouse_down = False
+											print "skill picked:", p.goskill.name
+											pickenm = True
 							x += 1
+						
+									
+						if pickenm:	
+							p.target = ["nul"]
+							for i in thesebattlers:
+								
+									
+								if hitDetect(mouse_pos, mouse_pos, (i.basex, i.basey), (i.basex + 50,i.basey + 50)):
+								
+									if mouse_down:
+										p.target[0] = i
+										ready = True
+										
+									mouse_down = False
+								
+								if ready:
+									print p.target[0].name
+									
+									if "hitAll" in  p.goskill.spec:
+										p.target = []
+										if p in self.battlers1:
+											p.target = self.battlers2
+										elif p in self.battlers2:
+											p.target = self.battlers1
+									
+									pickenm = False
+								
+
+
+						#----------------
+						if p in self.battlers1:
+							p.x += 50
+							if not p.x == p.basex + 50:
+								p.x = p.basex + 50
+						else: 
+							p.x -= 50
+							if not p.x == p.basex - 50:
+								p.x = p.basex - 50
+						
+						
+						p.y += p.ym
+						if p.y >= p.basey + 5 or p.y <= p.basey - 5:
+							p.ym *= -1
+						
+						defs.gScreen.blit(p.image, [p.x, p.y])
+					else:
+						p.goskill = defs.nothing
+						p.target = [p]
+						ready = True
+
+				
+					for i in thesebattlers:	
+						
 						
 						if i.hp > 0:
 							
 								
 							
 							if not i == p:
-								defs.gScreen.blit(i.image,[x * 550 + 50, y * 100 + 50])
+								defs.gScreen.blit(i.image,[i.basex,i.basey])
 							
 								
 							
-							pygame.draw.rect(gScreen, RED, [x* 550 + 50, y* 100 + 25,int(i.hp) / 20,5])
+							pygame.draw.rect(gScreen, RED, [i.basex, i.basey - 10,int(i.hp) / 20,5])
 							 
 							for f in range(len(i.effects)):
 								
-								defs.gScreen.blit(i.effects[f].img, [x* 550 + 40 - f * 10, y * 100 + 25])
+								defs.gScreen.blit(i.effects[f].img, [i.basex - f * 10, i.basey])
 							
 							
 						y += 1
 					#ANIMATIONS!
 					
 					pygame.draw.rect(gScreen, BLACK, [0,350,700,150])
-					#pygame.draw.rect(gScreen, WHITE, [10,360,300,50])
+				
 					defs.gScreen.blit(health_border, [10, 360])
 					pygame.draw.rect(gScreen, GREY, [320, 360, 370, 130])
 				
@@ -468,6 +435,17 @@ class Battle(object):
 
 					if p.hp > 0:
 						dispSkills(p)
+					#------
+					
+					
+					for i in range(len(thesebattlers)-1):
+						texti = self.dialog.inbattle[i][thesedisplays[i]]
+						displaythis = font.render(texti, True, BLACK)
+						for l in range(len(texti)-1):
+							print l
+							
+							defs.gScreen.blit(displaythis, [thesebattlers[i].basex, thesebattlers[i].basey - (30 + ((l) * font.size(l)[1]))])
+					
 					
 					if mouse_down:
 						defs.gScreen.blit(mouse_pointer2,mouse_pos)
@@ -479,27 +457,7 @@ class Battle(object):
 							
 						#reset character here
 						
-					for i in self.battlers1:
-						if i.hp <= 0:
-							self.battlers1.remove(i)
-							
-					for i in self.battlers2:
-						if i.hp <= 0:
-							self.battlers2.remove(i)
-							
-					if len(self.battlers1) == 0:
-						defs.printb("Player 2 WINS!")
-						print "Player 2 Wins"
-						for b in thesebattlers:
-							b = b.reBuild()
-						break
 						
-					elif len(self.battlers2) == 0:
-						defs.printb("Player 1 WINS!")
-						print "Player 1 Wins"
-						for b in thesebattlers:
-							b = b.reBuild()
-						break
 					#print "THE TIMER:", defs.timer
 					
 					
@@ -553,12 +511,37 @@ class Battle(object):
 					increment += 1
 				if increment > len(thesebattlers) - 1:
 					increment = 0
-					thebattler = 0
-					aiSet = False
-					for i in thesebattlers:
-						i.updated = False
 				
+				for i in thesebattlers:
+					if i.hp <= 0:
+						thesebattlers.remove(i)
+						if i in self.battlers1:
+							self.battlers1.remove(i)
+						if i in self.battlers2:
+							self.battlers2.remove(i)
+						
+			for i in thesebattlers:
+				i.updated = False
+			if len(self.battlers1) == 0:
+				defs.printb("Player 2 WINS!")
+				print "Player 2 Wins"
+				for b in thesebattlers:
+					b = b.reBuild()
+				self.music.reset()
+				self.music.stop()
+				battling = False
+				break
 				
+			elif len(self.battlers2) == 0:
+				defs.printb("Player 1 WINS!")
+				print "Player 1 Wins"
+				for b in thesebattlers:
+					b = b.reBuild()
+				self.music.reset()
+				self.music.stop()
+				battling = False
+				break
+
 				
 
 		# --- Drawing code should go here
@@ -579,6 +562,7 @@ class Battle(object):
 	 
 			# --- Limit to 60 frames per second
 			clock.tick(60)
+		player1.battlers = [defs.NOT.buildNew(), defs.NOT.buildNew(), defs.NOT.buildNew()]
 
 #preb is list of lists, inb is dictionary, losb is list of lists, winb is list of lists
 class Dialoge(object):
@@ -590,12 +574,12 @@ class Dialoge(object):
 
 NoDial = Dialoge([[0, ""]],{0:[""], 1:[""], 2:[""], 3:[""], 4:[""], 5:[""]},[[0, ""]],[[0, ""]])
 
-CatDial = Dialoge([[1, "Are you this 'Catosme' i've heard so much about?"], [4, "Yes, that is one title I reply to..."], [4, "Anyway, have you seen a little friend of mine running about?"], [1, "I was sent here by it to avenge it."], [4, "So it wants you to try to hit on me?"], [1, "Please no."], [4, "So we're going to skip the formalities", "and get right to the good parts, eh?"]], {4:["Come on, I know you can hit me harder than that!", "Looks hot over there, how about taking some of that off?", "ah, so THATS your weak spot!"]}, [[4, "Ah, that was nice being on top."], [1, "What is it with you and innuendos?"], [4, "I guess it's just one of the things in me."]], [[4, "Ah, I give! Safe word, Safe word!"], [1, "Please stop with the innuendos."]])
+CatDial = Dialoge([[0, "Are you this 'Catosme' i've heard so much about?"], [1, "Yes, that is one title I reply to..."], [1, "Anyway, have you seen a little friend of mine running about?"], [0, "I was sent here by it to avenge it."], [1, "So it wants you to try to hit on me?"], [0, "Please no."], [1, "So we're going to skip the formalities", "and get right to the good parts, eh?"]], {0:[""], 1:["Come on, I know you can hit me harder than that!", "Looks hot over there, how about taking some of that off?", "ah, so THATS your weak spot!"]}, [[1, "Ah, that was nice being on top."], [0, "What is it with you and innuendos?"], [1, "I guess it's just one of the things in me."]], [[1, "Ah, I give! Safe word, Safe word!"], [1, "Please stop with the innuendos."]])
 CatsomeFight = Battle([], [defs.NO, defs.Catsome.buildNew(), defs.NO], "", CatDial, False, defs.cattheme)
-CooDial = Dialoge([[5, "Ah, Coosome! it's been a while!"], [4, "Indeed it has, Cat."], [1, "You know him?"], [5, "Of course! We are all over each other!"], [4, "What Cat means to say, is that we are one and the same."], [5, "We stick together! so Lets have a FOURSOME!"], [1, "But who else is joining me?"], [2, "I'll stand in for Catsome. Lets do this."]], {4:[""], 5:["Come on, I know you can hit me harder than that!", "Looks hot over there, how about taking some of that off?", "Hit 'em there! thats his weak spot!"]}, [[4, "You fought well.", "But not well enough."], [5, "Is that really all? I'm not satisfied yet."]], [[4, "Nice one, you fought well there."], [5, "Is it done already? I'm not quite satisfied yet..."]])
-Coo33Fight = Battle([], [defs.NO, defs.Catsome.buildNew(), defs.CoosomeJoe.buildNew()], "", CooDial, False, defs.cootheme)
-
-Coo33Fight = Battle([], [defs.CoosomeJoe.buildNew(), defs.Coo33.buildNew(), defs.Catsome.buildNew()], "", CooDial, False, defs.cootheme)
+CooDial = Dialoge([[2, "Ah, Coosome! it's been a while!"], [3, "Indeed it has, Cat."], [0, "You know him?"], [2, "Of course! We are all over each other!"], [3, "What Cat means to say, is that we are one and the same."], [2, "We stick together! so Lets have a FOURSOME!"], [0, "But who else is joining me?"], [1, "I'll stand in for Catsome. Lets do this."]], {0:[""], 1:[""], 2:["Come on, I know you can hit me harder than that!", "Looks hot over there, how about taking some of that off?", "Hit 'em there! thats his weak spot!"]}, [[3, "You fought well.", "But not well enough."], [2, "Is that really all? I'm not satisfied yet."]], [[3, "Nice one, you fought well there."], [2, "Is it done already? I'm not quite satisfied yet..."]])
+Coo33Fight = Battle([], [defs.Catsome.buildNew(), defs.NO, defs.CoosomeJoe.buildNew()], "", CooDial, False, defs.cootheme) 
+C33Dial = Dialoge([[5, "Ah, Coosome! it's been a while!"], [4, "Indeed it has, Cat."], [1, "You know him?"], [5, "Of course! We are all over each other!"], [4, "What Cat means to say, is that we are one and the same."], [5, "We stick together! so Lets have a FOURSOME!"], [1, "But who else is joining me?"], [2, "I'll stand in for Catsome. Lets do this."]], {0:[""], 1:[""], 2:[""], 3:[""], 4:[""], 5:["Come on, I know you can hit me harder than that!", "Looks hot over there, how about taking some of that off?", "Hit 'em there! thats his weak spot!"]}, [[4, "You fought well.", "But not well enough."], [5, "Is that really all? I'm not satisfied yet."]], [[4, "Nice one, you fought well there."], [5, "Is it done already? I'm not quite satisfied yet..."]])
+Coo33Fight = Battle([], [defs.CoosomeJoe.buildNew(), defs.Coo33.buildNew(), defs.Catsome.buildNew()], "", C33Dial, False, defs.cootheme)
 
 
 
@@ -614,7 +598,7 @@ class Stage(object):
 		
 		
 
-st1 = Stage("", "", [CatsomeFight], [317,48])
+st1 = Stage("", "", [CatsomeFight,Coo33Fight], [317,48])
 st2 = Stage("", "", [], [280, 221])
 st3 = Stage("", "", [], [393,292])
 st4 = Stage("", "", [], [540,313])
@@ -852,7 +836,6 @@ def CharSelect(mult):
 					
 				else:
 					dispchar = defs.NO
-					thisplayer.battlers[0] = defs.NO
 
 			x += 1
 			
@@ -874,7 +857,6 @@ def CharSelect(mult):
 		
 				else:
 					dispchar2 = defs.NO
-					thisplayer.battlers[1] = defs.NO
 
 			x += 1
 			
@@ -895,7 +877,6 @@ def CharSelect(mult):
 					
 				else:
 					dispchar2 = defs.NO
-					thisplayer.battlers[2] = defs.NO
 
 			x += 1
 
@@ -906,7 +887,7 @@ def CharSelect(mult):
 						mult = False
 						for i in player2.battlers:
 							i.isAi = True
-					theBattle = Battle(player1.battlers, player2.battlers, "", NoDial, mult)
+					theBattle = Battle(player1.battlers, player2.battlers, "", NoDial, mult, defs.cattheme)
 		
 					theBattle.battle()
 					
@@ -970,7 +951,7 @@ def CharSelect(mult):
 		
 		testAnim.blit(gScreen, [0,0])
 		
-		defs.cattheme.play()
+		
 		defs.cootheme.reset()
 
 		pygame.display.flip()	
