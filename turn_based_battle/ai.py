@@ -57,14 +57,44 @@ def runAI(player, battlersL, battlersR):
 	see if you are there
 	if not, use basic attack
 	'''
+	
+	if player.name == "???":
+		player.goskill, player.target = player.skills[0], [player]
+	
+	if player.name == "Maice":
+		if len(allies) > 0 and not defs.rebuff in player.effects:
+			player.savingfor = "eggon"
+		if player.savingfor == "none" or defs.rebuff in player.effects:
+			player.savingfor == "bite"
+		if player.savingfor == "bite":
+			if player.power >= player.skills[2].power:
+				player.goskill, player.target = player.skills[2], [potdam[0]]
+			else:
+				if rand == 0:
+					player.goskill, player.target = player.skills[0], [potdam[0]]
+				else:
+					player.goskill, player.target = player.skills[1], [potdam[0]]
+		if player.savingfor == "eggon":
+			if player.power >= player.skills[3].power:
+				player.goskill, player.target = player.skills[3], [allies[random.randint(0,len(allies)-1)]]
+			else:
+				if rand == 0:
+					player.goskill, player.target = player.skills[0], [potdam[0]]
+				else:
+					player.goskill, player.target = player.skills[1], [potdam[0]]
+					
+				
+				
+	
+	
 	if player.name == "Lapis":
-		if player.savingfor == "none" and player.hp >= player.maxhp - player.max / 3 and rand == 0:
+		if player.savingfor == "none" and player.hp >= player.hp / 3 and rand == 0:
 			player.goskill, player.target = player.skills[4], [battlersL] 
 			player.savingfor = "astral vortex"
-		if player.savingfor == "none" and player.hp >= player.maxhp - player.max / 3 and rand == 1:
+		if player.savingfor == "none" and player.hp >= payer.hp / 3 and rand == 1:
 			player.goskill, player.target = player.skills[3], [battlersL] 
 			player.savingfor = "chaos vortex"
-		if player.savingfor == "none" and player.hp >= player.maxhp - (player.max / 3) * 2:
+		if player.savingfor == "none" and player.hp <= player.hp / 3:
 			player.goskill, player.target = player.skills[2], [battlersL]
 			player.savingfor = "earth vortex"
 		if player.savingfor == "astral vortex":
@@ -77,7 +107,7 @@ def runAI(player, battlersL, battlersR):
 				player.goskill, player.target = player.skills[5], [battlersL]
 			else:
 				player.goskill, player.target = player.skills[0], [potdam[0]]
-		if player.savingfor == "earthen vortex" and player.hp > player.max / 4:
+		if player.savingfor == "earth vortex" and player.hp > player.max / 4:
 			if player.power >= player.skills[6].cost:
 				player.goskill, player.target = player.skills[6], [battlersL]
 			else:

@@ -14,6 +14,29 @@ GREY = (100,100,100)
 
 pygame.init()
 font = pygame.font.SysFont('Calibri', 15, True, False)
+size = (700, 500)
+gScreen = pygame.display.set_mode(size)
+clock = pygame.time.Clock()
+class Music(object):
+	def __init__(self, musicc):
+		self.musicc = musicc
+		self.playing = True
+		
+	def play(self):
+		if self.playing:
+			pygame.mixer.music.stop()
+			pygame.mixer.music.load(self.musicc)
+			pygame.mixer.music.play(-1, 0.0)
+			#pygame.mixer.music.set_endevent(intodone)
+		self.playing = False
+	def reset(self):
+		self.playing = True
+	def stop(self):
+		pygame.mixer.music.stop
+		
+		
+cattheme = Music("Assets/music/Raxxo_Patchy_Aid.ogg")
+cootheme = Music("Assets/music/Raxxo_Stand_Your_Ground.ogg")
 
 def bubble_sort(items):
 	""" Implementation of bubble sort """
@@ -29,13 +52,31 @@ def printb(text):
 	global printing
 	global log
 	global timer
+
 	
 	newtext = font.render(text,True,BLACK)
-	log.append(newtext)
+	log.append(text)
 
-	if not printing:
-		disptext = newtext
-		timer = 90
+	
+	disptext = newtext
+	timer = 90
+	for i in range(timer):
+		
+					
+				
+	
+		pygame.draw.rect(gScreen, WHITE, [10, 320, 700, 15])
+		gScreen.blit(disptext, [10, 320])
+		printing = True
+		
+		pygame.draw.rect(gScreen, BLACK, [0,350,700,150])
+		
+		
+			
+		pygame.display.flip()
+		clock.tick(60)
+	
+						
 
 def printc(text, battler, thesebattlers):
 	global disptextc
@@ -51,6 +92,8 @@ def printc(text, battler, thesebattlers):
 	timerc = 90
 	for i in range(timerc):
 		gScreen.blit(disptextc, [thesebattlers[battler].x, thesebattlers[battler].y + 10])
+		
+
 
 class Type(object):
 	def __init__(self, name, weks, strs):
@@ -649,6 +692,7 @@ mindReading = Skill("Mind Reading", physic, False, 20, 20, 5, 2, 100, 1, [], ["m
 neverThere = Skill("Never There", physic, False, 0,0, 20, 0, 100, 2, [], ["trueHit", "neverThere"])
 colorfulBullet = Skill("colorfulBullet", magic, False, 10,5, 1, 2, 90, 0, [], [""])
 never = Skill("And Never Come Back", unknown, False, 200, 50, 20, 5, 100, 7, [], ["trueHit"])
+instantkill = Skill("Insta kill", unknown, False, 99999, 9999, 99, 15, 100, 0, [], ["trueHit"])
 
 
 class Char(object):
@@ -697,6 +741,7 @@ class Char(object):
 		self.savingfor = "none"
 		self.nextattack = ""
 		self.aimisc = 0
+		self.isAi = False
 		
 	def buildNew(self):
 		newchar = Char(self.name, self.types, self.hp, self.str, self.int, self.con, self.mag, self.agil, self.crit, self.dodgeChance, self.lvl, self.xp, self.skills, self.ability, pygame.transform.scale(pygame.image.load(self.image), [50, 50]), self.cords, pygame.transform.scale(pygame.image.load(self.image), [42, 42]))
@@ -714,6 +759,8 @@ NOT = Char("???", [unknown], 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, [nothing], "", "Asset
 Mage = Char("Meigis", [normal, chaos], 500, 5, 15, 5, 15, 4, 0, 10, 1, 0, [basicAtk, fireBall, waterSpout, airBlast, earthShot, defend], "", "Assets/battlers/Mage.png", [5,0], "")
 
 Mouther = Char("Mouther", [earth], 500, 20, 0, 10, 5, 4, 0, 10, 1, 0, [basicAtk, bite, consumeFlesh, defend], "", "Assets/battlers/Mouther.png", [4,0], "")
+
+Maice = Char("Maice", [normal], 500, 15, 15, 10, 10, 6, 2, 11, 1, 0, [basicAtk, slash, bite, eggon], "", "Assets/battlers/wip.png", [3, 0], "") 
 
 Nic = Char("Nic", [chaos], 500, 15, 50, 10, 25, 4, 0, 10, 1, 0, [basicAtk, magicMute, shardSwarm, powerUp, defend], "", "Assets/battlers/nic.png", [5,8], "")
 Epic = Char("Epic", [tech], 1000, 25, 50, 35, 45, 7, 10, 10, 1, 0, [basicAtk,energiBeam, wellspring, defend], "", "Assets/battlers/epic.png", [7,8], "")
@@ -739,7 +786,7 @@ Catsome = Char("Catsome", [light, ghost, physic], 1000, 10, 35, 10, 15, 5, 5, 10
 Creep = Char("Creepy Bald Guy", [physic, unknown], 750, 10, 10, 15, 50, 0, 0, 0, 1, 0, [creepyAtk, blink, stare, inhale, exhale, observe], "Creepus", "Assets/battlers/Creepy_Bald_Guy.png", [3, 15], "")
 KnowingEye = Char("Knowing Eye", [physic, unknown, astral], 750, 0, 75, 0, 75, 5, 6, 5, 1, 0, [creepyAtk, observe, meditate, magicMute, forceShield, create], "Creepus", "Assets/battlers/knowingeye.png", [4, 15], "")
 
-Protagonist = Char("Protagonist", [normal], 750, 15, 15, 20, 10, 2, 6, 5, 1, 0, [basicAtk, powerStrike, meditate, planAhead, eggon, takeBlow, mend, againstOdds], "Frenzy", "Assets/battlers/wip.png", [1,1], "")
+Protagonist = Char("Protagonist", [normal], 750, 15, 15, 20, 10, 2, 6, 5, 1, 0, [basicAtk, powerStrike, meditate, planAhead, eggon, takeBlow, mend, instantkill], "Frenzy", "Assets/battlers/wip.png", [1,1], "")
 
 Worshipper = Char("Worshipper", [magic, chaos, minion], 300, 5, 15, 6, 10, 0, 0, 0, 1, 0, [basicAtk, fireBall, powerTransfer, lifeTransfer, meditate], "Frenzy", "Assets/battlers/wip.png", [2,0], "")
 miniCreep = Char("Creepy Bald Guy", [physic, unknown, minion], 300, 6, 6, 8, 10, 0, 0, 0, 1, 0, [creepyAtk, blink, stare, inhale, exhale, observe], "Creepus", "Assets/battlers/Creepy_Bald_Guy.png", [3, 14], "")
