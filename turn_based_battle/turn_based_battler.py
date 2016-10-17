@@ -1,5 +1,6 @@
 
 
+
 import pygame
 import random
 import time
@@ -220,7 +221,7 @@ class Battle(object):
 			mouse_pos = pygame.mouse.get_pos()
 		
 			#health-=0.01
-			print thisbattler.name + "'s turn"
+			#print thisbattler.name + "'s turn"
 			if not thisbattler.updated:
 			
 				for i in thisbattler.effects:
