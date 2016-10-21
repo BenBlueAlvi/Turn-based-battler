@@ -162,6 +162,7 @@ class Battle(object):
 	def __init__(self, battlers1, battlers2, arena, dialog, mult, music):
 		self.battlers1 = battlers1
 		self.battlers2 = battlers2
+		
 		self.music = music
 		self.arena = arena
 		self.dialog = dialog
@@ -194,26 +195,50 @@ class Battle(object):
 		limit = 6
 		if self.mult == False:
 			limit = 6
+			
 		
 		thesebattlers += self.battlers1 + self.battlers2
 		for i in self.battlers1:
 			print i.name
 		for i in self.battlers2:
 			print i.name
-
+			
+			
+		
 		x = 0
 		y = 0
 		for i in thesebattlers:
+			
 			if y > 2:
 				y = 0
 				x += 1
 			i.basex = x * 550 + 50
 			i.basey = y * 100 + 50
 			y += 1
-		for i in thesebattlers:
-			if i.name == "???":
-				thesebattlers.remove(i)
+			
 
+			
+		for i in self.battlers1:
+			if i.name == "???" or i == defs.NO or i == defs.NOT:
+				self.battlers1.remove(i)
+		for i in self.battlers2:
+			if i.name == "???" or i == defs.NO or i == defs.NOT:
+				self.battlers2.remove(i)
+		thesebattlers = self.battlers1 + self.battlers2
+			
+		for i in thesebattlers:
+			if i.name == "???" or i == defs.NO or i == defs.NOT:
+				thesebattlers.remove(i)
+		
+		
+		origbattlers = thesebattlers
+		for i in origbattlers:
+			print "orig:", i.name
+		origbattlers1 = self.battlers1
+		origbattlers2 = self.battlers2
+
+		
+		
 		for i in self.dialog.prebattle:
 			textc, text = [], []
 			for l in range(len(i)):
@@ -278,9 +303,7 @@ class Battle(object):
 				p.y = p.basey
 				ready, selected = False, False
 				
-				thesedisplays = []
-				for i in range(len(thesebattlers)-1):
-					thesedisplays.append(random.randint(0, len(self.dialog.inbattle[i])-1))
+				
 
 				while not ready and not p.isAi:
 					defs.gScreen.fill(WHITE)
@@ -436,14 +459,7 @@ class Battle(object):
 					#------
 					
 					
-					for i in range(len(thesebattlers)-1):
-						texti = self.dialog.inbattle[i][thesedisplays[i]]
-						displaythis = font.render(texti, True, BLACK)
-						for l in range(len(texti)-1):
-							print l
-							
-							defs.gScreen.blit(displaythis, [thesebattlers[i].basex, thesebattlers[i].basey - (30 + ((l) * font.size(l)[1]))])
-					
+				
 					
 					if mouse_down:
 						defs.gScreen.blit(mouse_pointer2,mouse_pos)
@@ -512,7 +528,7 @@ class Battle(object):
 				
 				for i in thesebattlers:
 					if i.hp <= 0:
-						thesebattlers.remove(i)
+						#thesebattlers.remove(i)
 						if i in self.battlers1:
 							self.battlers1.remove(i)
 						if i in self.battlers2:
@@ -560,8 +576,67 @@ class Battle(object):
 	 
 			# --- Limit to 60 frames per second
 			clock.tick(60)
-		player1.battlers = [defs.NOT.buildNew(), defs.NOT.buildNew(), defs.NOT.buildNew()]
-
+			
+		#-------------------------------
+		speaker = 0
+		if len(self.battlers1) == 0:
+			for i in self.dialog.lossbattle:
+				textc, text = [], []
+				for l in range(len(i)):
+					if l == 0:
+						speaker = i[l]
+						print "speaker:", speaker
+					else:
+						textc.append(font.render(i[l],True,BLACK))
+						text.append(i[l])
+						
+						
+				talking = 0
+				while talking <= 120* len(textc):
+					defs.gScreen.fill(WHITE)
+					pygame.draw.rect(gScreen, BLACK, [0,350,700,150])
+					talking += 1
+					if origbattlers[speaker] in origbattlers1:
+						for l in range(len(textc)):
+							defs.gScreen.blit(textc[l-1], [origbattlers[speaker].basex, origbattlers[speaker].basey - (30 + ((l-1) * font.size(text[l-1])[1]))])
+					else:
+						for l in range(len(textc)):
+							defs.gScreen.blit(textc[l-1], [origbattlers[speaker].basex - font.size(text[l-1])[0], origbattlers[speaker].basey - (30 + ((l-1) * font.size(text[l-1])[1]))])
+					
+					for k in origbattlers:
+						defs.gScreen.blit(k.image,[k.basex, k.basey])
+					pygame.display.flip()
+					clock.tick(60)
+					
+		if len(self.battlers2) == 0:
+			for i in self.dialog.winbattle:
+				textc, text = [], []
+				for l in range(len(i)):
+					if l == 0:
+						speaker = i[l]
+						print "speaker:", speaker
+						
+					else:
+						textc.append(font.render(i[l],True,BLACK))
+						text.append(i[l])
+						
+						
+				talking = 0
+				while talking <= 120* len(textc):
+					defs.gScreen.fill(WHITE)
+					pygame.draw.rect(gScreen, BLACK, [0,350,700,150])
+					talking += 1
+					if origbattlers[speaker] in origbattlers1:
+						for l in range(len(textc)):
+							defs.gScreen.blit(textc[l-1], [origbattlers[speaker].basex, origbattlers[speaker].basey - (30 + ((l-1) * font.size(text[l-1])[1]))])
+					else:
+						for l in range(len(textc)):
+							defs.gScreen.blit(textc[l-1], [origbattlers[speaker].basex - font.size(text[l-1])[0], origbattlers[speaker].basey - (30 + ((l-1) * font.size(text[l-1])[1]))])
+					
+					for k in origbattlers:
+						defs.gScreen.blit(k.image,[k.basex, k.basey])
+					pygame.display.flip()
+					clock.tick(60)
 #preb is list of lists, inb is dictionary, losb is list of lists, winb is list of lists
 class Dialoge(object):
 	def __init__(self, preb, inb, losb, winb):
@@ -572,7 +647,7 @@ class Dialoge(object):
 
 NoDial = Dialoge([[0, ""]],{0:[""], 1:[""], 2:[""], 3:[""], 4:[""], 5:[""]},[[0, ""]],[[0, ""]])
 
-CatDial = Dialoge([[0, "Are you this 'Catosme' i've heard so much about?"], [1, "Yes, that is one title I reply to..."], [1, "Anyway, have you seen a little friend of mine running about?"], [0, "I was sent here by it to avenge it."], [1, "So it wants you to try to hit on me?"], [0, "Please no."], [1, "So we're going to skip the formalities", "and get right to the good parts, eh?"]], {0:[""], 1:["Come on, I know you can hit me harder than that!", "Looks hot over there, how about taking some of that off?", "ah, so THATS your weak spot!"]}, [[1, "Ah, that was nice being on top."], [0, "What is it with you and innuendos?"], [1, "I guess it's just one of the things in me."]], [[1, "Ah, I give! Safe word, Safe word!"], [1, "Please stop with the innuendos."]])
+CatDial = Dialoge([[0, "Are you this 'Catosme' i've heard so much about?"], [1, "Yes, that is one title I reply to..."], [1, "Anyway, have you seen a little friend of mine running about?"], [0, "I was sent here by it to avenge it."], [1, "So it wants you to try to hit on me?"], [0, "Please no."], [1, "So we're going to skip the formalities", "and get right to the good parts, eh?"]], {0:[""], 1:["Come on, I know you can hit me harder than that!", "Looks hot over there, how about taking some of that off?", "ah, so THATS your weak spot!"]}, [[1, "Ah, that was nice being on top."], [0, "What is it with you and innuendos?"], [1, "I guess it's just one of the things in me."]], [[1, "Ah, I give! Safe word, Safe word!"], [0, "Please stop with the innuendos."]])
 CatsomeFight = Battle([], [defs.NO, defs.Catsome.buildNew(), defs.NO], "", CatDial, False, defs.cattheme)
 CooDial = Dialoge([[2, "Ah, Coosome! it's been a while!"], [3, "Indeed it has, Cat."], [0, "You know him?"], [2, "Of course! We are all over each other!"], [3, "What Cat means to say, is that we are one and the same."], [2, "We stick together! so Lets have a FOURSOME!"], [0, "But who else is joining me?"], [1, "I'll stand in for Catsome. Lets do this."]], {0:[""], 1:[""], 2:["Come on, I know you can hit me harder than that!", "Looks hot over there, how about taking some of that off?", "Hit 'em there! thats his weak spot!"]}, [[3, "You fought well.", "But not well enough."], [2, "Is that really all? I'm not satisfied yet."]], [[3, "Nice one, you fought well there."], [2, "Is it done already? I'm not quite satisfied yet..."]])
 Coo33Fight = Battle([], [defs.Catsome.buildNew(), defs.NO, defs.CoosomeJoe.buildNew()], "", CooDial, False, defs.cootheme) 
@@ -692,8 +767,8 @@ theWorld = World([st1])
 
 class Player(object):
 	def __init__(self, name):
-		self.acbattler = defs.NOT.buildNew()
-		self.battlers = [defs.NOT.buildNew(), defs.NOT.buildNew(), defs.NOT.buildNew()]
+		self.acbattler = defs.NO
+		self.battlers = [defs.NO, defs.NO, defs.NO]
 		self.name = name
 		self.wins = 0
 		self.losses = 0
