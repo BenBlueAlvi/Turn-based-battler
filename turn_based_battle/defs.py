@@ -37,6 +37,7 @@ class Music(object):
 		
 cattheme = Music("Assets/music/Raxxo_Patchy_Aid.ogg")
 cootheme = Music("Assets/music/Raxxo_Stand_Your_Ground.ogg")
+maicetheme = Music("Assets/music/A_Tiny_Tiny_Clever_Commander.ogg")
 
 def bubble_sort(items):
 	""" Implementation of bubble sort """
@@ -489,7 +490,7 @@ class Skill(object):
 					user.effects.append(immortal.buildNew())
 				if i == "heal":
 					damage = 0
-					target.hp += user.int * 3
+					target.hp += 100
 					if target.ability == "3 worlds":
 						target.hp -= user.int * 2
 					if critical:
@@ -760,7 +761,7 @@ Mage = Char("Meigis", [normal, chaos], 500, 5, 15, 5, 15, 4, 0, 10, 1, 0, [basic
 
 Mouther = Char("Mouther", [earth], 500, 20, 0, 10, 5, 4, 0, 10, 1, 0, [basicAtk, bite, consumeFlesh, defend], "", "Assets/battlers/Mouther.png", [4,0], "")
 
-Maice = Char("Maice", [normal], 500, 15, 15, 10, 10, 6, 2, 11, 1, 0, [basicAtk, slash, bite, eggon], "", "Assets/battlers/wip.png", [3, 0], "") 
+Maice = Char("Maice", [normal], 500, 15, 15, 10, 10, 6, 2, 11, 1, 0, [basicAtk, slash, bite, eggon], "", "Assets/battlers/nazrin.png", [3, 0], "") 
 
 Nic = Char("Nic", [chaos], 500, 15, 50, 10, 25, 4, 0, 10, 1, 0, [basicAtk, magicMute, shardSwarm, powerUp, defend], "", "Assets/battlers/nic.png", [5,8], "")
 Epic = Char("Epic", [tech], 1000, 25, 50, 35, 45, 7, 10, 10, 1, 0, [basicAtk,energiBeam, wellspring, defend], "", "Assets/battlers/epic.png", [7,8], "")
@@ -786,7 +787,7 @@ Catsome = Char("Catsome", [light, ghost, physic], 1000, 10, 35, 10, 15, 5, 5, 10
 Creep = Char("Creepy Bald Guy", [physic, unknown], 750, 10, 10, 15, 50, 0, 0, 0, 1, 0, [creepyAtk, blink, stare, inhale, exhale, observe], "Creepus", "Assets/battlers/Creepy_Bald_Guy.png", [3, 15], "")
 KnowingEye = Char("Knowing Eye", [physic, unknown, astral], 750, 0, 75, 0, 75, 5, 6, 5, 1, 0, [creepyAtk, observe, meditate, magicMute, forceShield, create], "Creepus", "Assets/battlers/knowingeye.png", [4, 15], "")
 
-Protagonist = Char("Protagonist", [normal], 750, 15, 15, 20, 10, 2, 6, 5, 1, 0, [basicAtk, powerStrike, meditate, planAhead, eggon, takeBlow, mend, instantkill], "Frenzy", "Assets/battlers/wip.png", [1,1], "")
+Protagonist = Char("Protagonist", [normal], 750, 25, 15, 20, 10, 2, 6, 5, 1, 0, [basicAtk, powerStrike, eggon, mend, instantkill], "Frenzy", "Assets/battlers/wip.png", [1,1], "")
 
 Worshipper = Char("Worshipper", [magic, chaos, minion], 300, 5, 15, 6, 10, 0, 0, 0, 1, 0, [basicAtk, fireBall, powerTransfer, lifeTransfer, meditate], "Frenzy", "Assets/battlers/wip.png", [2,0], "")
 miniCreep = Char("Creepy Bald Guy", [physic, unknown, minion], 300, 6, 6, 8, 10, 0, 0, 0, 1, 0, [creepyAtk, blink, stare, inhale, exhale, observe], "Creepus", "Assets/battlers/Creepy_Bald_Guy.png", [3, 14], "")

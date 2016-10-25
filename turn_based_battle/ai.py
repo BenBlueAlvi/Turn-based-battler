@@ -62,12 +62,12 @@ def runAI(player, battlersL, battlersR):
 		player.goskill, player.target = player.skills[0], [player]
 	
 	if player.name == "Maice":
-		if len(allies) > 0 and not defs.rebuff in player.effects:
+		if len(allies) > 1 and not defs.rebuff in player.effects:
 			player.savingfor = "eggon"
 		if player.savingfor == "none" or defs.rebuff in player.effects:
-			player.savingfor == "bite"
+			player.savingfor = "bite"
 		if player.savingfor == "bite":
-			if player.power >= player.skills[2].power:
+			if player.power >= player.skills[2].cost:
 				player.goskill, player.target = player.skills[2], [potdam[0]]
 			else:
 				if rand == 0:
@@ -75,14 +75,15 @@ def runAI(player, battlersL, battlersR):
 				else:
 					player.goskill, player.target = player.skills[1], [potdam[0]]
 		if player.savingfor == "eggon":
-			if player.power >= player.skills[3].power:
+			if player.power >= player.skills[3].cost:
 				player.goskill, player.target = player.skills[3], [allies[random.randint(0,len(allies)-1)]]
 			else:
 				if rand == 0:
 					player.goskill, player.target = player.skills[0], [potdam[0]]
 				else:
 					player.goskill, player.target = player.skills[1], [potdam[0]]
-					
+		else:
+			player.savingfor = "bite"
 				
 				
 	
