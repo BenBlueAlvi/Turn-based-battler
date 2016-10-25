@@ -145,7 +145,7 @@ def hitDetect(pt1, pt2, pt3, pt4):
 
 
 	
-unlockedchars = [defs.Koishi.buildNew(), defs.Lapis.buildNew(), defs.Flan.buildNew(), defs.Okuu.buildNew(), defs.Nue.buildNew(), defs.Scarlet.buildNew(), defs.Mage.buildNew(), defs.Mouther.buildNew(), defs.Nic.buildNew(), defs.Siv.buildNew(), defs.Coo33.buildNew(), defs.CoosomeJoe.buildNew(), defs.Epic.buildNew(), defs.Alpha.buildNew(), defs.Durric.buildNew(), defs.Creep.buildNew(), defs.Catsome.buildNew(), defs.KnowingEye.buildNew(), defs.Protagonist.buildNew(), defs.Worshipper.buildNew(), defs.miniCreep.buildNew()]			
+unlockedchars = [defs.Koishi.buildNew(), defs.Lapis.buildNew(), defs.Flan.buildNew(), defs.Okuu.buildNew(), defs.Nue.buildNew(), defs.Scarlet.buildNew(), defs.Mage.buildNew(), defs.Mouther.buildNew(), defs.Nic.buildNew(), defs.Siv.buildNew(), defs.Coo33.buildNew(), defs.CoosomeJoe.buildNew(), defs.Epic.buildNew(), defs.Alpha.buildNew(), defs.Durric.buildNew(), defs.Creep.buildNew(), defs.Catsome.buildNew(), defs.KnowingEye.buildNew(), defs.Protagonist.buildNew(), defs.Worshipper.buildNew(), defs.miniCreep.buildNew(), defs.Axeurlegs.buildNew()]			
 
 #as off yet, not used
 
@@ -552,7 +552,7 @@ class Battle(object):
 				battling = False
 				break
 				
-			elif len(self.battlers2) == 0:
+			if len(self.battlers2) == 0:
 				defs.printb("Player 1 WINS!")
 				print "Player 1 Wins"
 				for b in thesebattlers:
@@ -583,7 +583,7 @@ class Battle(object):
 			# --- Limit to 60 frames per second
 			clock.tick(60)
 			
-		#-------------------------------
+		#-------------------------------POST BATTLE----------------------------
 		speaker = 0
 		if len(self.battlers1) == 0:
 			for i in self.dialog.lossbattle:
@@ -655,11 +655,13 @@ class Dialoge(object):
 
 NoDial = Dialoge([[0, ""]],[[0, ""]],[[0, ""]])
 
+#stage 1
 MousDial = Dialoge([[1, "Ahh!"], [0, "Wha--?"], [1, "Get-- Agh, I need to.."], [0, "Whoah, Calm Down!"], [1, "GET OUT OF MY WAY!"]], [[1, "*huff*"], [1, "I need to hurry up before that", "monster catches up with me..."]], [[1, "I.. I'm sorry."], [1, "I was panicking there."], [0, "I could tell. Why?"], [1, "Well, I'm being chased by.."], [1, "Well, you look like a nice guy,", "maybe you can help me?"], [0, "Depends, but I'll try"], [1, "A monster named 'Catsome' is chasing after me,","And I need some help dealing with it."], [0, "Sure, where can I-"], [1, "Thanks, I'll be heading off now!"]])
 MousFight = Battle([], [defs.NO, defs.Maice.buildNew(), defs.NO], "", MousDial, False, defs.maicetheme, "")
 CatDial = Dialoge([[0, "Are you this 'Catosme' i've heard so much about?"], [1, "Yes, that is one title I reply to..."], [1, "Anyway, have you seen a little friend of mine running about?"], [0, "I was sent here by it to avenge it."], [1, "So it wants you to try to hit on me?"], [0, "Please no."], [1, "So we're going to skip the formalities", "and get right to the good parts, eh?"]], [[1, "Ah, that was nice being on top."], [0, "What is it with you and innuendos?"], [1, "I guess it's just one of the things in me."]], [[1, "Ah, I give! Safe word, Safe word!"], [0, "Please stop with the innuendos."], [1, "Well, that little Maice charachter was", "running away after stealing something of mine."], [1, "So you think you can help me get back", "what was taken from me?"], [0, "Sure, I guess so."], [1, "Then let's head off!"]])
 CatsomeFight = Battle([], [defs.NO, defs.Catsome.buildNew(), defs.NO], "", CatDial, False, defs.cattheme, "")
-MiecFight = Battle([], [defs.Maice.buildNew(), defs.Maice.buildNew(), defs.Maice.buildNew()], "", MousDial, False, defs.maicetheme, "Get catsome")
+MiecDial = Dialoge([[1, "Ah, there you are. I see", "you brought some Friends this time."], [3, "Ah! There's the Cat!"], [3, "And.. I thought you were going to help me!", "you TRAITOR!"], [0, "something stole something"], [2, "You are Horrible!"], [4, "Why would you trust this scum?"], [3, "I don't even know."], [1, "Well then,", "Let's start this party."]],[[3, "lol rekt"]],[[3, "omg ded"]])
+MiecFight = Battle([], [defs.Maice.buildNew(), defs.Maice.buildNew(), defs.Maice.buildNew()], "", MiecDial, False, defs.maicetheme, "Get catsome")
 
 
 CooDial = Dialoge([[2, "Ah, Coosome! it's been a while!"], [3, "Indeed it has, Cat."], [0, "You know him?"], [2, "Of course! We are all over each other!"], [3, "What Cat means to say, is that we are one and the same."], [2, "We stick together! so Lets have a FOURSOME!"], [0, "But who else is joining me?"], [1, "I'll stand in for Catsome. Lets do this."]], [[3, "You fought well.", "But not well enough."], [2, "Is that really all? I'm not satisfied yet."]], [[3, "Nice one, you fought well there."], [2, "Is it done already? I'm not quite satisfied yet..."]])
@@ -677,7 +679,6 @@ class Stage(object):
 		self.cords = cords
 		self.completed = False
 	def run(self):
-		
 		for i in self.battles:
 			i.battlers1 = self.playerbattlers
 		for i in self.battles:
@@ -692,6 +693,7 @@ class Stage(object):
 				
 			
 			i.battle()
+		
 		
 		
 
@@ -791,23 +793,29 @@ theWorld = World([st1])
 
 class Player(object):
 	def __init__(self, name):
-		self.acbattler = defs.NO
+		
 		self.battlers = [defs.NO, defs.NO, defs.NO]
 		self.name = name
 		self.wins = 0
 		self.losses = 0
 	
-		self.ready = False
-		self.resolved = True
+		
 		self.x1 = 0
 		self.y1 = 0
 		self.x2 = 0
 		self.y2 = 0
 		self.x3 = 0
 		self.y3 = 0
-		self.turn = True
-		self.powergiven = False
-		self.effectResolved = False
+		
+	def reBuild(self):
+		self.battlers = [defs.NO, defs.NO, defs.NO]
+		self.x1 = 0
+		self.y1 = 0
+		self.x2 = 0
+		self.y2 = 0
+		self.x3 = 0
+		self.y3 = 0
+	
 	
 player1 = Player("1")
 player2 = Player("2")
@@ -853,6 +861,9 @@ def CharSelect(mult):
 
 	thesebattlers = []
 	thisplayer = player1
+	thisplayer.reBuild()
+	for i in thisplayer.battlers:
+		print i.name
 	mouse_down = False
 	while not done:
 		for event in pygame.event.get(): 
@@ -990,6 +1001,12 @@ def CharSelect(mult):
 					theBattle = Battle(player1.battlers, player2.battlers, "", NoDial, mult, defs.cattheme, "")
 		
 					theBattle.battle()
+					player1.reBuild()
+					player2.reBuild()
+					thisplayer = player1
+					for i in thisplayer.battlers:
+						print i.name
+					mouse_down = False
 					
 					
 					

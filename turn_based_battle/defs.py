@@ -32,7 +32,9 @@ class Music(object):
 	def reset(self):
 		self.playing = True
 	def stop(self):
-		pygame.mixer.music.stop
+		pygame.mixer.music.stop()
+	def fadeout(self, time):
+		pygame.mixer.music.fadeout(time)
 		
 		
 cattheme = Music("Assets/music/Raxxo_Patchy_Aid.ogg")
@@ -602,13 +604,14 @@ class Skill(object):
 			damage = 0
 			printb(user.name + " missed!")
 				
-				
+#Skill("", normal, True, 0, 0, 0, 0, 100, 0, [], [""])
 nothing = Skill("nothing", normal, True, 0, 0, 0, 0, 100, 0, [], ["nodam", "trueHit"])
 basicAtk = Skill("Basic Attack", normal, True, 5, 5, 1, 0,90, 0, [], [""])
 fireBall = Skill("Fire ball", fire, False, 7, 3, -1, 0,90, 2, [1, burn], [""])
 waterSpout = Skill("Water Spout", water, False, 2, 10, -1, 0,90, 2, [], [""])
 airBlast = Skill("Air Blast", air, False, 7, 1, 2, 0,95, 2, [], [""])
 earthShot = Skill("Earth Shot", earth, False, 12, 4, -5, 0,90, 2, [], [""])
+axeLegs = Skill("Axe Legs", fighting, True, 65, 25, 7, 2, 99, 0, [], [""])
 defend = Skill("Defend", normal, True, 0, 0, 0, 0,100, 0, [], ["defend", "trueHit"])
 scar = Skill("Scar", dark, True, 30, 5, 2, 0,97, 1, [3,bleed], ["vampire"])
 nuke = Skill("Nuke", fire, True, 200, 100, -4, 0,100, 20, [], ["trueHit", "hitAll"])
@@ -755,7 +758,7 @@ class Char(object):
 		newchar.img = self.image
 		return newchar
 		
-NOT = Char("???", [unknown], 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, [nothing], "", "Assets/battlers/locked.png", [-1,0], "")
+NOT = Char("???", [unknown], 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, [nothing], "", "Assets/battlers/locked.png", [-1,0], "")
 
 Mage = Char("Meigis", [normal, chaos], 500, 5, 15, 5, 15, 4, 0, 10, 1, 0, [basicAtk, fireBall, waterSpout, airBlast, earthShot, defend], "", "Assets/battlers/Mage.png", [5,0], "")
 
@@ -788,6 +791,9 @@ Creep = Char("Creepy Bald Guy", [physic, unknown], 750, 10, 10, 15, 50, 0, 0, 0,
 KnowingEye = Char("Knowing Eye", [physic, unknown, astral], 750, 0, 75, 0, 75, 5, 6, 5, 1, 0, [creepyAtk, observe, meditate, magicMute, forceShield, create], "Creepus", "Assets/battlers/knowingeye.png", [4, 15], "")
 
 Protagonist = Char("Protagonist", [normal], 750, 25, 15, 20, 10, 2, 6, 5, 1, 0, [basicAtk, powerStrike, eggon, mend, instantkill], "Frenzy", "Assets/battlers/wip.png", [1,1], "")
+
+Axeurlegs = Char("Axurlegs", [grass], 10, 5, 0, 0, 1, 2, 3, 0, 1, 0, [axeLegs], "", "Assets/battlers/wip.png", [10,0], "")
+
 
 Worshipper = Char("Worshipper", [magic, chaos, minion], 300, 5, 15, 6, 10, 0, 0, 0, 1, 0, [basicAtk, fireBall, powerTransfer, lifeTransfer, meditate], "Frenzy", "Assets/battlers/wip.png", [2,0], "")
 miniCreep = Char("Creepy Bald Guy", [physic, unknown, minion], 300, 6, 6, 8, 10, 0, 0, 0, 1, 0, [creepyAtk, blink, stare, inhale, exhale, observe], "Creepus", "Assets/battlers/Creepy_Bald_Guy.png", [3, 14], "")

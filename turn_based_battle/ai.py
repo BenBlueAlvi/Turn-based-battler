@@ -32,7 +32,8 @@ def runAI(player, battlersL, battlersR):
 		for j in range(len(potdam)-1-i):
 			if potdam[j].int + potdam[j].str > potdam[j+1].int + potdam[j+1].str:
 				potdam[j], potdam[j+1] = potdam[j+1], potdam[j]
-		#allies
+	
+	#allies
 	hptotal = []
 	for i in battlersR:
 		hptotal.append(i)
@@ -60,6 +61,9 @@ def runAI(player, battlersL, battlersR):
 	
 	if player.name == "???":
 		player.goskill, player.target = player.skills[0], [player]
+	
+	if player.name == "Axurlegs":
+		player.goskill, player.target = player.skills[0], [consort[0]]
 	
 	if player.name == "Maice":
 		if len(allies) > 1 and not defs.rebuff in player.effects:
