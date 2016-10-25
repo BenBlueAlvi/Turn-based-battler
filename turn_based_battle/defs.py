@@ -349,6 +349,18 @@ class Effect(object):
 				
 				target.effects.remove(self)
 				self.resetStats(target)
+
+		if self.effect == "slowed":
+			printb(target.name + " is slowed!")
+			target.agil -= 5
+			target.dodgeChance -= 10
+			
+			self.endeffect = random.randint(1,3)
+			if self.endeffect == 1:
+				printb(target.name + " is no longer slowed!")
+				
+				target.effects.remove(self)
+				self.resetStats(target)
 			
 		
 		
@@ -391,6 +403,7 @@ moonStagef = Effect("moonStage")
 guarded = Effect("guarded")
 
 neverTheref = Effect("neverThere")
+slowed = Effect("slowed")
 
 negeff = [burn, magicmute, bleed, poison, confusion]
 poseff = [defense, forceshield, immortal, block, rebuff, meditatef, planAheadf, dodgeUp, earthStagef, otherStagef, moonStagef]
@@ -625,6 +638,8 @@ meteorStorm = Skill("Meteor Storm", astral, False, 100, 50, -100, 0,75, 7, [2, b
 block = Skill("Block", fighting, True, 0, 0, 10, 0,100, 1, [], ["block", "trueHit"])
 powerDrain = Skill("Power Drain", astral, False, 25, 25, -10, 0,100, 2, [], ["powerdrain", "trueHit"])
 #-----------------------------------------------------------
+tangle = Skill("Tangle", grass, True, 4, 5, 0, 7, 100, 1, [1, slowed], [""])
+#-----------------------------------------------------------
 slash = Skill("Slash", normal, True, 11, 10, 3, 5,90, 0, [], [""])
 bite = Skill("Bite", normal, True, 10, 5, 0, 5, 92, 0, [4,bleed], [""])
 kick = Skill("Kick", fighting, True, 20, 5, 4, 0, 70, 1, [], [""])
@@ -787,15 +802,15 @@ Durric = Char("Durric", [earth, light, fighting, physic], 1000, 25, 25, 75, 25, 
 
 Coo33 = Char("Coo33", [dark, blood], 250, 50, 0, 30, 0, 10, 10, 10, 5, 0, [basicAtk, slash, bite, kick, dodge, rip, consumeFlesh, defend], "Blood hunt", "Assets/battlers/Coo33.png", [3,3], "")
 CoosomeJoe = Char("Coosome Joe", [light, tech], 500, 25, 25, 25, 25, 5, 2, 10, 1, 0, [basicAtk, bludgeon, erase, create, confuse, planAhead, mend, defend], "Frenzy", "Assets/battlers/Coosome.png",  [3, 4], "")
-Catsome = Char("Catsome", [light, ghost, physic], 1000, 10, 35, 10, 15, 5, 5, 10, 1, 0, [slash, bite, eggon, rebuke, mend, recover], "Cuteness", "Assets/battlers/catsome.png",[6,9], "")
+Catsome = Char("Catsome", [light, physic], 1000, 10, 35, 10, 15, 5, 5, 10, 1, 0, [slash, bite, eggon, rebuke, mend, recover], "Cuteness", "Assets/battlers/catsome.png",[6,9], "")
 
 Creep = Char("Creepy Bald Guy", [physic, unknown], 750, 10, 10, 15, 50, 0, 0, 0, 1, 0, [creepyAtk, blink, stare, inhale, exhale, observe], "Creepus", "Assets/battlers/Creepy_Bald_Guy.png", [3, 15], "")
 KnowingEye = Char("Knowing Eye", [physic, unknown, astral], 750, 0, 75, 0, 75, 5, 6, 5, 1, 0, [creepyAtk, observe, meditate, magicMute, forceShield, create], "Creepus", "Assets/battlers/knowingeye.png", [4, 15], "")
 
 Protagonist = Char("Protagonist", [normal], 750, 25, 15, 20, 10, 2, 6, 5, 1, 0, [basicAtk, powerStrike, eggon, mend, instantkill], "Frenzy", "Assets/battlers/wip.png", [1,1], "")
 
-Axeurlegs = Char("Axurlegs", [grass], 10, 5, 0, 0, 1, 2, 3, 0, 1, 0, [axeLegs], "", "Assets/battlers/wip.png", [10,0], "")
-
+Axeurlegs = Char("Axurlegs", [grass], 10, 30, 0, 0, 1, 2, 3, 0, 1, 0, [axeLegs], "", "Assets/battlers/wip.png", [10,0], "")
+Dandylion = Char("Dandy Lion", [grass], 600, 20, 15, 5, 20, 2, 2, 10, 1, 0, [axeLegs], "Frenzy", "Assets/battlers/wip.png", [11,0], "")
 
 Worshipper = Char("Worshipper", [magic, chaos, minion], 300, 5, 15, 6, 10, 0, 0, 0, 1, 0, [basicAtk, fireBall, powerTransfer, lifeTransfer, meditate], "Frenzy", "Assets/battlers/wip.png", [2,0], "")
 miniCreep = Char("Creepy Bald Guy", [physic, unknown, minion], 300, 6, 6, 8, 10, 0, 0, 0, 1, 0, [creepyAtk, blink, stare, inhale, exhale, observe], "Creepus", "Assets/battlers/Creepy_Bald_Guy.png", [3, 14], "")

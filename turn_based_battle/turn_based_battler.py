@@ -654,6 +654,7 @@ class Dialoge(object):
 		self.winbattle = winb
 
 NoDial = Dialoge([[0, ""]],[[0, ""]],[[0, ""]])
+#Battle([], [], "", NoDial, False, defs.maicetheme, "")
 
 #stage 1
 MousDial = Dialoge([[1, "Ahh!"], [0, "Wha--?"], [1, "Get-- Agh, I need to.."], [0, "Whoah, Calm Down!"], [1, "GET OUT OF MY WAY!"]], [[1, "*huff*"], [1, "I need to hurry up before that", "monster catches up with me..."]], [[1, "I.. I'm sorry."], [1, "I was panicking there."], [0, "I could tell. Why?"], [1, "Well, I'm being chased by.."], [1, "Well, you look like a nice guy,", "maybe you can help me?"], [0, "Depends, but I'll try"], [1, "A monster named 'Catsome' is chasing after me,","And I need some help dealing with it."], [0, "Sure, where can I-"], [1, "Thanks, I'll be heading off now!"]])
@@ -663,6 +664,9 @@ CatsomeFight = Battle([], [defs.NO, defs.Catsome.buildNew(), defs.NO], "", CatDi
 MiecDial = Dialoge([[1, "Ah, there you are. I see", "you brought some Friends this time."], [3, "Ah! There's the Cat!"], [3, "And.. I thought you were going to help me!", "you TRAITOR!"], [0, "something stole something"], [2, "You are Horrible!"], [4, "Why would you trust this scum?"], [3, "I don't even know."], [1, "Well then,", "Let's start this party."]],[[3, "lol rekt"]],[[3, "omg ded"]])
 MiecFight = Battle([], [defs.Maice.buildNew(), defs.Maice.buildNew(), defs.Maice.buildNew()], "", MiecDial, False, defs.maicetheme, "Get catsome")
 
+#forest stage 1
+ForDial = Dialoge([[0, "So this is the forest."], [3, "Why hello, fine traveler.", "What brings you to my forest?"], [1, "Who are you, with that fine maine?"], [3, "I am a Dandy Lion."], [2, "*click*"], [0, "wait, what was that noise?"], [4, "*click*"], [3 ,"and I must have you", "LEAVE MY FOREST!"]],[[3, "And I wish you a good day."]],[[3, "If... I must.", "You have proven yourself worthy to enter my forest."], [1, "Thank you, my fellow feline."]])
+ForFight1 = Battle([], [defs.Axeurlegs.buildNew(), defs.Axeurlegs.buildNew(), defs.Axeurlegs.buildNew()], "", ForDial, False, defs.maicetheme, "")
 
 CooDial = Dialoge([[2, "Ah, Coosome! it's been a while!"], [3, "Indeed it has, Cat."], [0, "You know him?"], [2, "Of course! We are all over each other!"], [3, "What Cat means to say, is that we are one and the same."], [2, "We stick together! so Lets have a FOURSOME!"], [0, "But who else is joining me?"], [1, "I'll stand in for Catsome. Lets do this."]], [[3, "You fought well.", "But not well enough."], [2, "Is that really all? I'm not satisfied yet."]], [[3, "Nice one, you fought well there."], [2, "Is it done already? I'm not quite satisfied yet..."]])
 Coo33Fight = Battle([], [defs.Catsome.buildNew(), defs.NO, defs.CoosomeJoe.buildNew()], "", CooDial, False, defs.cootheme,"") 
@@ -698,7 +702,7 @@ class Stage(object):
 		
 
 st1 = Stage("", "", [MousFight, CatsomeFight, MiecFight], [317,48])
-st2 = Stage("", "", [], [280, 221])
+st2 = Stage("", "", [ForFight1], [280, 221])
 st3 = Stage("", "", [], [393,292])
 st4 = Stage("", "", [], [540,313])
 st5 = Stage("", "", [], [675,240])
@@ -788,7 +792,7 @@ class World(object):
 			clock.tick(60)
 		
 
-theWorld = World([st1])
+theWorld = World([st1, st2])
 
 
 class Player(object):
