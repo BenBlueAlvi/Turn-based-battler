@@ -698,6 +698,8 @@ colorfulBullet = Skill("colorfulBullet", magic, False, 10,5, 1, 2, 90, 0, [], ["
 never = Skill("And Never Come Back", unknown, False, 200, 50, 20, 5, 100, 7, [], ["trueHit"])
 instantkill = Skill("Insta kill", unknown, False, 99999, 9999, 99, 15, 100, 0, [], ["trueHit"])
 
+allskills = [instantkill, never, colorfulBullet, neverThere, mindReading, antiPhysic, powerStrike, takeBlow, againstOdds, chaosVortex, astralVortex, earthenVortex, chains, voidSnap, otherStage, moonStage, earthStage, powerTransfer, lifeTransfer, fusion, fission, nuke, slash, scar, rebuke, eggon, sneeze, cleave, observe, exhale, inhale, creepyAtk, blink, stare, recover, mend, psionicRadiance,revenge, bladeFlash, wellspring, energiBeam, bludgeon, stab, confuse, erase, create, chaosBeam, chaosBolt, setFire, forceShield, summon, meditate, lifePact, shroud, bite, kick, dodge, rip, consumeFlesh, powerDrain, block, meteorStorm, vampire, destroy, magicAbsorb, powerUp, magicMute, shardSwarm, defend, axeLegs, earthShot, airBlast, waterSpout, fireBall]
+
 
 class Char(object):
 	def __init__(self, name, types, hp, str, int, con, mag, agil, crit, dodgeChance, lvl, xp, skills, ability, image, cords, menuImg):

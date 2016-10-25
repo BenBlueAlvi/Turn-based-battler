@@ -278,6 +278,7 @@ def runAI(player, battlersL, battlersR):
 				player.goskill, player.target = player.skills[1], [dmgtaken[len(dmgtaken)-1]]
 			else:
 				player.target = [consort[0]]
+	
 
 
 	return player
