@@ -913,6 +913,7 @@ def CharSelect(mult):
 					
 				else:
 					dispchar = defs.NO
+					thisplayer.battlers[0] = defs.NO
 
 			x += 1
 			
@@ -934,6 +935,7 @@ def CharSelect(mult):
 		
 				else:
 					dispchar2 = defs.NO
+					thisplayer.battlers[1] = defs.NO
 
 			x += 1
 			
@@ -954,6 +956,7 @@ def CharSelect(mult):
 					
 				else:
 					dispchar2 = defs.NO
+					thisplayer.battlers[2] = defs.NO
 
 			x += 1
 
