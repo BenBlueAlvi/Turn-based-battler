@@ -3,6 +3,14 @@ import defs
 import math
 #thisbattler = runAI(thisbattler, battlers1, battlers2)
 
+'''
+Battlers with AI, in the order:
+Axeurlegs, Maice, Worshipper, Creep 
+Lapis, Catsome, Coo33
+
+'''
+
+
 #Make note that hitall effect needs to be applied in your ai.
 #take in thisbattler, battlers1, battlers2
 def runAI(player, battlersL, battlersR):
@@ -27,7 +35,7 @@ def runAI(player, battlersL, battlersR):
 		for j in range(len(mgdsort)-1-i):
 			if mgdsort[j].mag < mgdsort[j+1].mag:
 				mgdsort[j], mgdsort[j+1] = mgdsort[j+1], mgdsort[j]
-		#Greatest to Least potential damage of enemies
+	#Greatest to Least potential damage of enemies
 	for i in range(len(potdam)):
 		for j in range(len(potdam)-1-i):
 			if potdam[j].int + potdam[j].str > potdam[j+1].int + potdam[j+1].str:
@@ -43,8 +51,6 @@ def runAI(player, battlersL, battlersR):
 			if hptotal[j].hp < hptotal[j+1].hp:
 				hptotal[j], hptotal[j+1] = hptotal[j+1], hptotal[j]
 
-
-
 	allies = battlersR
 	for i in allies:
 		if i == defs.NO:
@@ -59,6 +65,7 @@ def runAI(player, battlersL, battlersR):
 	if not, use basic attack
 	'''
 	
+#LESSER DUDES
 	if player.name == "???":
 		player.goskill, player.target = player.skills[0], [player]
 	
@@ -89,41 +96,6 @@ def runAI(player, battlersL, battlersR):
 		else:
 			player.savingfor = "bite"
 				
-				
-	
-	
-	if player.name == "Lapis":
-		if player.savingfor == "none" and player.hp >= player.hp / 3 and rand == 0:
-			player.goskill, player.target = player.skills[4], [battlersL] 
-			player.savingfor = "astral vortex"
-		if player.savingfor == "none" and player.hp >= payer.hp / 3 and rand == 1:
-			player.goskill, player.target = player.skills[3], [battlersL] 
-			player.savingfor = "chaos vortex"
-		if player.savingfor == "none" and player.hp <= player.hp / 3:
-			player.goskill, player.target = player.skills[2], [battlersL]
-			player.savingfor = "earth vortex"
-		if player.savingfor == "astral vortex":
-			if player.power >= player.skills[7].cost:
-				player.goskill, player.target = player.skills[7], [battlersL]
-			else:
-				player.goskill, player.target = player.skills[0], [potdam[0]]
-		if player.savingfor == "chaos vortex":
-			if player.power >= player.skills[5].cost:
-				player.goskill, player.target = player.skills[5], [battlersL]
-			else:
-				player.goskill, player.target = player.skills[0], [potdam[0]]
-		if player.savingfor == "earth vortex" and player.hp > player.max / 4:
-			if player.power >= player.skills[6].cost:
-				player.goskill, player.target = player.skills[6], [battlersL]
-			else:
-				player.goskill, player.target = player.skills[0], [potdam[0]]
-		else:
-			player.goskill, player.target = player.skills[1], [potdam[0]]
-				
-		
-	
-	
-
 	if player.name == "Worshipper":
 		#set up target
 		if player.aimisc == 0 or player.misc != True:
@@ -182,6 +154,57 @@ def runAI(player, battlersL, battlersR):
 			if player.hp < 100 and rand == 0:
 				player.goskill = player.skills[3]
 	
+#BOSSES
+	if player.name == "Knowing Eye":
+		if len(allies) < 3:
+			player.savingfor = "create"
+		if player.savingfor == "":
+			pass
+
+		#create
+		if player.savingfor == "create" and player.power >= defs.create.cost:
+			player.goskill, player.target, player.savingfor = player.skills[5], [player], ""
+
+		#magic mute
+		if player.savingfor == "mute" and player.power >= defs.magicMute.cost:			
+			for i in range(len(potdam)):
+				if defs.magicmute not in i.effects:
+					player.goskill, player.target, player.savingfor = player.skills[3], [i], ""
+					break
+
+		#meditate
+		if player.savingfor in ["create", "mute", "shield"]:
+			player.goskill, player.target = player.skills[2], [player]
+
+
+	if player.name == "Lapis":
+		if player.savingfor == "none" and player.hp >= player.hp / 3 and rand == 0:
+			player.goskill, player.target = player.skills[4], [battlersL] 
+			player.savingfor = "astral vortex"
+		if player.savingfor == "none" and player.hp >= payer.hp / 3 and rand == 1:
+			player.goskill, player.target = player.skills[3], [battlersL] 
+			player.savingfor = "chaos vortex"
+		if player.savingfor == "none" and player.hp <= player.hp / 3:
+			player.goskill, player.target = player.skills[2], [battlersL]
+			player.savingfor = "earth vortex"
+		if player.savingfor == "astral vortex":
+			if player.power >= player.skills[7].cost:
+				player.goskill, player.target = player.skills[7], [battlersL]
+			else:
+				player.goskill, player.target = player.skills[0], [potdam[0]]
+		if player.savingfor == "chaos vortex":
+			if player.power >= player.skills[5].cost:
+				player.goskill, player.target = player.skills[5], [battlersL]
+			else:
+				player.goskill, player.target = player.skills[0], [potdam[0]]
+		if player.savingfor == "earth vortex" and player.hp > player.max / 4:
+			if player.power >= player.skills[6].cost:
+				player.goskill, player.target = player.skills[6], [battlersL]
+			else:
+				player.goskill, player.target = player.skills[0], [potdam[0]]
+		else:
+			player.goskill, player.target = player.skills[1], [potdam[0]]
+				
 	if player.name == "Catsome":
 		allies, prefferedtarget = len(allies), "self"
 
@@ -255,7 +278,6 @@ def runAI(player, battlersL, battlersR):
 				player.target = [consort[0]]
 		if prefferedtarget == "ally":
 			player.target = [player.nextattack]
-
 
 	if player.name == "Coo33":
 		#selecting skill

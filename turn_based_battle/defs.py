@@ -19,7 +19,7 @@ gScreen = pygame.display.set_mode(size)
 clock = pygame.time.Clock()
 class Music(object):
 	def __init__(self, musicc):
-		self.musicc = musicc
+		self.musicc = "Assets/music/"+musicc+".ogg"
 		self.playing = True
 		
 	def play(self):
@@ -37,9 +37,10 @@ class Music(object):
 		pygame.mixer.music.fadeout(time)
 		
 		
-cattheme = Music("Assets/music/Raxxo_Patchy_Aid.ogg")
-cootheme = Music("Assets/music/Raxxo_Stand_Your_Ground.ogg")
-maicetheme = Music("Assets/music/A_Tiny_Tiny_Clever_Commander.ogg")
+cattheme = Music("Raxxo_Patchy_Aid")
+cootheme = Music("Raxxo_Stand_Your_Ground")
+maicetheme = Music("A_Tiny_Tiny_Clever_Commander")
+sivtheme = Music("WaterflameFinalBattle")
 
 def bubble_sort(items):
 	""" Implementation of bubble sort """

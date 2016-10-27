@@ -278,8 +278,6 @@ class Battle(object):
 			
 		
 		
-		
-		
 		while battling:
 			self.music.play()
 			for p in thesebattlers:
@@ -292,7 +290,7 @@ class Battle(object):
 							i.damage *= 2
 					i.update(p)
 				if p.ability == "Unidentifiable":
-					p.marks = 0
+					p.marks /= 2
 				if p.ability == "Radiation":
 					for l in thesebattlers:
 						l.hp -= 25
@@ -407,7 +405,6 @@ class Battle(object):
 									pickenm = False
 								
 
-
 						#----------------
 						if p in self.battlers1:
 							p.x += 50
@@ -429,23 +426,14 @@ class Battle(object):
 						p.target = [p]
 						ready = True
 
-				
 					for i in thesebattlers:	
-						
-						
 						if i.hp > 0:
-							
-								
-							
 							if not i == p:
 								defs.gScreen.blit(i.image,[i.basex,i.basey])
-							
-								
-							
+
 							pygame.draw.rect(gScreen, RED, [i.basex, i.basey - 10,int(i.hp) / 20,5])
 							 
 							for f in range(len(i.effects)):
-								
 								defs.gScreen.blit(i.effects[f].img, [i.basex - f * 10, i.basey])
 							
 							
@@ -464,9 +452,6 @@ class Battle(object):
 						dispSkills(p)
 					#------
 					
-					
-				
-					
 					if mouse_down:
 						defs.gScreen.blit(mouse_pointer2,mouse_pos)
 					else:
@@ -475,14 +460,6 @@ class Battle(object):
 						if i.hp <= 0:
 							i.effects.append(defs.death)
 							
-						#reset character here
-						
-						
-					#print "THE TIMER:", defs.timer
-					
-					
-					
-					
 					if thebattler == len(thesebattlers):
 						pygame.draw.rect(gScreen, BLACK, [0,350,700,150])
 
@@ -562,25 +539,7 @@ class Battle(object):
 				battling = False
 				break
 
-				
-
-		# --- Drawing code should go here
-		
-		#player
-		#animation:
-			
-			
-			
-			
-			
-			
-				
-				
-		
-			# --- Go ahead and update the screen with what we've drawn.
 			pygame.display.flip()
-	 
-			# --- Limit to 60 frames per second
 			clock.tick(60)
 			
 		#-------------------------------POST BATTLE----------------------------
@@ -667,6 +626,7 @@ MiecFight = Battle([], [defs.Maice.buildNew(), defs.Maice.buildNew(), defs.Maice
 #forest stage 1
 ForDial = Dialoge([[0, "So this is the forest."], [3, "Why hello, fine traveler.", "What brings you to my forest?"], [1, "Who are you, with that fine maine?"], [3, "I am a Dandy Lion."], [2, "*click*"], [0, "wait, what was that noise?"], [4, "*click*"], [3 ,"and I must have you", "LEAVE MY FOREST!"]],[[3, "And I wish you a good day."]],[[3, "If... I must.", "You have proven yourself worthy to enter my forest."], [1, "Thank you, my fellow feline."]])
 ForFight1 = Battle([], [defs.Axeurlegs.buildNew(), defs.Axeurlegs.buildNew(), defs.Axeurlegs.buildNew()], "", ForDial, False, defs.maicetheme, "")
+Alphight = Battle([], [defs.Axeurlegs.buildNew(), defs.Alpha.buildNew(), defs.Axeurlegs.buildNew()], "", ForDial, False, defs.sivtheme, "")
 
 CooDial = Dialoge([[2, "Ah, Coosome! it's been a while!"], [3, "Indeed it has, Cat."], [0, "You know him?"], [2, "Of course! We are all over each other!"], [3, "What Cat means to say, is that we are one and the same."], [2, "We stick together! so Lets have a FOURSOME!"], [0, "But who else is joining me?"], [1, "I'll stand in for Catsome. Lets do this."]], [[3, "You fought well.", "But not well enough."], [2, "Is that really all? I'm not satisfied yet."]], [[3, "Nice one, you fought well there."], [2, "Is it done already? I'm not quite satisfied yet..."]])
 Coo33Fight = Battle([], [defs.Catsome.buildNew(), defs.NO, defs.CoosomeJoe.buildNew()], "", CooDial, False, defs.cootheme,"") 
