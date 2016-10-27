@@ -138,7 +138,120 @@ class Effect(object):
 		self.img = pygame.image.load("Assets/ui/effects/" + effect + ".png")
 		self.canend = True
 		self.damage =0
+		
+	def apply(self, target):
+		if self.effect == "defend":
+			target.con += target.basecon * target.basecon
+			printb(target.name + " is defending!")
+			target.effects.append(self.buildNew())
+			
+		
+		if self.effect == "forceshield":
+			target.con += target.basecon * 3
+			target.mag += target.basemag * 3
+			printb(target.name + " has a shield up!")
+			target.effects.append(self.buildNew())
+			
+		if self.effect == "confusion":
+			target.con -= target.basecon / 2
+			target.mag -= target.basemag / 2
+			printb(target.name + " is confused!")
+			target.effects.append(self.buildNew())
+		if self.effect == "rebuff":
+			target.str += target.basestr * 1.4
+			target.int += target.baseint * 1.4
+			printb(target.name + " is encouraged!")
+			target.effects.append(self.buildNew())
+		if self.effect == "meditate":
+			target.power += 3
+			target.con -= 10
+			target.mag += 5
+			printb(target.name + " is meditating!")
+			target.effects.append(self.buildNew())
+		if self.effect == "planAhead":
+			target.crit += 2
+			target.int += target.int / 10
+			target.str += target.str / 10
+			printb(target.name + " is scheming!")
+			target.effects.append(self.buildNew())
+		if self.effect == "dodgeUp":
+			target.dodgeChance += 25
+			printb(target.name + " is prepared!")
+			target.effects.append(self.buildNew())
+		if self.effect == "neverThere":
+			target.dodgeChance += 100
+			printb(target.name + " dissapeared")
+			target.effects.append(self.buildNew())
+		if self.effect == "slowed":
+			target.agil -= 5
+			target.dodgeChance -= 10
+			printb(target.name + " is slowed!")
+			target.effects.append(self.buildNew())
+			
+	def end(self, target):
+		
+		if self.effect == "defend":
+			printb(target.name + " is no longer defending!")
+			target.con -= target.basecon * target.basecon
+			target.effects.remove(self)
+			
+		if self.effect == "forceshield":
+			target.con -= target.basecon * 3
+			target.mag -= target.basemag * 3
+			printb(target.name + " no longer has a shield up!")
+			target.effects.remove(self)
+		
+		if self.effect == "confusion":
+			target.con += target.basecon / 2
+			target.mag += target.basemag / 2
+			printb(target.name + " is no longer confused!")
+			target.effects.remove(self)
+		
+		if self.effect == "rebuff":
+			target.str -= target.basestr * 1.4
+			target.int -= target.baseint * 1.4
+			printb(target.name + " is no longer encouraged. :(")
+			target.effects.remove(self)
+		
+		if self.effect == "meditate":
+			target.con += 10
+			target.mag -= 5
+			printb(target.name + " is no longer meditating!")
+			target.effects.remove(self)
+		
+		if self.effect == "planAhead":
+			target.crit -= 2
+			target.int -= target.int / 10
+			target.str -= target.str / 10
+			printb(target.name + " is no longer scheming!")
+			target.effects.remove(self)
+		
+		if self.effect == "dodgeUp":
+			target.dodgeChance -= 25
+			printb(target.name + " is no longer prepared!")
+			target.effects.remove(self)
+		
+		if self.effect == "neverThere":
+			target.dodgeChance -= 100
+			printb(target.name + " reapeared!")
+			target.effects.remove(self)
+			
+		if self.effect == "slowed":
+			target.agil -= 5
+			target.dodgeChance -= 10
+			printb(target.name + " is no longer slowed!")
+			target.effects.remove(self)
+			
+				
+				
+			
+			
+	
 	def update(self, target):
+	
+	
+	
+	
 		if self.effect == "burn":
 			self.damage = 25 + random.randint(1, 25)
 			self.endeffect = random.randint(1,3)
@@ -152,7 +265,7 @@ class Effect(object):
 			
 			if self.endeffect == 2 and self.canend:
 				printb(target.name + " put out the fire!")
-				target.effects.remove(self)
+				self.end(target)
 				
 				
 		if self.effect == "bleed":
@@ -163,73 +276,29 @@ class Effect(object):
 			if self.endeffect == 2:
 				printb(target.name + " is no longer bleeding")
 				target.effects.remove(self)
-				
-		if self.effect == "magicmute":
-			target.power -= 1
-			printb(target.name + " can't gain power!")
-			self.endeffect = random.randint(1,3)
-			if self.endeffect == 2:
-				printb(target.name + " can gain power again!")
-				target.effects.remove(self)
-		
-				
+
 		if self.effect == "defend":
-			target.con = target.basecon * target.basecon
-			printb(target.name + " is defending!")
 			self.endeffect += 1
 			if self.endeffect == 2:
-				target.effects.remove(self)
-				printb(target.name + " is no longer defending!")
-				self.resetStats(target)
+				self.end(target)
+				
+				
 				
 		if self.effect == "forceshield":
-			target.con = target.basecon * 3
-			target.mag = target.basemag * 3
-			printb(target.name + " has a shield up!")
 			self.endeffect = random.randint(1,2)
 			if self.endeffect == 2:
-				target.effects.remove(self)
-				printb(target.name + " no longer has a shield up!")
-				self.resetStats(target)
+				self.end(target)
 				
 		if self.effect == "confusion":
-			target.con = target.basecon / 2
-			target.mag = target.basemag / 2
-			printb(target.name + " is confused!")
-			self.endeffect = random.randint(1,2)
-			if self.endeffect == 2:
-				target.effects.remove(self)
-				target.con = target.basecon
-				target.mag = target.basemag
-				printb(target.name + " is no longer confused!")
-				self.resetStats(target)
-				
-		if self.effect == "immortal":
-			target.con = 100000000
-			target.mag = 100000000
-			printb(target.name + " is invincible!")
-			self.endeffect = random.randint(1,2)
-			if self.endeffect == 2:
-				target.effects.remove(self)
-				
-				printb(target.name + " is no longer invincible!")
-				self.resetStats(target)
-				
-		if self.effect == "block":
-			target.con = 100000000
-			printb(target.name + " is blocking attacks!")
-			self.endeffect = random.randint(1,2)
 			
+			self.endeffect = random.randint(1,2)
 			if self.endeffect == 2:
-				target.effects.remove(self)
-				printb(target.name + " is no longer blocking attacks!")
-				self.resetStats(target)
+				self.end(target)
+				
 				
 				
 		if self.effect == "poison":
 			damage = target.hp / 10
-			if target.ability == "tank" and damage > 100:
-				damage = 100
 			target.hp -= damage
 			printb(target.name + " is poisoned!   " + target.name + " takes " + str(damage) + " damage")
 			self.endeffect = random.randint(1,4)
@@ -239,49 +308,27 @@ class Effect(object):
 				
 		if self.effect == "rebuff":
 			
-			printb(target.name + " is encouraged!")
-			target.str += target.basestr * 1.4
-			target.int += target.baseint * 1.4
-			if self.endeffect == 1:
-				printb(target.name + " is no longer encouraged. :(")
-				target.effects.remove(self)
-				self.resetStats(target)
+			
+			if self.endeffect >= 1:
+				self.end(target)
 			self.endeffect += 1
 			
 		if self.effect == "meditate":
-			print self
-			for i in target.effects:
-				print i
-			printb(target.name + " is meditating!")
-			target.power += 3
-			target.con -= 10
-			target.mag += 5
+			
 			if self.endeffect == 1:
-				printb(target.name + " is no longer meditating!")
-				target.effects.remove(self)
-				self.resetStats(target)
+				self.end(target)
 			self.endeffect += 1
 				
 		if self.effect == "planAhead":
-		
-			printb(target.name + " is scheming!")
-			
-			target.crit += 2
-			target.int += target.int / 10
-			target.str += target.str / 10
+
 			if self.endeffect == 1:
-				printb(target.name + " is no longer scheming!")
-				target.effects.remove(self)
-				self.resetStats(target)
+				self.end(target)
 			self.endeffect += 1
 		
 		if self.effect == "dodgeUp":
-			printb(target.name + " is prepared!")
-			target.dodgeChance = target.basedodgeChance + 25
+			
 			if self.endeffect == 1:
-				printb(target.name + " is no longer prepared!")
-				target.effects.remove(self)
-				self.resetStats(target)
+				self.end(target)
 			self.endeffect += 1
 			
 		if self.effect == "earthStage":
@@ -341,26 +388,17 @@ class Effect(object):
 			self.endeffect += 1	
 			
 		if self.effect == "neverThere":
-			printb(target.name + " dissapeared")
-			target.dodgeChance += 100
-			self.endeffect = random.randint(1,3)
-			if self.endeffect == 1:
-				printb(target.name + " reapeared!")
-				
-				target.effects.remove(self)
-				self.resetStats(target)
-
-		if self.effect == "slowed":
-			printb(target.name + " is slowed!")
-			target.agil -= 5
-			target.dodgeChance -= 10
 			
 			self.endeffect = random.randint(1,3)
 			if self.endeffect == 1:
-				printb(target.name + " is no longer slowed!")
-				
-				target.effects.remove(self)
-				self.resetStats(target)
+				self.end(target)
+
+		if self.effect == "slowed":
+			
+			
+			self.endeffect = random.randint(1,3)
+			if self.endeffect == 1:
+				self.end(target)
 			
 		
 		
@@ -463,11 +501,11 @@ class Skill(object):
 					message += " CRITICAL HIT!"
 				critical = True
 				if not len(self.effects) == 0:
-					target.effects.append(self.effects[1])
+					self.effects[1].apply(target)
 					
 			if not len(self.effects) == 0:
 				if random.randint(1,self.effects[0]) == 1:
-					target.effects.append(self.effects[1])
+					self.effects[1].apply(target)
 					
 			if target.ability == "Creepus":
 				user.marks += 1

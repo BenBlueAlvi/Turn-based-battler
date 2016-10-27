@@ -677,11 +677,12 @@ Coo33Fight = Battle([], [defs.CoosomeJoe.buildNew(), defs.Coo33.buildNew(), defs
 
 			
 class Stage(object):
-	def __init__(self, name, playerbattlers, battles, cords):
+	def __init__(self, name, playerbattlers, battles, cords, nextstages):
 		self.name = name
 		self.battles = battles
 		self.cords = cords
-		self.completed = False
+		self.locked = True
+		self.nextstages = nextstages
 	def run(self):
 		for i in self.battles:
 			i.battlers1 = self.playerbattlers
@@ -697,19 +698,19 @@ class Stage(object):
 				
 			
 			i.battle()
-		
-		
-		
+		for i in self.nextstages:
+			i.locked = False
 
-st1 = Stage("", "", [MousFight, CatsomeFight, MiecFight], [317,48])
-st2 = Stage("", "", [ForFight1], [280, 221])
-st3 = Stage("", "", [], [393,292])
-st4 = Stage("", "", [], [540,313])
-st5 = Stage("", "", [], [675,240])
-st6 = Stage("", "", [], [720,360])
-st7 = Stage("", "", [], [523,431])
-st8 = Stage("", "", [], [359,516])
+st8 = Stage("", "", [], [359,516], [])
+st7 = Stage("", "", [], [523,431], [st8])
+st6 = Stage("", "", [], [720,360], [st7])
+st5 = Stage("", "", [], [675,240], [st6])
+st4 = Stage("", "", [], [540,313], [st5])
+st3 = Stage("", "", [], [393,292], [st4])
+st2 = Stage("", "", [ForFight1], [280, 221], [st3])
+st1 = Stage("", "", [MousFight, CatsomeFight, MiecFight], [317,48], [st2])
 		
+st1.locked = False
 
 class World(object):
 	def __init__(self, stages):
@@ -764,7 +765,7 @@ class World(object):
 				
 				pygame.draw.rect(gScreen, RED, [i.cords[0], i.cords[1], 16,16])
 				if hitDetect(mouse_pos, mouse_pos, [i.cords[0] + self.cords[0], i.cords[1]+ self.cords[1]], [i.cords[0] + 16, i.cords[1] + 16]):
-					if mouse_down:
+					if mouse_down and not i.locked:
 						i.playerbattlers = CharSelect(mult)
 						i.run()
 						i.completed = True
@@ -778,8 +779,10 @@ class World(object):
 			defs.gScreen.blit(self.image, [self.cords[0], self.cords[1]])
 			
 			for i in self.stages:
-				
-				pygame.draw.rect(gScreen, RED, [i.cords[0] + self.cords[0], i.cords[1] + self.cords[1], 16,16])
+				if i.locked:
+					defs.gScreen.blit(lockedchar, [i.cords[0] + self.cords[0], i.cords[1] + self.cords[1]])
+				else:
+					pygame.draw.rect(gScreen, RED, [i.cords[0] + self.cords[0], i.cords[1] + self.cords[1], 16,16])
 			
 			if mouse_down:
 				defs.gScreen.blit(mouse_pointer2,mouse_pos)
