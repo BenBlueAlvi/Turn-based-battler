@@ -14,7 +14,7 @@ GREY = (100,100,100)
 
 pygame.init()
 font = pygame.font.SysFont('Calibri', 15, True, False)
-size = (700, 500)
+size = (1250, 700)
 gScreen = pygame.display.set_mode(size)
 clock = pygame.time.Clock()
 class Music(object):
@@ -58,7 +58,7 @@ def printb(text):
 	global timer
 
 	
-	newtext = font.render(text,True,BLACK)
+	newtext = font.render(text,True,WHITE)
 	log.append(text)
 
 	
@@ -69,11 +69,13 @@ def printb(text):
 					
 				
 	
-		pygame.draw.rect(gScreen, WHITE, [10, 320, 700, 15])
-		gScreen.blit(disptext, [10, 320])
+		pygame.draw.rect(gScreen, BLACK, [0,size[1] - 150,size[0],150])
+		#gScreen.blit(disptext, [10, 320 + size[1] - 500])
+		gScreen.blit(disptext, [10 + size[0] - 525, size[1] - 25])
 		printing = True
 		
-		pygame.draw.rect(gScreen, BLACK, [0,350,700,150])
+		#pygame.draw.rect(gScreen, WHITE, [0,350 + size[1] - 500,700,150])
+		#pygame.draw.rect(gScreen, BLACK, [0 + size[0] - 200,size[1] - 500,700,150])
 		
 		
 			

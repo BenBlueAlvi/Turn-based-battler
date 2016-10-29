@@ -47,7 +47,7 @@ animate = True
 pygame.init()
  
 # Set the width and height of the screen [width, height]
-size = (700, 500)
+size = (1250, 700)
 gScreen = pygame.display.set_mode(size)
 
 font = pygame.font.SysFont('Calibri', 15, True, False)
@@ -179,7 +179,7 @@ class Battle(object):
 				i.isAi = True
 		
 	def battle(self):
-		
+		global size
 		thebattler = 0
 		powergiven = False
 		pickenm = False
@@ -216,8 +216,8 @@ class Battle(object):
 			if y > 2:
 				y = 0
 				x += 1
-			i.basex = x * 550 + 50
-			i.basey = y * 100 + 50
+			i.basex = x * (size[0] - 150) + 50
+			i.basey = y * 75 + 325
 			y += 1
 			
 
@@ -257,7 +257,7 @@ class Battle(object):
 			talking = 0
 			while talking <= 120* len(textc):
 				defs.gScreen.fill(WHITE)
-				pygame.draw.rect(gScreen, BLACK, [0,350,700,150])
+				pygame.draw.rect(gScreen, BLACK, [0,size[1] - 150,size[0],150])
 				talking += 1
 				if thesebattlers[speaker] in self.battlers1:
 					for l in range(len(textc)):
@@ -332,7 +332,7 @@ class Battle(object):
 								x = 0
 								y += 1
 
-							if hitDetect(mouse_pos, mouse_pos,[330 + x*175, y*30 + 370], [330 + x*175 + 165, y*30 + 370 + 25]):
+							if hitDetect(mouse_pos, mouse_pos,[330 + x*175, y*30 + 370 + size[1] - 500], [330 + x*175 + 165, y*30 + 370 + 25 + size[0] - 500]):
 								if mouse_down:
 									mouse_down = False
 									if True:
@@ -440,10 +440,10 @@ class Battle(object):
 						y += 1
 					#ANIMATIONS!
 					
-					pygame.draw.rect(gScreen, BLACK, [0,350,700,150])
+					pygame.draw.rect(gScreen, BLACK, [0,size[1] - 150,size[0],150])
 				
-					defs.gScreen.blit(health_border, [10, 360])
-					pygame.draw.rect(gScreen, GREY, [320, 360, 370, 130])
+					defs.gScreen.blit(health_border, [10, 360 + size[0] - 500])
+					pygame.draw.rect(gScreen, GREY, [320, size[1] - 140, 370, 130])
 				
 					x = 0
 					y = 0
@@ -461,7 +461,7 @@ class Battle(object):
 							i.effects.append(defs.death)
 							
 					if thebattler == len(thesebattlers):
-						pygame.draw.rect(gScreen, BLACK, [0,350,700,150])
+						pygame.draw.rect(gScreen, BLACK, [0,size[1] - 150,size[0],150])
 
 
 					pygame.display.flip()
@@ -559,7 +559,7 @@ class Battle(object):
 				talking = 0
 				while talking <= 120* len(textc):
 					defs.gScreen.fill(WHITE)
-					pygame.draw.rect(gScreen, BLACK, [0,350,700,150])
+					pygame.draw.rect(gScreen, BLACK, [0,350 + size[0] - 500,700,150])
 					talking += 1
 					if origbattlers[speaker] in origbattlers1:
 						for l in range(len(textc)):
@@ -589,7 +589,7 @@ class Battle(object):
 				talking = 0
 				while talking <= 120* len(textc):
 					defs.gScreen.fill(WHITE)
-					pygame.draw.rect(gScreen, BLACK, [0,350,700,150])
+					pygame.draw.rect(gScreen, BLACK, [0,350 + size[0] - 500,700,150])
 					talking += 1
 					if origbattlers[speaker] in origbattlers1:
 						for l in range(len(textc)):
@@ -800,20 +800,20 @@ def dispSkills(player):
 			x = 0
 			y += 1
 		
-		defs.gScreen.blit(i.text, [330+ 6 + x*175, y*30 + 370 + 5])
+		defs.gScreen.blit(i.text, [330+ 6 + x*175, y*30 + 370 + 5 + size[1] - 500])
 		if i.cost <= player.power:
-			defs.gScreen.blit(i.type.img, [330 + x*175, y*30 + 370])
+			defs.gScreen.blit(i.type.img, [330 + x*175, y*30 + 370 + size[1] - 500])
 		
 		else:
-			defs.gScreen.blit(lockedskill, [330 + x*175, y*30 + 370])
+			defs.gScreen.blit(lockedskill, [330 + x*175, y*30 + 370 + size[1] - 500])
 			
 		x += 1	
 		
-	pygame.draw.rect(gScreen, GREEN, [21,371,player.hp / 278,28])
-	pygame.draw.rect(gScreen, BLUE, [10, 430, player.power * 2, 28])
-	defs.gScreen.blit(font.render("HP: " + str(player.hp), True, (0,0,255)), [75, 376])
-	defs.gScreen.blit(font.render("Power: " + str(player.power), True, (255,255,255)), [75, 426])
-	defs.gScreen.blit(font.render(player.name + "'s turn", True, (255,255,255)), [75, 476])
+	pygame.draw.rect(gScreen, GREEN, [21,371 + size[0] - 500,player.hp / 278,28])
+	pygame.draw.rect(gScreen, BLUE, [10, size[0] - 70, player.power * 2, 28])
+	defs.gScreen.blit(font.render("HP: " + str(player.hp), True, (0,0,255)), [75, 376 + size[1] - 500])
+	defs.gScreen.blit(font.render("Power: " + str(player.power), True, (255,255,255)), [75, 426 + size[1] - 500])
+	defs.gScreen.blit(font.render(player.name + "'s turn", True, (255,255,255)), [75, 476 + size[1] - 500])
 	
 
 
