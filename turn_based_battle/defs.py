@@ -41,7 +41,7 @@ cattheme = Music("Raxxo_Patchy_Aid")
 cootheme = Music("Raxxo_Stand_Your_Ground")
 maicetheme = Music("A_Tiny_Tiny_Clever_Commander")
 sivtheme = Music("WaterflameFinalBattle")
-
+noutheme = Music("superierior_nouledge")
 def bubble_sort(items):
 	""" Implementation of bubble sort """
 	for i in range(len(items)):
@@ -79,7 +79,7 @@ def printb(text):
 		
 		
 			
-		pygame.display.flip()
+		pygame.display.flip()	
 		clock.tick(60)
 	
 						
