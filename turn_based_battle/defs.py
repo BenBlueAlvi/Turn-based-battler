@@ -684,6 +684,8 @@ class Skill(object):
 				
 #Skill("", normal, True, 0, 0, 0, 0, 100, 0, [], [""])
 
+eldritchAppuratus = Skill("Eldritch Appuratus", tech, False, 0, 0, 3, 2, 100, 3, [], ["powerUp", "recover"])
+windSlash = Skill("Wind Slash", air, False, 20, 10, 5, 3, 90, 1, [], [])
 nothing = Skill("nothing", normal, True, 0, 0, 0, 0, 100, 0, [], ["nodam", "trueHit"])
 basicAtk = Skill("Basic Attack", normal, True, 5, 5, 1, 0,90, 0, [], [""])
 fireBall = Skill("Fire ball", fire, False, 7, 3, -1, 0,90, 2, [1, burn], [""])
