@@ -140,7 +140,7 @@ class Effect(object):
 		self.endeffect = 0
 		self.img = pygame.image.load("Assets/ui/effects/" + effect + ".png")
 		self.canend = True
-		self.damage =0
+		self.damage = 0
 		
 	def apply(self, target):
 		if self.effect == "defend":
@@ -148,7 +148,6 @@ class Effect(object):
 			printb(target.name + " is defending!")
 			target.effects.append(self.buildNew())
 			
-		
 		if self.effect == "forceshield":
 			target.con += target.basecon * 3
 			target.mag += target.basemag * 3
@@ -160,119 +159,118 @@ class Effect(object):
 			target.mag -= target.basemag / 2
 			printb(target.name + " is confused!")
 			target.effects.append(self.buildNew())
+			
 		if self.effect == "rebuff":
 			target.str += target.basestr * 1.4
 			target.int += target.baseint * 1.4
 			printb(target.name + " is encouraged!")
 			target.effects.append(self.buildNew())
+			
 		if self.effect == "meditate":
 			target.power += 3
 			target.con -= 10
 			target.mag += 5
 			printb(target.name + " is meditating!")
 			target.effects.append(self.buildNew())
+			
 		if self.effect == "planAhead":
+			planned = False
+			for i in target.effects:
+				if i.effect == "planAhead":
+					i.endeffect, planned = 0, True
+			if not planned:
+				target.effects.append(self.buildNew())
+			target.misc += 1
 			target.crit += 2
-			target.int += target.int / 10
-			target.str += target.str / 10
+			target.int = target.int + (target.int / 10)
+			target.str = target.str + (target.str / 10)
 			printb(target.name + " is scheming!")
-			target.effects.append(self.buildNew())
+			
 		if self.effect == "dodgeUp":
 			target.dodgeChance += 25
 			printb(target.name + " is prepared!")
 			target.effects.append(self.buildNew())
+			
 		if self.effect == "neverThere":
 			target.dodgeChance += 100
 			printb(target.name + " dissapeared")
 			target.effects.append(self.buildNew())
+			
 		if self.effect == "slowed":
 			target.agil -= 5
 			target.dodgeChance -= 10
 			printb(target.name + " is slowed!")
 			target.effects.append(self.buildNew())
 			
+		if self.effect == "magicMute":
+			printb(target.name+"is Muted!")
+			target.effects.append(self.buildNew())
+			
 	def end(self, target):
+		target.effects.remove(self)
 		
 		if self.effect == "defend":
 			printb(target.name + " is no longer defending!")
 			target.con -= target.basecon * target.basecon
-			target.effects.remove(self)
 			
 		if self.effect == "forceshield":
 			target.con -= target.basecon * 3
 			target.mag -= target.basemag * 3
 			printb(target.name + " no longer has a shield up!")
-			target.effects.remove(self)
 		
 		if self.effect == "confusion":
 			target.con += target.basecon / 2
 			target.mag += target.basemag / 2
 			printb(target.name + " is no longer confused!")
-			target.effects.remove(self)
 		
 		if self.effect == "rebuff":
 			target.str -= target.basestr * 1.4
 			target.int -= target.baseint * 1.4
 			printb(target.name + " is no longer encouraged. :(")
-			target.effects.remove(self)
 		
 		if self.effect == "meditate":
 			target.con += 10
 			target.mag -= 5
 			printb(target.name + " is no longer meditating!")
-			target.effects.remove(self)
 		
 		if self.effect == "planAhead":
-			target.crit -= 2
-			target.int -= target.int / 10
-			target.str -= target.str / 10
+			for i in range(target.misc):
+				target.crit = target.crit - 2
+				target.int = target.int - (target.int / 10)
+				target.str = target.str - (target.str / 10)
 			printb(target.name + " is no longer scheming!")
-			target.effects.remove(self)
 		
 		if self.effect == "dodgeUp":
 			target.dodgeChance -= 25
 			printb(target.name + " is no longer prepared!")
-			target.effects.remove(self)
 		
 		if self.effect == "neverThere":
 			target.dodgeChance -= 100
 			printb(target.name + " reapeared!")
-			target.effects.remove(self)
 			
 		if self.effect == "slowed":
 			target.agil -= 5
 			target.dodgeChance -= 10
 			printb(target.name + " is no longer slowed!")
-			target.effects.remove(self)
 			
-				
-				
-			
-			
-	
 	def update(self, target):
-	
-	
-	
-	
+		if self.effect == "magicMute":
+			target.power -= 1
+			printb(target.name+"'s power was Muted!")
+			if self.endeffect == 1:
+				self.end(target)
+			self.endeffect += 1
+		
 		if self.effect == "burn":
 			self.damage = 25 + random.randint(1, 25)
 			self.endeffect = random.randint(1,3)
-			
-
-			
-
 			target.hp -= self.damage
 			printb(target.name + " is on fire!   " + target.name + " takes " + str(self.damage) + " damage")
-		
-			
 			if self.endeffect == 2 and self.canend:
 				printb(target.name + " put out the fire!")
 				self.end(target)
 				
-				
 		if self.effect == "bleed":
-			
 			target.hp -= target.hp / 4
 			printb(target.name + " is on bleeding out!")
 			self.endeffect = random.randint(1,3)
@@ -285,20 +283,15 @@ class Effect(object):
 			if self.endeffect == 2:
 				self.end(target)
 				
-				
-				
 		if self.effect == "forceshield":
 			self.endeffect = random.randint(1,2)
 			if self.endeffect == 2:
 				self.end(target)
 				
 		if self.effect == "confusion":
-			
 			self.endeffect = random.randint(1,2)
 			if self.endeffect == 2:
 				self.end(target)
-				
-				
 				
 		if self.effect == "poison":
 			damage = target.hp / 10
@@ -310,20 +303,21 @@ class Effect(object):
 				target.effects.remove(self)
 				
 		if self.effect == "rebuff":
-			
-			
 			if self.endeffect >= 1:
 				self.end(target)
 			self.endeffect += 1
 			
 		if self.effect == "meditate":
-			
+			if magicMute in target.effects:
+				printb(target.name + "'s Meditate was Muted!")
+			else:
+				printb(target.name + " is Meditating.")
+				target.power += 3
 			if self.endeffect == 1:
 				self.end(target)
 			self.endeffect += 1
 				
 		if self.effect == "planAhead":
-
 			if self.endeffect == 1:
 				self.end(target)
 			self.endeffect += 1
@@ -341,11 +335,11 @@ class Effect(object):
 			target.int -= 20
 			target.str -= 20
 			try:
-				target.effects.remove(moonStagef)
+				moonStagef.end(target)
 			except:
 				pass
 			try:
-				target.effects.remove(otherStagef)
+				otherStagef.end(target)
 			except:
 				pass
 				
@@ -356,11 +350,11 @@ class Effect(object):
 			target.str -= 25
 			target.con -= 25
 			try:
-				target.effects.remove(earthStagef)
+				earthStagef.end(target)
 			except:
 				pass
 			try:
-				target.effects.remove(otherStagef)
+				otherStagef.end(target)
 			except:
 				pass
 			
@@ -373,11 +367,11 @@ class Effect(object):
 			target.con -= 50
 			target.mag -= 50
 			try:
-				target.effects.remove(moonStagef)
+				moonStagef.end(target)
 			except:
 				pass
 			try:
-				target.effects.remove(earthStagef)
+				earthStagef.end(target)
 			except:
 				pass
 				
@@ -386,8 +380,7 @@ class Effect(object):
 			if self.endeffect == 1:
 				printb(target.name + " is no longer being guarded by " + target.guarder.name + "!")
 				target.guarder = "nul"
-				target.effects.remove(self)
-				self.resetStats(target)
+				self.end(target)
 			self.endeffect += 1	
 			
 		if self.effect == "neverThere":
@@ -411,6 +404,7 @@ class Effect(object):
 			
 		else:
 			pass
+
 	def resetStats(self, target):
 		target.con = target.basecon
 		target.mag = target.basemag
@@ -514,7 +508,7 @@ class Skill(object):
 				user.marks += 1
 				if critical:
 					user.marks += 1
-				
+			
 			for i in self.spec:
 				if i == "vampire":
 					user.hp += damage
@@ -522,7 +516,7 @@ class Skill(object):
 						user.hp += math.floor(damage/10)
 				if i == "defend":
 					damage = 0
-					user.effects.append(defense.buildNew())
+					user.apply(defence)
 				if i == "powerUp":
 					damage = 0
 					user.power += 2
@@ -536,14 +530,14 @@ class Skill(object):
 					user.con += 6
 					user.mag += 6
 				if i == "Shield":
-					user.effects.append(forceshield.buildNew())
+					forceshield.apply(user)
 				if i == "atkUp":
 					damage = 0
-					user.effects.append(planAheadf)
+					planAheadf.apply(user)
 				if i == "division":
 					damage = target.hp/5
 				if i == "immortal":
-					user.effects.append(immortal.buildNew())
+					immortal.apply(user)
 				if i == "heal":
 					damage = 0
 					target.hp += 100
@@ -553,10 +547,14 @@ class Skill(object):
 						target.hp += user.int
 				if i == "block":
 					damage = 0
-					user.effects.append(block.buildNew())
+					block.apply(user)
 				if i == "powerdrain":
-					damage = 0 
-					user.power += target.power
+					damage = 0
+					if magicMute in user.effects:
+						printb(user.name+"'s Power drain was Muted!")
+						user.power += math.floor(target.power/5)
+					else:
+						user.power += target.power
 					target.power = 0
 				if i == "revenge":
 					damage = user.maxhp - user.hp
@@ -576,13 +574,17 @@ class Skill(object):
 					if critical:
 						target.marks += 1
 				if i == "creepyAtk":
+					temp = target.mag
+					if temp <= 0:
+						temp = (-1)/(-1 + temp)
+					print "Detected devision by 0. Modding to: "+temp
 					damage = math.floor((user.int * (1.08 ** target.marks))/target.mag)
 				if i == "endeffect":
 					user.effects = []
 				if i == "removeEff":
 					for j in negeff:
 						if j in target.effects:
-							target.effects.remove(j)
+							j.end(target)
 				if i == "removeUff":
 					target.con = target.basecon
 					target.mag = target.basemag
@@ -597,19 +599,23 @@ class Skill(object):
 						target.hp += math.floor(user.hp/5)
 				if i == "powerTransfer":
 					user.power -= user.power
-					target.power += user.power
+					if magicMute in target.effects:
+						printb(user.name+"'s Transfer was Muted!")
+						target.power += math.floor(user.power/5)
+					else:
+						target.power += user.power
 					if critical:
 						target.power += 1
 				if i == "meditate":
-					user.effects.append(meditatef.buildNew())
+					meditatef.apply(user)
 				if i == "dodgeUp":
-					user.effects.append(dodgeUp.buildNew())
+					dodgeUp.apply(user)
 				if i == "otherStage":
-					user.effects.append(otherStagef.buildNew())
+					otherStagef.apply(user)
 				if i == "earthStage":
-					user.effects.append(earthStagef.buildNew())
+					earthStagef.apply(user)
 				if i == "moonStage":
-					user.effects.append(moonStagef.buildNew())
+					moonStagef.apply(user)
 				if i == "againstOdds":
 					if user in player1.battlers:
 						for b in player2.battlers:
@@ -626,18 +632,18 @@ class Skill(object):
 					damage = math.floor(damage) - target.con
 				if i == "takeBlow":
 					target.guarder = user
-					target.effects.append(guarded.buildNew())
+					guarded.apply(target)
 				if i == "mindReading":
 					user.dodgeChance += 5
 					if critical:
 						user.dodgeChance += 1
 
 				if i == "neverThere":
-					user.effects.append(neverTheref.buildNew())
+					neverTheref.apply(user)
 
 
 			if user.ability == "Frenzy" and user.hp <= user.maxhp/5:
-				damage *= 1.25
+				damage = math.floor(damage * 1.25)
 						
 			if user.hp > 0:
 				if target.ability == "3 worlds":
@@ -651,7 +657,6 @@ class Skill(object):
 					damage = 0
 
 				printb(user.name + " uses " + self.name + " and deals " + str(damage) + " damage to " + target.name + message)
-			
 				target.hp -= damage
 				
 		else:
@@ -700,7 +705,7 @@ shroud = Skill("Shroud", dark, False, 0, 0, 10, 0,100, 2, [], ["shroud", "trueHi
 bludgeon = Skill("Bludgeon", fighting, True, 10, 2, -1, 0,90, 0, [], [""])
 stab = Skill("Stab", fighting, True, 5, 7, 2, 0,100, 0, [], [""])
 confuse = Skill("Confuse", physic, False, 0, 0, 10, 0,80, 2, [1,confusion], [""])
-planAhead = Skill("Plan Ahead", tech, False, 0, 0, -10, 0,100, 2, [], ["atkUp", "trueHit"])
+planAhead = Skill("Plan Ahead", tech, False, 0, 0, -10, 0,100, 0, [], ["atkUp", "trueHit"])
 erase =Skill("Erase", unknown, False, 0, 0, -10, 0,100, 5, [], ["division"])
 create = Skill("Create", unknown, False, 0,0, -10, 0,100, 5, [], ["immortal", "trueHit"])
 mend = Skill("Mend", magic, False, 0,0, 1, 0,100, 3, [], ["heal", "trueHit"])

@@ -156,26 +156,46 @@ def runAI(player, battlersL, battlersR):
 	
 #BOSSES
 	if player.name == "Knowing Eye":
+		player.aimisc -= 1
+		print player.aimisc, rand
 		if len(allies) < 3:
 			player.savingfor = "create"
-		if player.savingfor == "":
-			pass
+		if player.savingfor == "none":
+			if rand == 0:
+				player.savingfor = "mute"
+			if rand == 1:
+				player.savingfor = "shield"
+			if player.aimisc <= 0:
+				player.aimisc, player.goskill, player.target = 3, player.skills[0], [battlersL[0]]
+				for i in battlersL:
+					temp1, temp2 = i.mag, player.target[0].mag
+					if temp1 < 1:
+						temp1 = 1
+					if temp2 < 1:
+						temp2 = 1
+					if i.marks/temp1 > player.target[0].marks/temp2:
+						player.target = [i]
+						break
 
 		#create
 		if player.savingfor == "create" and player.power >= defs.create.cost:
-			player.goskill, player.target, player.savingfor = player.skills[5], [player], ""
+			player.goskill, player.target, player.savingfor = player.skills[5], [player], "none"
 
 		#magic mute
 		if player.savingfor == "mute" and player.power >= defs.magicMute.cost:			
 			for i in range(len(potdam)):
 				if defs.magicmute not in i.effects:
-					player.goskill, player.target, player.savingfor = player.skills[3], [i], ""
+					player.goskill, player.target, player.savingfor = player.skills[3], [i], "none"
 					break
+		
+		if player.savingfor == "shield" and player.power >= defs.forceShield.cost:
+			player.goskill, player.target, player.savingfor = player.skills[4], [player], "none"
 
 		#meditate
 		if player.savingfor in ["create", "mute", "shield"]:
 			player.goskill, player.target = player.skills[2], [player]
-
+		
+		print player, player.goskill, player.target[0]
 
 	if player.name == "Lapis":
 		if player.savingfor == "none" and player.hp >= player.hp / 3 and rand == 0:
