@@ -331,8 +331,10 @@ class Battle(object):
 							if x > 1:
 								x = 0
 								y += 1
-
-							if hitDetect(mouse_pos, mouse_pos,[330 + x*175, y*30 + 370 + size[1] - 500], [330 + x*175 + 165, y*30 + 370 + 25 + size[0] - 500]):
+							
+							thisxcord = 330 + x*175
+							thisycord = y*30 + 370 + size[1] - 500
+							if hitDetect(mouse_pos, mouse_pos,[thisxcord, thisycord], [thisxcord + 165, thisycord + 25]):
 								if mouse_down:
 									mouse_down = False
 									if True:
@@ -488,14 +490,14 @@ class Battle(object):
 				
 				if len(p.target) > 1:
 					
-					p.goskill.use(p,p.target[mincrement])
+					p.goskill.use(p,p.target[mincrement], self.battlers1, self.battlers2, thesebattlers)
 					
 					if mincrement > 2:
 						p.power -= p.goskill.cost
 					
 				else:
 					
-					p.goskill.use(p,p.target[0])
+					p.goskill.use(p,p.target[0], self.battlers1, self.battlers2, thesebattlers)
 					p.power -= p.goskill.cost
 			
 				
@@ -633,7 +635,8 @@ Coo33Fight = Battle([], [defs.Catsome.buildNew(), defs.NO, defs.CoosomeJoe.build
 C33Dial = Dialoge([[5, "Ah, Coosome! it's been a while!"], [4, "Indeed it has, Cat."], [1, "You know him?"], [5, "Of course! We are all over each other!"], [4, "What Cat means to say, is that we are one and the same."], [5, "We stick together! so Lets have a FOURSOME!"], [1, "But who else is joining me?"], [2, "I'll stand in for Catsome. Lets do this."]], [[4, "You fought well.", "But not well enough."], [5, "Is that really all? I'm not satisfied yet."]], [[4, "Nice one, you fought well there."], [5, "Is it done already? I'm not quite satisfied yet..."]])
 Coo33Fight = Battle([], [defs.CoosomeJoe.buildNew(), defs.Coo33.buildNew(), defs.Catsome.buildNew()], "", C33Dial, False, defs.cootheme, "")
 
-
+NouDial = Dialoge([[3, "!"], [2, "Hello?"], [3, "Hiya!"], [1, "Finally, a person in this strange place.", "We have-"], [3, "Oh yes I know, I know everything.", "Except for what my master Knows!", "She truely knows everything"], [0, "Even more than-"], [3, "Yes, even more than that, abomination.", "I must say that you and you're group seem very excited to get you're hands on this knowlede", "Unforunatly, I cannot allwow that"]], [[0, "Ugg"]], [[0, "Ugg"]])
+NouFight = Battle([], [defs.NO, defs.Nou.buildNew(), defs.NO], "", NouDial, False, defs.cootheme, "")
 
 			
 class Stage(object):
