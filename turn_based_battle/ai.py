@@ -14,6 +14,12 @@ Lapis, Catsome, Coo33
 #Make note that hitall effect needs to be applied in your ai.
 #take in thisbattler, battlers1, battlers2
 def runAI(player, battlersL, battlersR):
+	for i in battlersL:
+		if i.name == "???" or i == defs.NO or i == defs.NOT:
+			battlersL.remove(i)
+	for i in battlersR:
+		if i.name == "???" or i == defs.NO or i == defs.NOT:
+			battlersR.remove(i)
 	consort, mgdsort, dmgtaken, potdam = [], [], [], []
 	for i in battlersL:
 		dmgtaken.append(i)

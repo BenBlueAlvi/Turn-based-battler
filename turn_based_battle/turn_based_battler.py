@@ -153,8 +153,10 @@ class Arena(object):
 	def __init__(self, name, effect, img):
 		self.name = name
 		self.effect = effect
-		self.img = img
+		self.img = pygame.image.load(img)
 
+rift = Arena("Rift", "", "assets/arena/riftnou.png")
+defultarena = Arena("Defult", "", "assets/arena/defult.png")
 		
 		
 
@@ -194,6 +196,8 @@ class Battle(object):
 		defs.printing = False
 		textc = font.render(" ",True,BLACK)
 		limit = 6
+		
+			
 		if self.mult == False:
 			limit = 6
 			
@@ -257,6 +261,7 @@ class Battle(object):
 			talking = 0
 			while talking <= 120* len(textc):
 				defs.gScreen.fill(WHITE)
+				defs.gScreen.blit(self.arena.img, [0,0])
 				pygame.draw.rect(gScreen, BLACK, [0,size[1] - 150,size[0],150])
 				talking += 1
 				if thesebattlers[speaker] in self.battlers1:
@@ -311,6 +316,7 @@ class Battle(object):
 
 				while not ready and not p.isAi:
 					defs.gScreen.fill(WHITE)
+					defs.gScreen.blit(self.arena.img, [0,0])
 					for event in pygame.event.get(): 
 						if event.type == pygame.QUIT: 
 							ready = True							
@@ -331,8 +337,10 @@ class Battle(object):
 							if x > 1:
 								x = 0
 								y += 1
-
-							if hitDetect(mouse_pos, mouse_pos,[330 + x*175, y*30 + 370 + size[1] - 500], [330 + x*175 + 165, y*30 + 370 + 25 + size[0] - 500]):
+							
+							thisxcord = 330 + x*175
+							thisycord = y*30 + 370 + size[1] - 500
+							if hitDetect(mouse_pos, mouse_pos,[thisxcord, thisycord], [thisxcord + 165, thisycord + 25]):
 								if mouse_down:
 									mouse_down = False
 									if True:
@@ -488,14 +496,14 @@ class Battle(object):
 				
 				if len(p.target) > 1:
 					
-					p.goskill.use(p,p.target[mincrement])
+					p.goskill.use(p,p.target[mincrement], self.battlers1, self.battlers2, thesebattlers)
 					
 					if mincrement > 2:
 						p.power -= p.goskill.cost
 					
 				else:
 					
-					p.goskill.use(p,p.target[0])
+					p.goskill.use(p,p.target[0], self.battlers1, self.battlers2, thesebattlers)
 					p.power -= p.goskill.cost
 			
 				
@@ -559,6 +567,7 @@ class Battle(object):
 				talking = 0
 				while talking <= 120* len(textc):
 					defs.gScreen.fill(WHITE)
+					defs.gScreen.blit(self.arena.img, [0,0])
 					pygame.draw.rect(gScreen, BLACK, [0,350 + size[0] - 500,700,150])
 					talking += 1
 					if origbattlers[speaker] in origbattlers1:
@@ -589,6 +598,7 @@ class Battle(object):
 				talking = 0
 				while talking <= 120* len(textc):
 					defs.gScreen.fill(WHITE)
+					defs.gScreen.blit(self.arena.img, [0,0])
 					pygame.draw.rect(gScreen, BLACK, [0,350 + size[0] - 500,700,150])
 					talking += 1
 					if origbattlers[speaker] in origbattlers1:
@@ -617,23 +627,24 @@ NoDial = Dialoge([[0, ""]],[[0, ""]],[[0, ""]])
 
 #stage 1
 MousDial = Dialoge([[1, "Ahh!"], [0, "Wha--?"], [1, "Get-- Agh, I need to.."], [0, "Whoah, Calm Down!"], [1, "GET OUT OF MY WAY!"]], [[1, "*huff*"], [1, "I need to hurry up before that", "monster catches up with me..."]], [[1, "I.. I'm sorry."], [1, "I was panicking there."], [0, "I could tell. Why?"], [1, "Well, I'm being chased by.."], [1, "Well, you look like a nice guy,", "maybe you can help me?"], [0, "Depends, but I'll try"], [1, "A monster named 'Catsome' is chasing after me,","And I need some help dealing with it."], [0, "Sure, where can I-"], [1, "Thanks, I'll be heading off now!"]])
-MousFight = Battle([], [defs.NO, defs.Maice.buildNew(), defs.NO], "", MousDial, False, defs.maicetheme, "")
+MousFight = Battle([], [defs.NO, defs.Maice.buildNew(), defs.NO], defultarena, MousDial, False, defs.maicetheme, "")
 CatDial = Dialoge([[0, "Are you this 'Catosme' i've heard so much about?"], [1, "Yes, that is one title I reply to..."], [1, "Anyway, have you seen a little friend of mine running about?"], [0, "I was sent here by it to avenge it."], [1, "So it wants you to try to hit on me?"], [0, "Please no."], [1, "So we're going to skip the formalities", "and get right to the good parts, eh?"]], [[1, "Ah, that was nice being on top."], [0, "What is it with you and innuendos?"], [1, "I guess it's just one of the things in me."]], [[1, "Ah, I give! Safe word, Safe word!"], [0, "Please stop with the innuendos."], [1, "Well, that little Maice charachter was", "running away after stealing something of mine."], [1, "So you think you can help me get back", "what was taken from me?"], [0, "Sure, I guess so."], [1, "Then let's head off!"]])
-CatsomeFight = Battle([], [defs.NO, defs.Catsome.buildNew(), defs.NO], "", CatDial, False, defs.cattheme, "")
+CatsomeFight = Battle([], [defs.NO, defs.Catsome.buildNew(), defs.NO], defultarena, CatDial, False, defs.cattheme, "")
 MiecDial = Dialoge([[1, "Ah, there you are. I see", "you brought some Friends this time."], [3, "Ah! There's the Cat!"], [3, "And.. I thought you were going to help me!", "you TRAITOR!"], [0, "something stole something"], [2, "You are Horrible!"], [4, "Why would you trust this scum?"], [3, "I don't even know."], [1, "Well then,", "Let's start this party."]],[[3, "lol rekt"]],[[3, "omg ded"]])
-MiecFight = Battle([], [defs.Maice.buildNew(), defs.Maice.buildNew(), defs.Maice.buildNew()], "", MiecDial, False, defs.maicetheme, "Get catsome")
+MiecFight = Battle([], [defs.Maice.buildNew(), defs.Maice.buildNew(), defs.Maice.buildNew()], defultarena, MiecDial, False, defs.maicetheme, "Get catsome")
 
 #forest stage 1
 ForDial = Dialoge([[0, "So this is the forest."], [3, "Why hello, fine traveler.", "What brings you to my forest?"], [1, "Who are you, with that fine maine?"], [3, "I am a Dandy Lion."], [2, "*click*"], [0, "wait, what was that noise?"], [4, "*click*"], [3 ,"and I must have you", "LEAVE MY FOREST!"]],[[3, "And I wish you a good day."]],[[3, "If... I must.", "You have proven yourself worthy to enter my forest."], [1, "Thank you, my fellow feline."]])
-ForFight1 = Battle([], [defs.Axeurlegs.buildNew(), defs.Axeurlegs.buildNew(), defs.Axeurlegs.buildNew()], "", ForDial, False, defs.maicetheme, "")
-Alphight = Battle([], [defs.Axeurlegs.buildNew(), defs.Alpha.buildNew(), defs.Axeurlegs.buildNew()], "", ForDial, False, defs.sivtheme, "")
+ForFight1 = Battle([], [defs.Axeurlegs.buildNew(), defs.Axeurlegs.buildNew(), defs.Axeurlegs.buildNew()], defultarena, ForDial, False, defs.maicetheme, "")
+Alphight = Battle([], [defs.Axeurlegs.buildNew(), defs.Alpha.buildNew(), defs.Axeurlegs.buildNew()], defultarena, ForDial, False, defs.sivtheme, "")
 
 CooDial = Dialoge([[2, "Ah, Coosome! it's been a while!"], [3, "Indeed it has, Cat."], [0, "You know him?"], [2, "Of course! We are all over each other!"], [3, "What Cat means to say, is that we are one and the same."], [2, "We stick together! so Lets have a FOURSOME!"], [0, "But who else is joining me?"], [1, "I'll stand in for Catsome. Lets do this."]], [[3, "You fought well.", "But not well enough."], [2, "Is that really all? I'm not satisfied yet."]], [[3, "Nice one, you fought well there."], [2, "Is it done already? I'm not quite satisfied yet..."]])
-Coo33Fight = Battle([], [defs.Catsome.buildNew(), defs.NO, defs.CoosomeJoe.buildNew()], "", CooDial, False, defs.cootheme,"") 
+Coo33Fight = Battle([], [defs.Catsome.buildNew(), defs.NO, defs.CoosomeJoe.buildNew()], defultarena, CooDial, False, defs.cootheme,"") 
 C33Dial = Dialoge([[5, "Ah, Coosome! it's been a while!"], [4, "Indeed it has, Cat."], [1, "You know him?"], [5, "Of course! We are all over each other!"], [4, "What Cat means to say, is that we are one and the same."], [5, "We stick together! so Lets have a FOURSOME!"], [1, "But who else is joining me?"], [2, "I'll stand in for Catsome. Lets do this."]], [[4, "You fought well.", "But not well enough."], [5, "Is that really all? I'm not satisfied yet."]], [[4, "Nice one, you fought well there."], [5, "Is it done already? I'm not quite satisfied yet..."]])
-Coo33Fight = Battle([], [defs.CoosomeJoe.buildNew(), defs.Coo33.buildNew(), defs.Catsome.buildNew()], "", C33Dial, False, defs.cootheme, "")
+Coo33Fight = Battle([], [defs.CoosomeJoe.buildNew(), defs.Coo33.buildNew(), defs.Catsome.buildNew()], defultarena, C33Dial, False, defs.cootheme, "")
 
-
+NouDial = Dialoge([[3, "!"], [2, "Hello?"], [3, "Hiya!"], [1, "Finally, a person in this strange place.", "We have-"], [3, "Oh yes I know, I know everything.", "Except for what my master Knows!", "She truely knows everything"], [0, "Even more than-"], [3, "Yes, even more than that, abomination.", "I must say that you and you're group seem very excited to get you're hands on this knowlede", "Unforunatly, I cannot allwow that"]], [[0, "Ugg"]], [[0, "Ugg"]])
+NouFight = Battle([], [defs.NO, defs.Nou.buildNew(), defs.NO], rift, NouDial, False, defs.noutheme, "")
 
 			
 class Stage(object):
@@ -965,7 +976,7 @@ def CharSelect(mult):
 						mult = False
 						for i in player2.battlers:
 							i.isAi = True
-					theBattle = Battle(player1.battlers, player2.battlers, "", NoDial, mult, defs.cattheme, "")
+					theBattle = Battle(player1.battlers, player2.battlers, defultarena, NoDial, mult, defs.cattheme, "")
 		
 					theBattle.battle()
 					player1.reBuild()
