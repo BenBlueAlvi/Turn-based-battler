@@ -71,7 +71,7 @@ def printb(text):
 	
 		pygame.draw.rect(gScreen, BLACK, [0,size[1] - 150,size[0],150])
 		#gScreen.blit(disptext, [10, 320 + size[1] - 500])
-		gScreen.blit(disptext, [10 + size[0] - 525, size[1] - 25])
+		gScreen.blit(disptext, [10, size[1] - 140])
 		printing = True
 		
 		#pygame.draw.rect(gScreen, WHITE, [0,350 + size[1] - 500,700,150])
