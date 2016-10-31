@@ -331,7 +331,7 @@ class Battle(object):
 					mouse_pos = pygame.mouse.get_pos()
 					
 					#displaying and picking skills
-					if p.hp > 0:
+					if p.hp > 0 and not defs.passedOut in p.effects:
 						for i in p.skills:
 						
 							if x > 1:
@@ -572,7 +572,7 @@ class Battle(object):
 					talking += 1
 					if origbattlers[speaker] in origbattlers1:
 						for l in range(len(textc)):
-							defs.gScreen.blit(textc[l-1], [origbattlers[speaker].basex, origbattlers[speaker].basey - (30 + ((l-1) * font.size(text[l-1])[1]))])
+							defs.gScreen.blit(textc[l-1], [origbattlers[speaker].basex + 55, origbattlers[speaker].basey - (30 + ((l-1) * font.size(text[l-1])[1]))])
 					else:
 						for l in range(len(textc)):
 							defs.gScreen.blit(textc[l-1], [origbattlers[speaker].basex - font.size(text[l-1])[0], origbattlers[speaker].basey - (30 + ((l-1) * font.size(text[l-1])[1]))])
@@ -643,8 +643,8 @@ Coo33Fight = Battle([], [defs.Catsome.buildNew(), defs.NO, defs.CoosomeJoe.build
 C33Dial = Dialoge([[5, "Ah, Coosome! it's been a while!"], [4, "Indeed it has, Cat."], [1, "You know him?"], [5, "Of course! We are all over each other!"], [4, "What Cat means to say, is that we are one and the same."], [5, "We stick together! so Lets have a FOURSOME!"], [1, "But who else is joining me?"], [2, "I'll stand in for Catsome. Lets do this."]], [[4, "You fought well.", "But not well enough."], [5, "Is that really all? I'm not satisfied yet."]], [[4, "Nice one, you fought well there."], [5, "Is it done already? I'm not quite satisfied yet..."]])
 Coo33Fight = Battle([], [defs.CoosomeJoe.buildNew(), defs.Coo33.buildNew(), defs.Catsome.buildNew()], defultarena, C33Dial, False, defs.cootheme, "")
 
-NouDial = Dialoge([[3, "!"], [2, "Hello?"], [3, "Hiya!"], [1, "Finally, a person in this strange place.", "We have-"], [3, "Oh yes I know, I know everything.", "Except for what my master Knows!", "She truely knows everything"], [0, "Even more than-"], [3, "Yes, even more than that, abomination.", "I must say that you and you're group seem very excited to get you're hands on this knowlede", "Unforunatly, I cannot allwow that"]], [[0, "Ugg"]], [[0, "Ugg"]])
-NouFight = Battle([], [defs.NO, defs.Nou.buildNew(), defs.NO], rift, NouDial, False, defs.noutheme, "")
+NouDial = Dialoge([[3, "!"], [2, "Hello?"], [3, "Hiya!"], [1, "Finally, a person in this strange place.", "We have-"], [3, "Oh yes I know, I know everything.", "Except for what my master Knows!", "She truely knows everything"], [0, "Even more than-"], [3, "Yes, even more than that, abomination.", "I must say that you and you're group seem very excited to get you're hands on this knowledge", "Unforunatly, I cannot allwow that"]], [[0, "Ugg"]], [[0, "Ugg"]])
+NouFight = Battle([], [defs.Nou.buildNew()], rift, NouDial, False, defs.noutheme, "")
 
 			
 class Stage(object):
@@ -671,17 +671,19 @@ class Stage(object):
 			i.battle()
 		for i in self.nextstages:
 			i.locked = False
+			defs.maptheme.reset()
 
 st8 = Stage("", "", [], [359,516], [])
 st7 = Stage("", "", [], [523,431], [st8])
 st6 = Stage("", "", [], [720,360], [st7])
 st5 = Stage("", "", [], [675,240], [st6])
 st4 = Stage("", "", [], [540,313], [st5])
-st3 = Stage("", "", [], [393,292], [st4])
+st3 = Stage("", "", [NouFight], [393,292], [st4])
 st2 = Stage("", "", [ForFight1], [280, 221], [st3])
 st1 = Stage("", "", [MousFight, CatsomeFight, MiecFight], [317,48], [st2])
 		
 st1.locked = False
+st3.locked = False
 
 class World(object):
 	def __init__(self, stages):
@@ -695,6 +697,7 @@ class World(object):
 		mouse_down = False
 		running = True
 		while running:
+			defs.maptheme.play()
 			for event in pygame.event.get(): 
 				if event.type == pygame.QUIT: 
 					running = False
@@ -766,7 +769,7 @@ class World(object):
 			clock.tick(60)
 		
 
-theWorld = World([st1, st2])
+theWorld = World([st1, st2, st3])
 
 
 class Player(object):

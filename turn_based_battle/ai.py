@@ -46,6 +46,8 @@ def runAI(player, battlersL, battlersR):
 		for j in range(len(potdam)-1-i):
 			if potdam[j].int + potdam[j].str > potdam[j+1].int + potdam[j+1].str:
 				potdam[j], potdam[j+1] = potdam[j+1], potdam[j]
+	for i in potdam:
+		print "potdam:", i.name
 	
 	#allies
 	hptotal = []
@@ -170,32 +172,32 @@ def runAI(player, battlersL, battlersR):
 			
 		if player.savingfor == "mindReading":
 			if player.power >= player.skills[2].cost:
-				player.goskill, target = player.skills[2], [potdam[0]]
+				player.goskill, player.target = player.skills[2], [potdam[0]]
 			else:
 				if rand == 1:
 				
-					player.goskill, target = player.skills[1], [potdam[0]]
+					player.goskill, player.target = player.skills[1], [potdam[0]]
 				if rand == 0:
 				
-					player.goskill, target = player.skills[0], [potdam[0]]
+					player.goskill, player.target = player.skills[0], [potdam[0]]
 		if player.savingfor == "rejuvinate":
 			if player.power >= player.skills[5].cost:
-				player.goskill, target = player.skills[2], [player]
+				player.goskill, player.target = player.skills[2], [player]
 			else:
 				player.savingfor = "meditate"
 				
 		
 		if player.savingfor == "meditate":
 			if player.power >= player.skills[6].cost:
-				player.goskill, target = player.skills[6], [player]
+				player.goskill, player.target = player.skills[6], [player]
 			else:
-				player.goskill, target = player.skills[0], [potdam[0]]
+				player.goskill, player.target = player.skills[0], [potdam[0]]
 		
 		if player.savingfor == "forceShield":
 			if player.power >= player.skills[4].cost:
-				player.goskill, target = player.skills[4], [player]
+				player.goskill, player.target = player.skills[4], [player]
 			else:
-				player.goskill, target = player.skills[0], [potdam[0]]
+				player.goskill, player.target = player.skills[0], [potdam[0]]
 			
 	if player.name == "Knowing Eye":
 		player.aimisc -= 1
