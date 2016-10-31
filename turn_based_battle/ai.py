@@ -369,8 +369,19 @@ def runAI(player, battlersL, battlersR):
 		if len(allies) < 3:
 			player.savingfor = "create"
 		if player.savingfor == "none":
-			if player.hp > 400:
+			if player.hp > 250:
+				doing = False
+				for i in battlersL:
+					if i.hp <= i.maxhp/5:
+						doing = True
+						break
+				if doing:
+					player.savingfor = "erase"
+
+			elif player.hp > 480 and rand == 1:
 				player.savingfor = "planattack"
+			else:
+				player.savingfor = "mend"
 
 		if player.savingfor == "create":
 			if player.power >= defs.create2.cost:
@@ -386,13 +397,15 @@ def runAI(player, battlersL, battlersR):
 					player.target = l
 
 		if player.savingfor == "mend":
-			pass
+			if player.power >= defs.mend.cost:
+				player.goskill, player.target, player.savingfor = player.skills[6], [player], "none"
+			else:
+				player.goskill, player.target = player.skills[rand], [consort[0]]
 
 		if player.savingfor == "planattack":
 			if player.hp <= 400:
-				player.goskill, player.target, player.savingfor = player.skills[rand], , "none"
+				player.goskill, player.target, player.savingfor = player.skills[1], [consort[0]], "none"
 			else:
 				player.goskill, player.target = player.skills[5], [player]
-
 
 	return player
