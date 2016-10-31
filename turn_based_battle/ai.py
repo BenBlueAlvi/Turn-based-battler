@@ -161,6 +161,49 @@ def runAI(player, battlersL, battlersR):
 				player.goskill = player.skills[3]
 	
 #BOSSES
+	if player.name == "Nou Furueteru":
+		if player.hp < player.maxhp / 3:
+			player.savingfor = "rejuvinate"
+		else:
+			player.savingfor = "mindReading"
+			
+			
+		if player.savingfor == "mindReading":
+			if player.power >= player.skills[2].cost:
+				player.goskill, target = player.skills[2], [potdam[0]]
+			else:
+				if rand == 1:
+				
+					player.goskill, target = player.skills[1], [potdam[0]]
+				if rand == 0:
+				
+					player.goskill, target = player.skills[0], [potdam[0]]
+		if player.savingfor == "rejuvinate":
+			if player.power >= player.skills[5].cost:
+				player.goskill, target = player.skills[2], [player]
+			else:
+				player.savingfor = "meditate"
+				
+		
+		if player.savingfor == "meditate":
+			if player.power >= player.skills[6].cost:
+				player.goskill, target = player.skills[6], [player]
+			else:
+				player.goskill, target = player.skills[0], [potdam[0]]
+		
+		if player.savingfor == "forceShield":
+			if player.power >= player.skills[4].cost:
+				player.goskill, target = player.skills[4], [player]
+			else:
+				player.goskill, target = player.skills[0], [potdam[0]]
+			
+				
+			
+				
+			
+				
+
+
 	if player.name == "Knowing Eye":
 		player.aimisc -= 1
 		print player.aimisc, rand

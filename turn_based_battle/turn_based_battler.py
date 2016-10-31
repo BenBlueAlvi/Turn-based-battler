@@ -857,58 +857,58 @@ def CharSelect(mult):
 					if event.key == K_UP:
 						thisplayer.y3 -= 1
 						if thisplayer.y3 < 0:
-							thisplayer.y3 = 15
+							thisplayer.y3 = 24
 					if event.key == K_DOWN:
 						thisplayer.y3 += 1
-						if thisplayer.y3 > 15:
+						if thisplayer.y3 > 24:
 							thisplayer.y3 = 0
 					if event.key == K_LEFT:
 						thisplayer.x3 -= 1
 						if thisplayer.x3 < 0:
-							thisplayer.x3 = 23
+							thisplayer.x3 = 48
 					if event.key == K_RIGHT:
 						thisplayer.x3 += 1
-						if thisplayer.x3 > 23:
+						if thisplayer.x3 > 48:
 							thisplayer.x3 = 0
 					if event.key == K_w:
 						thisplayer.y1 -= 1
 						if thisplayer.y1 < 0:
-							thisplayer.y1 = 15
+							thisplayer.y1 = 24
 					if event.key == K_s:
 						thisplayer.y1 += 1
-						if thisplayer.y1 > 15:
+						if thisplayer.y1 > 24:
 							thisplayer.y1 = 0
 					if event.key == K_a:
 						thisplayer.x1 -= 1
 						if thisplayer.x1 < 0:
-							thisplayer.x1 = 23
+							thisplayer.x1 = 48
 					if event.key == K_d:
 						thisplayer.x1 += 1
-						if thisplayer.x1 > 23:
+						if thisplayer.x1 > 48:
 							thisplayer.x1 = 0
 					if event.key == K_i:
 						thisplayer.y2 -= 1
 						if thisplayer.y2 < 0:
-							thisplayer.y2 = 15
+							thisplayer.y2 = 24
 					if event.key == K_k:
 						thisplayer.y2 += 1
-						if thisplayer.y2 > 15:
+						if thisplayer.y2 > 24:
 							thisplayer.y2 = 0
 					if event.key == K_j:
 						thisplayer.x2 -= 1
 						if thisplayer.x2 < 0:
-							thisplayer.x2 = 23
+							thisplayer.x2 = 48
 					if event.key == K_l:
 						thisplayer.x2 += 1
-						if thisplayer.x2 > 23:
+						if thisplayer.x2 > 48:
 							thisplayer.x2 = 0
 				
 		mouse_pos = pygame.mouse.get_pos()
 		y = 0
 		x = 0
-		for i in range(384):
+		for i in range(1225):
 			
-			if x > 23:
+			if x > 48:
 				x = 0
 				y += 1
 			
@@ -928,9 +928,9 @@ def CharSelect(mult):
 			
 		y = 0
 		x = 0
-		for i in range(384):
+		for i in range(1225):
 			
-			if x > 23:
+			if x > 48:
 				x = 0
 				y += 1
 			
@@ -950,9 +950,9 @@ def CharSelect(mult):
 			
 		y = 0
 		x = 0
-		for i in range(384):
+		for i in range(1225):
 			
-			if x > 23:
+			if x > 48:
 				x = 0
 				y += 1
 			for f in unlockedchars:
@@ -969,7 +969,7 @@ def CharSelect(mult):
 
 			x += 1
 
-		if hitDetect(mouse_pos, mouse_pos, [529, 434], [698, 498]):
+		if hitDetect(mouse_pos, mouse_pos, [1079, 634], [1248, 698]):
 			if thisplayer == player2:
 				if mouse_down:
 					if aitest:
@@ -1003,41 +1003,41 @@ def CharSelect(mult):
 		x = 0
 		y = 0
 		
-		for i in range(384):
+		for i in range(1225):
 			loaded = False
-			if x > 23:
+			if x > 48:
 				x = 0
 				y += 1
 			
 			for f in unlockedchars:
 				if f.cords[0] == x and f.cords[1] == y:
-					defs.gScreen.blit(f.img, [3 + 22*x,3 + 22*y])
+					defs.gScreen.blit(f.img, [3 + 22*x,5 + 22*y])
 					loaded = True
 			
 			if not loaded:
-				defs.gScreen.blit(lockedchar, [3 + 22*x,3 + 22*y])
+				defs.gScreen.blit(lockedchar, [3 + 22*x,5 + 22*y])
 				loaded = False
 					
 			x += 1
 				
-		defs.gScreen.blit(selector1, [thisplayer.x1*22 + 1, thisplayer.y1*22 + 1])
-		defs.gScreen.blit(selector2, [thisplayer.x2*22 + 1, thisplayer.y2*22 + 1])
-		defs.gScreen.blit(selector3, [thisplayer.x3*22 + 1, thisplayer.y3*22 + 1])
+		defs.gScreen.blit(selector1, [thisplayer.x1*22 + 1, thisplayer.y1*22 + 3])
+		defs.gScreen.blit(selector2, [thisplayer.x2*22 + 1, thisplayer.y2*22 + 3])
+		defs.gScreen.blit(selector3, [thisplayer.x3*22 + 1, thisplayer.y3*22 + 3])
 		
 		for i in range(len(thisplayer.battlers)):
 		
 			localbattler = thisplayer.battlers[i]
 		
-			defs.gScreen.blit(dispchar2.image, [644, 370])
+			#defs.gScreen.blit(dispchar2.image, [644, 370])
 		
-			defs.gScreen.blit(localbattler.menuImg, [4, i * 47 + 359])
-			defs.gScreen.blit(font.render(localbattler.name, True, BLACK), [56, i * 47 + 359])
+			defs.gScreen.blit(localbattler.menuImg, [4, i * 47 + 559])
+			defs.gScreen.blit(font.render(localbattler.name, True, BLACK), [56, i * 47 + 559])
 			
 			atypes = ""
 			for f in localbattler.types:
 				atypes += f.name + " "
-			defs.gScreen.blit(font.render(atypes, True, BLACK), [56, i * 47 + 375])
-			defs.gScreen.blit(font.render("Str: " + str(localbattler.str) + "   Con: " + str(localbattler.con) + "   Int: " + str(localbattler.int) + "   Mdf: " + str(localbattler.mag) + "   Agil: " + str(localbattler.agil) + "   Crit: " + str(localbattler.crit), True, BLACK), [56, i * 47 + 391])
+			defs.gScreen.blit(font.render(atypes, True, BLACK), [56, i * 47 + 575 + 550])
+			defs.gScreen.blit(font.render("Str: " + str(localbattler.str) + "   Con: " + str(localbattler.con) + "   Int: " + str(localbattler.int) + "   Mdf: " + str(localbattler.mag) + "   Agil: " + str(localbattler.agil) + "   Crit: " + str(localbattler.crit), True, BLACK), [56, i * 47 + 574])
 		
 		if mouse_down:
 			defs.gScreen.blit(mouse_pointer2,mouse_pos)
