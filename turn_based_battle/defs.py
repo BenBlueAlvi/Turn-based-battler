@@ -242,6 +242,7 @@ class Effect(object):
 				target.crit = target.crit - 2
 				target.int = target.int - (target.int / 10)
 				target.str = target.str - (target.str / 10)
+			target.misc = 0
 			printb(target.name + " is no longer scheming!")
 		
 		if self.effect == "dodgeUp":
@@ -529,7 +530,7 @@ class Skill(object):
 						user.hp += math.floor(damage/10)
 				if i == "defend":
 					damage = 0
-					user.apply(defence)
+					defence.apply(user)
 				if i == "powerUp":
 					damage = 0
 					user.power += 2
@@ -632,7 +633,6 @@ class Skill(object):
 				if i == "againstOdds":
 					if user in player1.battlers:
 						for b in player2.battlers:
-							
 							damage += b.hp / 10
 						for c in player1.battlers:
 							damage += (c.maxhp - c.hp) / 6
@@ -675,6 +675,49 @@ class Skill(object):
 						i.basex = x * (size[0] - 150) + 50
 						i.basey = y * 75 + 325
 						y += 1
+				
+				if i == "createWorship":
+					if user in battlers1 and len(battlers1) < 3:
+						spawned = Worshipper.buildNew()
+						battlers1.append(spawned)
+						thesebattlers.append(spawned)
+					elif user in battlers2 and len(battlers2) < 3:
+						battlers2.append(Worshipper.buildNew())
+						thesebattlers.append(spawned)
+					
+					else:
+						pass
+					x = 0
+					y = 0
+					for i in thesebattlers:
+						if y > 2:
+							y = 0
+							x += 1
+						i.basex = x * (size[0] - 150) + 50
+						i.basey = y * 75 + 325
+						y += 1
+
+				if i == "createCubes":
+					if user in battlers1 and len(battlers1) < 3:
+						spawned = Cubes.buildNew()
+						battlers1.append(spawned)
+						thesebattlers.append(spawned)
+					elif user in battlers2 and len(battlers2) < 3:
+						battlers2.append(Cubes.buildNew())
+						thesebattlers.append(spawned)
+					
+					else:
+						pass
+					x = 0
+					y = 0
+					for i in thesebattlers:
+						if y > 2:
+							y = 0
+							x += 1
+						i.basex = x * (size[0] - 150) + 50
+						i.basey = y * 75 + 325
+						y += 1
+
 
 			if user.ability == "Frenzy" and user.hp <= user.maxhp/5:
 				damage = math.floor(damage * 1.25)
@@ -743,9 +786,12 @@ stab = Skill("Stab", fighting, True, 5, 7, 2, 0,100, 0, [], [""])
 confuse = Skill("Confuse", physic, False, 0, 0, 10, 0,80, 2, [1,confusion], [""])
 planAhead = Skill("Plan Ahead", tech, False, 0, 0, -10, 0,100, 0, [], ["atkUp", "trueHit"])
 erase =Skill("Erase", unknown, False, 0, 0, -10, 0,100, 5, [], ["division"])
-create = Skill("Create", unknown, False, 0,0, -10, 0,100, 0, [], ["createCreep", "trueHit"])
+create = Skill("Create", unknown, False, 0, 0, -10, 0,100, 0, [], ["createCreep", "trueHit"])
+create2 = Skill("Create", unknown, False, 0, 0, -10, 0,100, 0, [], ["createWorship", "trueHit"])
+create3 = Skill("Create", unknown, False, 0, 0, -10, 0,100, 0, [], ["createCubes", "trueHit"])
 mend = Skill("Mend", magic, False, 0,0, 1, 0,100, 3, [], ["heal", "trueHit"])
 #------------------------------------------------------------------
+zap = Skill("Lightning", electic, False, 5, 10, 3, 4, 100, 0, [], [""])
 energiBeam = Skill("Energy Beam", tech, False, 77, 10, -3, 0,90, 5, [], [""]) 
 wellspring = Skill("Wellspring", tech, False, 0, 0, 3, 0,100, -10, [], ["trueHit"])
 #-----------------------------------------------------------------
@@ -767,7 +813,7 @@ exhale = Skill("Exhale", air, False, 5, 10, 3, 0, 85, 0, [], ["mark", "hitAll"])
 sneeze = Skill("Sneeze", acid, False, 14, 6, 6, 0,90, 1, [2, poison], [""])
 
 eggon = Skill("Egg On", normal, True, 0, 0, 10, 10, 100, 2, [1, rebuff], ["trueHit", "nodam"])
-rebuke = Skill("Rebuke", normal, True, 0, 0, 10, 2, 100, 1, [], ["removeEff", "removeUff", "trueHit", "nodam"])
+rebuke = Skill("Rebuke", normal, True, 0, 0, 10, 2, 100, 1, [], ["removeEff", "trueHit", "nodam"])
 
 blast = Skill("Blast", tech, False, 20, 20, 5, 8, 95, 2, [2, burn], [""])
 fission = Skill("Fission", fire, False, 20, 40, -1, 0, 90, 0, [2, burn], ["powerDown", "fullmana"])
@@ -805,6 +851,7 @@ instantkill = Skill("Insta kill", unknown, False, 99999, 9999, 99, 15, 100, 0, [
 
 allskills = [instantkill, never, colorfulBullet, neverThere, mindReading, antiPhysic, powerStrike, takeBlow, againstOdds, chaosVortex, astralVortex, earthenVortex, chains, voidSnap, otherStage, moonStage, earthStage, powerTransfer, lifeTransfer, fusion, fission, nuke, slash, scar, rebuke, eggon, sneeze, cleave, observe, exhale, inhale, creepyAtk, blink, stare, recover, mend, psionicRadiance,revenge, bladeFlash, wellspring, energiBeam, bludgeon, stab, confuse, erase, create, chaosBeam, chaosBolt, setFire, forceShield, summon, meditate, lifePact, shroud, bite, kick, dodge, rip, consumeFlesh, powerDrain, block, meteorStorm, vampire, destroy, magicAbsorb, powerUp, magicMute, shardSwarm, defend, axeLegs, earthShot, airBlast, waterSpout, fireBall]
 
+Cubes = Char("Cubes", [tech], 400, 25, 35, 60, 30, 4, 5, 30, 1, 0, [zap, energiBeam, wellspring, planAhead, create3], "", "Assets/battlers/wip.png", [0,13], "")
 
 class Char(object):
 	def __init__(self, name, types, hp, str, int, con, mag, agil, crit, dodgeChance, lvl, xp, skills, ability, image, cords, menuImg):
@@ -893,7 +940,7 @@ Siv = Char("Siv", [normal, earth, dark, physic, chaos, magic], 250, 0, 50, 0, 38
 Durric = Char("Durric", [earth, light, fighting, physic], 1000, 25, 25, 75, 25, 0, 0, 1, 1, 0, [basicAtk, forceShield, cleave, obsidianBlast, recover, psionicRadiance, mend, takeBlow], "Regen", "Assets/battlers/Durric.png", [4, 4], "")
 
 Coo33 = Char("Coo33", [dark, blood], 250, 50, 0, 30, 0, 10, 10, 10, 5, 0, [basicAtk, slash, bite, kick, dodge, rip, consumeFlesh, defend], "Blood hunt", "Assets/battlers/Coo33.png", [3,3], "")
-CoosomeJoe = Char("Coosome Joe", [light, tech], 500, 25, 25, 25, 25, 5, 2, 10, 1, 0, [basicAtk, bludgeon, erase, create, confuse, planAhead, mend, defend], "Frenzy", "Assets/battlers/Coosome.png",  [3, 4], "")
+CoosomeJoe = Char("Coosome Joe", [light, tech], 500, 25, 25, 25, 25, 5, 2, 10, 1, 0, [basicAtk, bludgeon, erase, create2, confuse, planAhead, mend, defend], "Frenzy", "Assets/battlers/Coosome.png",  [3, 4], "")
 Catsome = Char("Catsome", [light, physic], 1000, 10, 35, 10, 15, 5, 5, 10, 1, 0, [slash, bite, eggon, rebuke, mend, recover], "Cuteness", "Assets/battlers/catsome.png",[6,9], "")
 
 Creep = Char("Creepy Bald Guy", [physic, unknown], 750, 10, 10, 15, 50, 0, 0, 0, 1, 0, [creepyAtk, blink, stare, inhale, exhale, observe], "Creepus", "Assets/battlers/Creepy_Bald_Guy.png", [3, 15], "")
@@ -902,7 +949,7 @@ KnowingEye = Char("Knowing Eye", [physic, unknown, astral], 750, 0, 75, 0, 75, 5
 Protagonist = Char("Protagonist", [normal], 750, 25, 15, 20, 10, 2, 6, 5, 1, 0, [basicAtk, powerStrike, eggon, mend, instantkill], "Frenzy", "Assets/battlers/wip.png", [1,1], "")
 
 Axeurlegs = Char("Axurlegs", [grass], 10, 30, 0, 0, 1, 2, 3, 0, 1, 0, [axeLegs], "", "Assets/battlers/wip.png", [10,0], "")
-Dandylion = Char("Dandy Lion", [grass], 600, 20, 15, 5, 20, 2, 2, 10, 1, 0, [axeLegs], "Frenzy", "Assets/battlers/wip.png", [11,0], "")
+Dandylion = Char("Dandy Lion", [grass], 600, 20, 15, 5, 20, 2, 2, 10, 1, 0, [slash, bite, tangle], "Frenzy", "Assets/battlers/wip.png", [11,0], "")
 
 Worshipper = Char("Worshipper", [magic, chaos, minion], 300, 5, 15, 6, 10, 0, 0, 0, 1, 0, [basicAtk, fireBall, powerTransfer, lifeTransfer, meditate], "Frenzy", "Assets/battlers/wip.png", [2,0], "")
 miniCreep = Char("Creepy Bald Guy", [physic, unknown, minion], 300, 6, 6, 8, 10, 0, 0, 0, 1, 0, [creepyAtk, blink, stare, inhale, exhale, observe], "Creepus", "Assets/battlers/Creepy_Bald_Guy.png", [3, 14], "")
