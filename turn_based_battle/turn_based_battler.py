@@ -284,7 +284,7 @@ class Battle(object):
 		
 		
 		while battling:
-			#self.music.play()
+			self.music.play()
 			for p in thesebattlers:
 				#update effects and all that good stuff
 				for i in p.effects:
@@ -697,7 +697,7 @@ class World(object):
 		mouse_down = False
 		running = True
 		while running:
-			#defs.maptheme.play()
+			defs.maptheme.play()
 			for event in pygame.event.get(): 
 				if event.type == pygame.QUIT: 
 					running = False
@@ -1147,7 +1147,7 @@ while not done:
 	else:
 		defs.gScreen.blit(mouse_pointer,mouse_pos)
 		
-	#defs.cootheme.play()
+	defs.cootheme.play()
 
 	pygame.display.flip()
 

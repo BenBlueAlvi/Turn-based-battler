@@ -390,7 +390,7 @@ def runAI(player, battlersL, battlersR):
 
 		if player.savingfor == "planattack":
 			if player.hp <= 400:
-				player.goskill, player.target, player.savingfor = player.skills[rand], , "none"
+				player.goskill, player.target, player.savingfor = player.skills[rand],[consort[0]] , "none"
 			else:
 				player.goskill, player.target = player.skills[5], [player]
 
