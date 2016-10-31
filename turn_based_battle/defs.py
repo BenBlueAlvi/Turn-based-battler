@@ -530,7 +530,7 @@ class Skill(object):
 						user.hp += math.floor(damage/10)
 				if i == "defend":
 					damage = 0
-					defence.apply(user)
+					defense.apply(user)
 				if i == "powerUp":
 					damage = 0
 					user.power += 2
@@ -538,7 +538,7 @@ class Skill(object):
 					damage = user.hp / 2 + user.int
 					user.hp /=2
 				if i == "fullmana":
-					damage = ((user.power * (user.int + self.atk)) / 4) + self.atk
+					damage = ((user.power * (user.int + self.atk)) / 8)
 					user.power = 0
 				if i == "shroud":
 					user.con += 6
@@ -655,12 +655,14 @@ class Skill(object):
 					neverTheref.apply(user)
 				
 				if i == "createCreep":
+					spawned = miniCreep.buildNew()
 					if user in battlers1 and len(battlers1) < 3:
-						spawned = miniCreep.buildNew()
+						
 						battlers1.append(spawned)
 						thesebattlers.append(spawned)
 					elif user in battlers2 and len(battlers2) < 3:
-						battlers2.append(miniCreep.buildNew())
+						spawned.isAi = True
+						battlers2.append(spawned)
 						thesebattlers.append(spawned)
 					
 					else:
@@ -676,12 +678,13 @@ class Skill(object):
 						y += 1
 				
 				if i == "createWorship":
+					spawned = Worshipper.buildNew()
 					if user in battlers1 and len(battlers1) < 3:
-						spawned = Worshipper.buildNew()
 						battlers1.append(spawned)
 						thesebattlers.append(spawned)
 					elif user in battlers2 and len(battlers2) < 3:
-						battlers2.append(Worshipper.buildNew())
+						spawned.isAi = True
+						battlers2.append(spawned)
 						thesebattlers.append(spawned)
 					
 					else:
@@ -697,12 +700,13 @@ class Skill(object):
 						y += 1
 
 				if i == "createCubes":
+					spawned = Cubes.buildNew()
 					if user in battlers1 and len(battlers1) < 3:
-						spawned = Cubes.buildNew()
 						battlers1.append(spawned)
 						thesebattlers.append(spawned)
 					elif user in battlers2 and len(battlers2) < 3:
-						battlers2.append(Cubes.buildNew())
+						spawned.isAi = True
+						battlers2.append(spawned)
 						thesebattlers.append(spawned)
 					
 					else:
@@ -850,7 +854,6 @@ instantkill = Skill("Insta kill", unknown, False, 99999, 9999, 99, 15, 100, 0, [
 
 allskills = [instantkill, never, colorfulBullet, neverThere, mindReading, antiPhysic, powerStrike, takeBlow, againstOdds, chaosVortex, astralVortex, earthenVortex, chains, voidSnap, otherStage, moonStage, earthStage, powerTransfer, lifeTransfer, fusion, fission, nuke, slash, scar, rebuke, eggon, sneeze, cleave, observe, exhale, inhale, creepyAtk, blink, stare, recover, mend, psionicRadiance,revenge, bladeFlash, wellspring, energiBeam, bludgeon, stab, confuse, erase, create, chaosBeam, chaosBolt, setFire, forceShield, summon, meditate, lifePact, shroud, bite, kick, dodge, rip, consumeFlesh, powerDrain, block, meteorStorm, vampire, destroy, magicAbsorb, powerUp, magicMute, shardSwarm, defend, axeLegs, earthShot, airBlast, waterSpout, fireBall]
 
-Cubes = Char("Cubes", [tech], 400, 25, 35, 60, 30, 4, 5, 30, 1, 0, [zap, energiBeam, wellspring, planAhead, create3], "", "Assets/battlers/wip.png", [0,13], "")
 
 class Char(object):
 	def __init__(self, name, types, hp, str, int, con, mag, agil, crit, dodgeChance, lvl, xp, skills, ability, image, cords, menuImg):
@@ -941,6 +944,7 @@ Durric = Char("Durric", [earth, light, fighting, physic], 1000, 25, 25, 75, 25, 
 Coo33 = Char("Coo33", [dark, blood], 250, 50, 0, 30, 0, 10, 10, 10, 5, 0, [basicAtk, slash, bite, kick, dodge, rip, consumeFlesh, defend], "Blood hunt", "Assets/battlers/Coo33.png", [3,3], "")
 CoosomeJoe = Char("Coosome Joe", [light, tech], 500, 25, 25, 25, 25, 5, 2, 10, 1, 0, [basicAtk, bludgeon, erase, create2, confuse, planAhead, mend, defend], "Frenzy", "Assets/battlers/Coosome.png",  [3, 4], "")
 Catsome = Char("Catsome", [light, physic], 1000, 10, 35, 10, 15, 5, 5, 10, 1, 0, [slash, bite, eggon, rebuke, mend, recover], "Cuteness", "Assets/battlers/catsome.png",[6,9], "")
+Cubes = Char("Cubes", [tech], 400, 25, 35, 60, 30, 4, 5, 30, 1, 0, [zap, energiBeam, wellspring, planAhead, create3], "", "Assets/battlers/wip.png", [0,13], "")
 
 Creep = Char("Creepy Bald Guy", [physic, unknown], 750, 10, 10, 15, 50, 0, 0, 0, 1, 0, [creepyAtk, blink, stare, inhale, exhale, observe], "Creepus", "Assets/battlers/Creepy_Bald_Guy.png", [3, 15], "")
 KnowingEye = Char("Knowing Eye", [physic, unknown, astral], 750, 0, 75, 0, 75, 5, 6, 5, 1, 0, [creepyAtk, observe, meditate, magicMute, forceShield, create], "Creepus", "Assets/battlers/knowingeye.png", [4, 15], "")
