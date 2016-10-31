@@ -216,17 +216,17 @@ def runAI(player, battlersL, battlersR):
 				player.savingfor = "mute"
 			if rand == 1:
 				player.savingfor = "shield"
-			if player.aimisc <= 0:
-				player.aimisc, player.goskill, player.target = 3, player.skills[0], [battlersL[0]]
-				for i in battlersL:
-					temp1, temp2 = i.mag, player.target[0].mag
-					if temp1 < 1:
-						temp1 = 1
-					if temp2 < 1:
-						temp2 = 1
-					if i.marks/temp1 > player.target[0].marks/temp2:
-						player.target = [i]
-						break
+		if player.aimisc <= 0:
+			player.aimisc, player.goskill, player.target = 3, player.skills[0], [battlersL[0]]
+			for i in battlersL:
+				temp1, temp2 = i.mag, player.target[0].mag
+				if temp1 < 1:
+					temp1 = 1
+				if temp2 < 1:
+					temp2 = 1
+				if i.marks/temp1 > player.target[0].marks/temp2:
+					player.target = [i]
+					break
 
 		#create
 		if player.savingfor == "create" and player.power >= defs.create.cost:
@@ -234,7 +234,7 @@ def runAI(player, battlersL, battlersR):
 
 		#magic mute
 		if player.savingfor == "mute" and player.power >= defs.magicMute.cost:			
-			for i in range(len(potdam)):
+			for i in potdam:
 				if defs.magicmute not in i.effects:
 					player.goskill, player.target, player.savingfor = player.skills[3], [i], "none"
 					break

@@ -537,7 +537,7 @@ class Skill(object):
 					damage = user.hp / 2 + user.int
 					user.hp /=2
 				if i == "fullmana":
-					damage = ((user.power * (user.int + self.atk)) / 4) + self.atk
+					damage = ((user.power * (user.int + self.atk)) / 8)
 					user.power = 0
 				if i == "shroud":
 					user.con += 6
@@ -655,8 +655,9 @@ class Skill(object):
 					neverTheref.apply(user)
 				
 				if i == "createCreep":
+					spawned = miniCreep.buildNew()
 					if user in battlers1 and len(battlers1) < 3:
-						spawned = miniCreep.buildNew()
+						
 						battlers1.append(spawned)
 						thesebattlers.append(spawned)
 					elif user in battlers2 and len(battlers2) < 3:
