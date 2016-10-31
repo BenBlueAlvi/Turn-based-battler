@@ -197,13 +197,6 @@ def runAI(player, battlersL, battlersR):
 			else:
 				player.goskill, target = player.skills[0], [potdam[0]]
 			
-				
-			
-				
-			
-				
-
-
 	if player.name == "Knowing Eye":
 		player.aimisc -= 1
 		print player.aimisc, rand
@@ -214,17 +207,17 @@ def runAI(player, battlersL, battlersR):
 				player.savingfor = "mute"
 			if rand == 1:
 				player.savingfor = "shield"
-			if player.aimisc <= 0:
-				player.aimisc, player.goskill, player.target = 3, player.skills[0], [battlersL[0]]
-				for i in battlersL:
-					temp1, temp2 = i.mag, player.target[0].mag
-					if temp1 < 1:
-						temp1 = 1
-					if temp2 < 1:
-						temp2 = 1
-					if i.marks/temp1 > player.target[0].marks/temp2:
-						player.target = [i]
-						break
+		if player.aimisc <= 0:
+			player.aimisc, player.goskill, player.target = 3, player.skills[0], [battlersL[0]]
+			for i in battlersL:
+				temp1, temp2 = i.mag, player.target[0].mag
+				if temp1 < 1:
+					temp1 = 1
+				if temp2 < 1:
+					temp2 = 1
+				if i.marks/temp1 > player.target[0].marks/temp2:
+					player.target = [i]
+					break
 
 		#create
 		if player.savingfor == "create" and player.power >= defs.create.cost:
@@ -232,7 +225,7 @@ def runAI(player, battlersL, battlersR):
 
 		#magic mute
 		if player.savingfor == "mute" and player.power >= defs.magicMute.cost:			
-			for i in range(len(potdam)):
+			for i in potdam:
 				if defs.magicmute not in i.effects:
 					player.goskill, player.target, player.savingfor = player.skills[3], [i], "none"
 					break
@@ -370,6 +363,34 @@ def runAI(player, battlersL, battlersR):
 			else:
 				player.target = [consort[0]]
 	
+	if player.name == "Coosome Joe":
+		if len(allies) < 3:
+			player.savingfor = "create"
+		if player.savingfor == "none":
+			if player.hp > 400:
+				player.savingfor = "planattack"
+
+		if player.savingfor == "create":
+			if player.power >= defs.create2.cost:
+				player.goskill, player.target, player.savingfor = player.skills[3], [player], "none"
+			else:
+				player.goskill, player.target = player.skills[rand], [consort[0]]
+
+		if player.savingfor == "erase" and player.power >= create2.cost:
+			player.goskill, player.target, player.savingfor = player.skills[2], [potdam[0]], "none"
+			for i in range(len(potdam)):
+				l = potdam[(len(potdam)-1)-i]
+				if l.hp <= l.maxhp/5:
+					player.target = l
+
+		if player.savingfor == "mend":
+			pass
+
+		if player.savingfor == "planattack":
+			if player.hp <= 400:
+				player.goskill, player.target, player.savingfor = player.skills[rand], , "none"
+			else:
+				player.goskill, player.target = player.skills[5], [player]
 
 
 	return player
