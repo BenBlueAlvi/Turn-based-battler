@@ -41,7 +41,8 @@ cattheme = Music("Raxxo_Patchy_Aid")
 cootheme = Music("Raxxo_Stand_Your_Ground")
 maicetheme = Music("A_Tiny_Tiny_Clever_Commander")
 sivtheme = Music("WaterflameFinalBattle")
-noutheme = Music("superierior_nouledge")
+noutheme = Music("supierior_nouledge")
+maptheme = Music("Raxxo_Bent_to_the_Core")
 def bubble_sort(items):
 	""" Implementation of bubble sort """
 	for i in range(len(items)):
@@ -203,7 +204,10 @@ class Effect(object):
 			target.effects.append(self.buildNew())
 			
 		if self.effect == "magicMute":
-			printb(target.name+"is Muted!")
+			printb(target.name+" is Muted!")
+			target.effects.append(self.buildNew())
+		if self.effect == "passedOut":
+			printb(target.name+" passed out!")
 			target.effects.append(self.buildNew())
 			
 	def end(self, target):
@@ -252,6 +256,8 @@ class Effect(object):
 			target.agil -= 5
 			target.dodgeChance -= 10
 			printb(target.name + " is no longer slowed!")
+		if self.effect == "passedOut":
+			printb(target.name + " is no longer passed out!")
 			
 	def update(self, target):
 		if self.effect == "magicMute":
@@ -395,6 +401,13 @@ class Effect(object):
 			self.endeffect = random.randint(1,3)
 			if self.endeffect == 1:
 				self.end(target)
+				
+		if self.effect == "passedOut":
+			
+			
+			self.endeffect = random.randint(1,2)
+			if self.endeffect == 1:
+				self.end(target)
 		
 	
 		
@@ -436,7 +449,7 @@ earthStagef = Effect("earthStage")
 otherStagef = Effect("otherStage")
 moonStagef = Effect("moonStage")
 guarded = Effect("guarded")
-
+passedOut = Effect("passedOut")
 neverTheref = Effect("neverThere")
 slowed = Effect("slowed")
 
@@ -779,7 +792,7 @@ mindReading = Skill("Mind Reading", physic, False, 20, 20, 5, 2, 100, 2, [], ["m
 neverThere = Skill("Never There", physic, False, 0,0, 20, 0, 100, 2, [], ["trueHit", "neverThere"])
 colorfulBullet = Skill("colorfulBullet", magic, False, 10,5, 1, 2, 90, 0, [], [""])
 never = Skill("And Never Come Back", unknown, False, 200, 50, 20, 5, 100, 7, [], ["trueHit"])
-mindDisk = Skill("Mind disk", physic, False, 20, 10, 4, 5, 100, 1, [], ["dodgeUp"])
+mindDisk = Skill("Mind disk", physic, False, 20, 10, 4, 5, 100, 1, [2, slowed], ["dodgeUp"])
 daggerStorm = Skill("Dagger Storm", light, True, 40, 50, 10, 7, 99, 3, [], ["hitAll"])
 eldritchAppuratus = Skill("Eldritch Appuratus", tech, False, 0, 0, 3, 2, 100, 3, [], ["powerUp", "recover"])
 windSlash = Skill("Wind Slash", air, False, 20, 10, 5, 3, 90, 1, [], [])
@@ -869,9 +882,9 @@ Nue = Char("Nue", [astral, dark], 300, 25, 40, 10, 50, 4, 15, 10, 1, 0, [basicAt
 Okuu = Char("Okuu", [fire, tech], 500, 15, 50, 30, 10, 1, 5, 5, 1, 0, [bludgeon, blast, fusion, fission, nuke, forceShield, recover], "Radiation", "Assets/battlers/reiji.png", [3,7], "")
 Lapis = Char("Lapis", [astral], 400, 20, 20, 10, 10, 4, 5, 20, 1, 0, [chains, voidSnap, earthStage, moonStage, otherStage, earthenVortex, chaosVortex, astralVortex], "3 worlds", "Assets/battlers/lapis.png", [6,7], "")
 
-Koishi = Char("Koishi", [unknown, physic], 400, 10, 55, 20, 75, 10, 6, 30, 1, 0, [colorfulBullet,mindReading, antiPhysic, neverThere, never, recover, voidSnap], "", "Assets/battlers/komeiji.png", [7,7], "")
+Koishi = Char("Koishi", [unknown, physic], 400, 10, 55, 80, 100, 10, 6, 30, 1, 0, [colorfulBullet,mindReading, antiPhysic, neverThere, never, recover, voidSnap], "", "Assets/battlers/komeiji.png", [7,7], "")
 #def __init__(self, name, types, hp, str, int, con, mag, agil, crit, dodgeChance, lvl, xp, skills, ability, image, cords, menuImg):
-Nou = Char("Nou Furueteru", [physic], 300, 10, 40, 30, 40, 11, 7, 25, 1, 0, [colorfulBullet, mindDisk, mindReading, recover, forceShield, rejuvinate, meditate, defend], "", "Assets/battlers/Nou.png", [8,8], "")
+Nou = Char("Nou Furueteru", [physic], 300, 10, 50, 55, 90, 11, 7, 25, 1, 0, [colorfulBullet, mindDisk, mindReading, recover, forceShield, rejuvinate, meditate, defend], "", "Assets/battlers/Nou.png", [8,8], "")
 
 Alpha = Char("Alpha", [normal, earth, fighting], 500, 50, -50, 30, 5, 5, 0, 10, 1, 0, [basicAtk, slash, cleave, bladeFlash, revenge, mend, defend], "", "Assets/battlers/alpha.png", [8,4], "")
 Siv = Char("Siv", [normal, earth, dark, physic, chaos, magic], 250, 0, 50, 0, 38, 5, 7, 10, 1, 0, [basicAtk, chaosBolt, setFire, forceShield, chaosBeam, meditate, lifePact, shroud], "", "Assets/battlers/siv.png", [4,2], "")
