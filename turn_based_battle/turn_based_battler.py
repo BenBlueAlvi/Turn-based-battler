@@ -120,34 +120,12 @@ class SpreetSheet(object):
 
 turn = 0
 
-def hitDetect(pt1, pt2, pt3, pt4):
-	'''Determine if 2 rectangles overlap. Rect 1 is defined as pt1 & pt2. Rect 2 is defined as pt3 & pt4.
-	Each point is a 2-tuple with the x & y: pt1 = (32, 55)'''
-
-	# Test upper left point
-	if pt4[0]>pt1[0]>pt3[0]and pt4[1]>pt1[1]>pt3[1]:
+def hitDetect(p1, p2, p3, p4):
+	if p2[0] > p3[0] and p1[0] < p4[0] and p2[1] > p3[1] and p1[1] < p4[1]:
 		return True
 
-	# Test lower right point
-	if pt4[0]>pt2[0]>pt3[0]and pt4[1]>pt2[1]>pt3[1]:
-		return True
+unlockedchars = [defs.Koishi.buildNew(), defs.Lapis.buildNew(), defs.Flan.buildNew(), defs.Okuu.buildNew(), defs.Nue.buildNew(), defs.Scarlet.buildNew(), defs.Mage.buildNew(), defs.Mouther.buildNew(), defs.Nic.buildNew(), defs.Siv.buildNew(), defs.Coo33.buildNew(), defs.CoosomeJoe.buildNew(), defs.Epic.buildNew(), defs.Alpha.buildNew(), defs.Durric.buildNew(), defs.Creep.buildNew(), defs.Catsome.buildNew(), defs.KnowingEye.buildNew(), defs.Protagonist.buildNew(), defs.Worshipper.buildNew(), defs.miniCreep.buildNew(), defs.Axeurlegs.buildNew(), defs.Dandylion.buildNew(), defs.Cubes.buildNew()]
 
-	# Test lower left point
-	if pt4[0]>pt1[0]>pt3[0]and pt4[1]>pt2[1]>pt3[1]:
-		return True
-
-	# Test upper right point
-	if pt4[0]>pt2[0]>pt3[0]and pt4[1]>pt1[1]>pt3[1]:
-		return True
-
-
-
-
-
-	
-unlockedchars = [defs.Koishi.buildNew(), defs.Lapis.buildNew(), defs.Flan.buildNew(), defs.Okuu.buildNew(), defs.Nue.buildNew(), defs.Scarlet.buildNew(), defs.Mage.buildNew(), defs.Mouther.buildNew(), defs.Nic.buildNew(), defs.Siv.buildNew(), defs.Coo33.buildNew(), defs.CoosomeJoe.buildNew(), defs.Epic.buildNew(), defs.Alpha.buildNew(), defs.Durric.buildNew(), defs.Creep.buildNew(), defs.Catsome.buildNew(), defs.KnowingEye.buildNew(), defs.Protagonist.buildNew(), defs.Worshipper.buildNew(), defs.miniCreep.buildNew(), defs.Axeurlegs.buildNew()]			
-
-#as off yet, not used
 
 class Arena(object):
 	def __init__(self, name, effect, img):
@@ -156,9 +134,8 @@ class Arena(object):
 		self.img = pygame.image.load(img)
 
 rift = Arena("Rift", "", "assets/arena/riftnou.png")
-defultarena = Arena("Defult", "", "assets/arena/defult.png")
-		
-		
+defultarena = Arena("Defult", "", "assets/arena/defult.png")		
+	
 
 class Battle(object):
 	def __init__(self, battlers1, battlers2, arena, dialog, mult, music, post):

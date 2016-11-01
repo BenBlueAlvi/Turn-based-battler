@@ -283,7 +283,7 @@ class Effect(object):
 			self.endeffect = random.randint(1,3)
 			if self.endeffect == 2:
 				printb(target.name + " is no longer bleeding")
-				target.effects.remove(self)
+				self.end(target)
 
 		if self.effect == "defend":
 			self.endeffect += 1
@@ -307,7 +307,7 @@ class Effect(object):
 			self.endeffect = random.randint(1,4)
 			if self.endeffect == 2:
 				printb(target.name + " is no longer poisoned!")
-				target.effects.remove(self)
+				self.end(target)
 				
 		if self.effect == "rebuff":
 			if self.endeffect >= 1:
@@ -391,33 +391,23 @@ class Effect(object):
 			self.endeffect += 1	
 			
 		if self.effect == "neverThere":
-			
 			self.endeffect = random.randint(1,3)
 			if self.endeffect == 1:
 				self.end(target)
 
 		if self.effect == "slowed":
-			
-			
 			self.endeffect = random.randint(1,3)
 			if self.endeffect == 1:
 				self.end(target)
 				
 		if self.effect == "passedOut":
-			
-			
 			self.endeffect = random.randint(1,2)
 			if self.endeffect == 1:
 				self.end(target)
 		
-	
-		
 		if self.effect == "death":
 			pass
 			#Death stufff here
-			
-		else:
-			pass
 
 	def resetStats(self, target):
 		target.con = target.basecon
@@ -507,9 +497,11 @@ class Skill(object):
 					message = " It's not very effective!"
 					effective = False
 					
-			if random.randint(1,30) + user.crit >= 30:
+			if random.randint(1,30) + user.crit > 30:
 				if effective:
 					message += " CRITICAL HIT!"
+				else:
+					message = "CRITICAL HIT!"
 				critical = True
 				if not len(self.effects) == 0:
 					self.effects[1].apply(target)
@@ -533,7 +525,10 @@ class Skill(object):
 					defense.apply(user)
 				if i == "powerUp":
 					damage = 0
-					user.power += 2
+					if magicMute in user.effects:
+						printb(user.name+"'s power was Muted!")
+					else:
+						user.power += 2
 				if i == "lifepact":
 					damage = user.hp / 2 + user.int
 					user.hp /=2
@@ -657,7 +652,6 @@ class Skill(object):
 				if i == "createCreep":
 					spawned = miniCreep.buildNew()
 					if user in battlers1 and len(battlers1) < 3:
-						
 						battlers1.append(spawned)
 						thesebattlers.append(spawned)
 					elif user in battlers2 and len(battlers2) < 3:
@@ -686,7 +680,6 @@ class Skill(object):
 						spawned.isAi = True
 						battlers2.append(spawned)
 						thesebattlers.append(spawned)
-					
 					else:
 						pass
 					x = 0
@@ -899,7 +892,6 @@ class Char(object):
 		self.misc = 0
 		#AI stuff
 		self.savingfor = "none"
-		self.nextattack = ""
 		self.aimisc = 0
 		self.isAi = False
 		

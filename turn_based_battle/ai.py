@@ -6,7 +6,7 @@ import math
 '''
 Battlers with AI, in the order:
 Axeurlegs, Maice, Worshipper, Creep 
-Lapis, Catsome, Coo33
+Nou, Knowing eye, Lapis, Catsome, Coo33, Coosome
 
 '''
 
@@ -46,6 +46,7 @@ def runAI(player, battlersL, battlersR):
 		for j in range(len(potdam)-1-i):
 			if potdam[j].int + potdam[j].str > potdam[j+1].int + potdam[j+1].str:
 				potdam[j], potdam[j+1] = potdam[j+1], potdam[j]
+
 	for i in potdam:
 		print "potdam:", i.name
 	
@@ -271,7 +272,7 @@ def runAI(player, battlersL, battlersR):
 				
 	if player.name == "Catsome":
 		allies, prefferedtarget = len(allies), "self"
-
+		print allies
 		#solo
 		if allies == 1 and player.savingfor == "none":
 			#selecting skill
@@ -293,21 +294,21 @@ def runAI(player, battlersL, battlersR):
 				for i in hptotal:
 					if i.hp < 800:
 						player.savingfor = "heal"
-						player.nextattack = i
+						player.aimisc = i
 						prefferedtarget = "ally"
 				if defs.CoosomeJoe in battlersR or defs.Coo33 in battlersR:
 					for i in hptotal:
 						if i.hp < 700 and i.name == "Coo33" or i.hp < 700 and i.name == "Coosome Joe":
 							player.savingfor = "heal"
-							player.nextattack = i
+							player.aimisc = i
 				if player.hp <= 200 and random.randint(0, 2) == 1:
-					player.prefferedtarget, player.savingfor = "self", "heal"
+					prefferedtarget, player.savingfor = "self", "heal"
 			#rebuke if ally has negative effect
 			for i in hptotal:
 				for x in defs.negeff:
 					if x in i.effects:
 						player.savingfor = "rebuke"
-						player.nextattack = i
+						player.aimisc = i
 						prefferedtarget = "ally"
 			#Egging on of allies
 			if player.savingfor == "none" and rand == 1:
@@ -322,7 +323,7 @@ def runAI(player, battlersL, battlersR):
 			player.goskill = player.skills[4]
 			player.savingfor = "none"
 			if prefferedtarget != "self":
-								prefferedtarget = "ally"
+				prefferedtarget = "ally"
 		if player.savingfor == "rebuke" and player.power >= 1:
 			player.goskill = player.skills[3]
 			player.savingfor = "none"
@@ -341,11 +342,10 @@ def runAI(player, battlersL, battlersR):
 			else:
 				player.target = [consort[0]]
 		if prefferedtarget == "ally":
-			player.target = [player.nextattack]
+			player.target = [player.aimisc]
 
 	if player.name == "Coo33":
 		#selecting skill
-		
 		if player.savingfor == "none" or player.hp <= 200:
 			if player.hp <= 250 or rand == 0:
 				player.savingfor = "consume"
@@ -377,8 +377,9 @@ def runAI(player, battlersL, battlersR):
 						break
 				if doing:
 					player.savingfor = "erase"
-
-			elif player.hp > 480 and rand == 1:
+				else:
+					player.savingfor = "mend"
+			elif player.hp > 480 and rand == 1 or player.hp >= 500:
 				player.savingfor = "planattack"
 			else:
 				player.savingfor = "mend"
@@ -407,5 +408,6 @@ def runAI(player, battlersL, battlersR):
 				player.goskill, player.target, player.savingfor = player.skills[1], [consort[0]], "none"
 			else:
 				player.goskill, player.target = player.skills[5], [player]
-
+		print player.goskill, player.target, player.savingfor
+		print player.goskill.name
 	return player
