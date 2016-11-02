@@ -612,14 +612,15 @@ class Skill(object):
 					if critical:
 						target.hp += math.floor(user.hp/5)
 				if i == "powerTransfer":
-					user.power -= user.power
+					transfered = 0
+					if critical:
+						transfered += 1
 					if magicMute in target.effects:
 						printb(user.name+"'s Transfer was Muted!")
-						target.power += math.floor(user.power/5)
-					else:
-						target.power += user.power
-					if critical:
-						target.power += 1
+						transfered = math.floor(transfered/5)
+					target.power += transfered
+					user.power -= user.power
+					printb(user.name + " transfered "+str(transfered)+" power to "+target.name)
 				if i == "meditate":
 					meditatef.apply(user)
 				if i == "dodgeUp":
@@ -884,7 +885,7 @@ fusion.desc = "Collect nearby atoms from foes in order to gain power and cause b
 
 lifeTransfer = Skill("Life Transfer", blood, False, 0, 0, 10, 0,100, 2, [], ["lifeTransfer", "nodam"])
 lifeTransfer.desc = "Transfer some life force to an ally."
-powerTransfer = Skill("Power Transfer", tech, False, 0, 0, 10, 0, 100, 0, [], ["powerTransfer", "nodam"])
+powerTransfer = Skill("Power Transfer", tech, False, 0, 0, 10, 0, 100, 0, [], ["powerTransfer", "nodam", "trueHit"])
 powerTransfer.desc = "Transfer some power to an ally."
 
 earthStage = Skill("Earth Stage", astral, False, 10, 15, 10, 0, 100, 0, [], ["trueHit","hitAll","earthStage"])
