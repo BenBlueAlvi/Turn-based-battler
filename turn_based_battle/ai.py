@@ -47,8 +47,6 @@ def runAI(player, battlersL, battlersR):
 			if potdam[j].int + potdam[j].str > potdam[j+1].int + potdam[j+1].str:
 				potdam[j], potdam[j+1] = potdam[j+1], potdam[j]
 
-	for i in potdam:
-		print "potdam:", i.name
 	
 	#allies
 	hptotal = []
