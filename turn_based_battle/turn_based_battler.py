@@ -173,7 +173,7 @@ class Battle(object):
 		defs.printing = False
 		textc = font.render(" ",True,BLACK)
 		limit = 6
-		
+		dispskill = defs.nothing
 			
 		if self.mult == False:
 			limit = 6
@@ -317,7 +317,30 @@ class Battle(object):
 							
 							thisxcord = 330 + x*175
 							thisycord = y*30 + 370 + size[1] - 500
+							print dispskill.name
 							if hitDetect(mouse_pos, mouse_pos,[thisxcord, thisycord], [thisxcord + 165, thisycord + 25]):
+								
+								if x == 0 and y ==0:
+									dispskill = p.skills[0]
+									
+								elif x == 1 and y == 0:
+									dispskill = p.skills[1]
+										
+								elif x == 0 and y == 1:
+									dispskill = p.skills[2]
+								elif x == 1 and y == 1:
+									dispskill = p.skills[3]
+								elif x == 0 and y == 2:
+									dispskill = p.skills[4]
+								elif x == 1 and y == 2:
+									dispskill = p.skills[5]
+								elif x == 0 and y == 3:
+									dispskill = p.skills[6]
+								elif x == 1 and y == 3:
+									dispskill = p.skills[7]
+								else:
+									dispskill = defs.nothing
+								
 								if mouse_down:
 									mouse_down = False
 									if True:
@@ -361,6 +384,10 @@ class Battle(object):
 											mouse_down = False
 											print "skill picked:", p.goskill.name
 											pickenm = True
+							
+							
+							
+							
 							x += 1
 						
 									
@@ -429,6 +456,9 @@ class Battle(object):
 				
 					defs.gScreen.blit(health_border, [10, 360 + size[0] - 500])
 					pygame.draw.rect(gScreen, GREY, [320, size[1] - 140, 370, 130])
+					
+					defs.gScreen.blit(font.render(dispskill.name + "   Cost: " + str(dispskill.cost), True, WHITE), [700, size[1] - 140])
+					defs.gScreen.blit(font.render(dispskill.desc, True, WHITE), [700, size[1] - 125])
 				
 					x = 0
 					y = 0

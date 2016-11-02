@@ -463,6 +463,8 @@ class Skill(object):
 		self.hitChance = hitChance
 		self.effects = effects
 		self.text = font.render(name, True, WHITE)
+		self.desc = ""
+		
 		
 	def use(self, user, target, battlers1, battlers2, thesebattlers):
 		
@@ -740,102 +742,182 @@ class Skill(object):
 
 
 nothing = Skill("nothing", normal, True, 0, 0, 0, 0, 100, 0, [], ["nodam", "trueHit"])
+nothing.desc = ""
 basicAtk = Skill("Basic Attack", normal, True, 5, 5, 1, 0,90, 0, [], [""])
+basicAtk.desc = "A basic attack, like using a weapon or claws."
 fireBall = Skill("Fire ball", fire, False, 7, 3, -1, 0,90, 2, [1, burn], [""])
+fireBall.desc = "Summons a small fireball, chance to cause burn."
 waterSpout = Skill("Water Spout", water, False, 2, 10, -1, 0,90, 2, [], [""])
+waterSpout.desc = "Creates a fountain of water."
 airBlast = Skill("Air Blast", air, False, 7, 1, 2, 0,95, 2, [], [""])
+airBlast.desc = "A strong blast of air pushes foes away"
 earthShot = Skill("Earth Shot", earth, False, 12, 4, -5, 0,90, 2, [], [""])
+earthShot.desc = "Magical rock throwing."
 axeLegs = Skill("Axe Legs", fighting, True, 65, 25, 7, 2, 99, 0, [], [""])
+axeLegs.desc = "Strong axe blades click into place before spinning rapidly, quickly removing your foe's limbs."
 defend = Skill("Defend", normal, True, 0, 0, 0, 0,100, 0, [], ["defend", "trueHit"])
+defend.desc = "Brace yourself against incomming physical damage."
 scar = Skill("Scar", dark, True, 30, 5, 2, 0,97, 1, [3,bleed], ["vampire"])
+scar.desc = "Mangle your foe's flesh and steal a bit of their life, can cause horrible bleeding."
 nuke = Skill("Nuke", fire, True, 200, 100, -4, 0,100, 20, [], ["trueHit", "hitAll"])
+nuke.desc = "Drops a nuke on all foes, dealing heavy damage."
 shardSwarm = Skill("Shard Swarm", chaos, False, 20, 30, 4, 0,90, 10, [], [""])
+shardSwarm.desc = "Summons a swarm of sharp energy shards to slice up your foes."
 magicMute = Skill("Magic Mute", chaos, False, 0, 0, -2, 0,100, 5, [1,magicmute], ["trueHit"])
+magicMute.desc = "Prevents opponents from gaining power."
 powerUp = Skill("Power Up", chaos, False, 0, 0, 10, 0,100, 2, [], ["powerup", "trueHit"])
-magicAbsorb = Skill("Magic Absorb", chaos, False, 0, 0, 5, 0,100, 3, [], ["trueHit"])
+powerUp.desc = "Builds power by absorbing choatic energy."
+
 destroy = Skill("Destroy", chaos, False, 100, 100, -100, 15,100, 7, [], [""])
+destroy.desc = "Destroys absolutely everything, but takes a long time to cast."
 vampire = Skill("Vampire", blood, False, 20, 10, 5, 20,90, 2, [], ["vampire", "vampire"])
+vampire.desc = "Drains the blood of your foes to heal yourself."
 meteorStorm = Skill("Meteor Storm", astral, False, 100, 50, -100, 0,75, 7, [2, burn], [""])
+meteorStorm.desc = "Calls down a meteor storm to crush opponents, can cause burns."
 block = Skill("Block", fighting, True, 0, 0, 10, 0,100, 1, [], ["block", "trueHit"])
+block.desc = "Prevents incomming physical damage."
 powerDrain = Skill("Power Drain", astral, False, 25, 25, -10, 0,100, 2, [], ["powerdrain", "trueHit"])
+powerDrain.desc = "Drains power from opponents to use for yourself."
 #-----------------------------------------------------------
 tangle = Skill("Tangle", grass, True, 4, 5, 0, 7, 100, 1, [1, slowed], [""])
+tangle.desc = "Tangles foes within a strong vine."
 #-----------------------------------------------------------
 slash = Skill("Slash", normal, True, 11, 10, 3, 5,90, 0, [], [""])
+slash.desc = "Splice up foes with a sword or claw."
 bite = Skill("Bite", normal, True, 10, 5, 0, 5, 92, 0, [4,bleed], [""])
+bite.desc = "Take a large bite out of your foe, has a chance of causeing bleeding."
 kick = Skill("Kick", fighting, True, 20, 5, 4, 0, 70, 1, [], [""])
+kick.desc = "Kick your foes in the face!"
 dodge = Skill("Dodge", fighting, True, 0, 0, 10, 10, 100, 2, [], ["trueHit", "dodgeUp"])
+dodge.desc = "Prepare yourself to dodge the next attack."
 rip = Skill("Rip", dark, True, 20, 15, -1, 0,90, 3, [1,bleed], [""])
+rip.desc = "Rip your foes to shreds and cause heavy bleeding"
 consumeFlesh = Skill("Consume Flesh", blood, True, 30, 8, -5, 0,90, 3, [2,bleed], ["vampire"])
+consumeFlesh.desc = "Eat some of the foe's flesh that you ripped off. Has a chance to cause bleeding."
 #----------------------------------------------------------------
 chaosBolt = Skill("Chaos Bolt", chaos, False, 10, 20, 1, 0,90, 1, [], [""])
-setFire = Skill("Set Fire", fire, False, 5, 20, -1, 0,90, 3, [3,burn], ["hitAll"])
+chaosBolt.desc = "Cause a bolt of chaotic energy to bounce between foes, searing the flesh."
+setFire = Skill("Set Fire", fire, False, 5, 20, -1, 0,90, 3, [1,burn], ["hitAll"])
+setFire.desc = "Watch them all burn to ashes."
 forceShield = Skill("Force Shield", magic, False, 0, 0, -2, 0,100, 2, [], ["shield", "nodam", "trueHit"])
-summon = Skill("Summon", magic, False, 0, 0, -4, 0,100, 4, [], ["trueHit"])
+forceShield.desc = "Put up a shield of energy to block incomming damage."
+
 chaosBeam = Skill("Chaos Beam", chaos, False, 20, 20, -10, 0,94, 0, [], ["fullmana"])
+chaosBeam.desc = "Convert all of your power into choatic energy then blast it at your foe."
 meditate = Skill("Meditate", magic, False, 0, 0, 0, 0,100, 0, [], ["nodam", "trueHit", "meditate"])
+meditate.desc = "Gain power through inner focus."
 lifePact = Skill("Life Pact", blood, False, 0, 0, -2, 0,100, 4, [], ["lifepact", "trueHit"])
+lifePact.desc = "Make a pact with your foe, if you take damage, so do they."
 shroud = Skill("Shroud", dark, False, 0, 0, 10, 0,100, 2, [], ["shroud", "trueHit"])
+shroud.desc = "Shroud yourself in darkness to avoid getting hit."
 #-------------------------------------------------------------------
 bludgeon = Skill("Bludgeon", fighting, True, 10, 2, -1, 0,90, 0, [], [""])
+bludgeon.desc = "Bash your foe's brains in with a blunt weapon."
 stab = Skill("Stab", fighting, True, 5, 7, 2, 0,100, 0, [], [""])
+stab.desc = "Stab Stab Stab!"
 confuse = Skill("Confuse", physic, False, 0, 0, 10, 0,80, 2, [1,confusion], [""])
+confuse.desc = "Confuse your foe to lower their damage and defenses."
 planAhead = Skill("Plan Ahead", tech, False, 0, 0, -10, 0,100, 0, [], ["atkUp", "trueHit"])
+planAhead.desc = "Focus on planning your next move, immporving its weak points."
 erase =Skill("Erase", unknown, False, 0, 0, -10, 0,100, 5, [], ["division"])
+erase.desc = "Use the magic of the pencil to erase foes from existance."
 create = Skill("Create", unknown, False, 0, 0, -10, 0,100, 0, [], ["createCreep", "trueHit"])
+create.desc = "Create a creep"
 create2 = Skill("Create", unknown, False, 0, 0, -10, 0,100, 0, [], ["createWorship", "trueHit"])
+create2.desc = "Create a worshiper to worship you, giving you power."
 create3 = Skill("Create", unknown, False, 0, 0, -10, 0,100, 0, [], ["createCubes", "trueHit"])
+create3.desc = "Clone more CUBES!"
 mend = Skill("Mend", magic, False, 0,0, 1, 0,100, 3, [], ["heal", "trueHit"])
+mend.desc = "Heal yourself or an ally."
 #------------------------------------------------------------------
 zap = Skill("Lightning", electic, False, 5, 10, 3, 4, 100, 0, [], [""])
-energiBeam = Skill("Energy Beam", tech, False, 77, 10, -3, 0,90, 5, [], [""]) 
+zap.desc = "A stray electron zaps your foe."
+energiBeam = Skill("Energy Beam", tech, False, 77, 10, -3, 0,90, 5, [], [""])
+energiBeam.desc = "A strong electronic beam fries foes."
 wellspring = Skill("Wellspring", tech, False, 0, 0, 3, 0,100, -10, [], ["trueHit"])
+wellspring.desc = "Generate power through technology."
 #-----------------------------------------------------------------
 bladeFlash = Skill("Blade Flash", fighting, True, 6, 5, 10, 2,90, 1, [], [""])
+bladeFlash.desc = "Quick draw your sword, cutting into your foe before anyone else can act."
 cleave = Skill("Cleave", fighting, True, 20, 20, -2, 2,90, 2, [2, bleed], [""])
+cleave.desc = "Bring back your blade for a heavy blow, can cause bleeding."
 revenge = Skill("Revenge", dark, False, 0, 0, 10, 0,100, 5, [], ["revenge"])
+revenge.desc = "All the rage you have against your foes is released in a fury of blows."
 #----------------------------------------------------------------------
 obsidianBlast = Skill("Obsidian Blast", fire, False, 30, 10, -3, 0,90, 5, [1, burn] ,[""])
+obsidianBlast.desc = "Create burnning obsidian shards to burn your foe."
 recover = Skill("Recover", magic, False, 0, 0, 10, 0,100, 7, [], ["recover", "endeffect", "trueHit"])
-psionicRadiance = Skill("Psionic Radiance", physic, False, 30, 10, -2, 3,100, 3, [], [""])
+recover.desc = "Recover lost energy, ending all negative effects and healing yourself."
+psionicRadiance = Skill("Psionic Radiance", physic, False, 47, 10, -2, 3,100, 3, [], [""])
+psionicRadiance.desc = "Use the power of physic energy to cause horrible headaches."
 #------------------------------------------------------------------------
 stare = Skill("Stare", physic, False, 30, 10, -2, 15,100, 5, [], [""])
+stare.desc = "Jiiiiiiiiiiiiiiiiii"
 blink = Skill("Blink", physic, True, 5, 5, 1, 0,100, 0, [], ["mark"])
+blink.desc = "Blink Blink"
 creepyAtk = Skill("Creep Attack", physic, False, 5, 5, 1, 0,90, 0, [], ["creepyAtk"])
+creepyAtk.desc = "Use all the knowledge you have about your enemy to find their weakest point."
 inhale = Skill("Inhale", air, False, 0, 0, 3, 0,100, 0, [], ["defend", "heal", "trueHit"])
+inhale.desc = "Inhale to absorb some healthy particles, healing yourself and defending."
 observe = Skill("Observe", unknown, False, 0, 0, 3, 2, 100, 1, [], ["mark", "mark", "mark", "mark", "mark", "mark", "nodam", "trueHit"])
+observe.desc = "Watch your foe to learn about them."
 exhale = Skill("Exhale", air, False, 5, 10, 3, 0, 85, 0, [], ["mark", "hitAll"])
+exhale.desc = "Breath out to cause minor damage to all foes."
 #------------------------------------------------------------------------
 sneeze = Skill("Sneeze", acid, False, 14, 6, 6, 0,90, 1, [2, poison], [""])
+sneeze.desc = "Sneeze to cause minor damage and chance of poison."
 
 eggon = Skill("Egg On", normal, True, 0, 0, 10, 10, 100, 2, [1, rebuff], ["trueHit", "nodam"])
+eggon.desc = "Cheer on yourself or your friends to increase damage and hit chance."
 rebuke = Skill("Rebuke", normal, True, 0, 0, 10, 2, 100, 1, [], ["removeEff", "trueHit", "nodam"])
+rebuke.desc = "Cheer on your friends to remove all their negative effects."
 
 blast = Skill("Blast", tech, False, 20, 20, 5, 8, 95, 2, [2, burn], [""])
+blast.desc = "Fire a bolt of energy into your foes. Can cause burns."
 fission = Skill("Fission", fire, False, 20, 40, -1, 0, 90, 0, [2, burn], ["powerDown", "fullmana"])
+fission.desc = "Break appart nearby atoms to cause major damage."
 fusion = Skill("Fusion", fire, False, 1, 40, -1, 0, 100, 1, [2,burn], ["powerUp"])
+fusion.desc = "Collect nearby atoms from foes in order to gain power and cause burns."
 
 lifeTransfer = Skill("Life Transfer", blood, False, 0, 0, 10, 0,100, 2, [], ["lifeTransfer", "nodam"])
+lifeTransfer.desc = "Transfer some life force to an ally."
 powerTransfer = Skill("Power Transfer", tech, False, 0, 0, 10, 0, 100, 0, [], ["powerTransfer", "nodam"])
+powerTransfer.desc = "Transfer some power to an ally."
 
 earthStage = Skill("Earth Stage", astral, False, 10, 15, 10, 0, 100, 0, [], ["trueHit","hitAll","earthStage"])
+earthStage.desc = ""
 moonStage = Skill("Moon Stage", astral, False, 10, 15, 10, 0, 100, 0, [], ["trueHit","hitAll","moonStage"])
+moonStage.desc = ""
 otherStage = Skill("Otherworld Stage", astral, False, 10, 15, 10, 0, 100, 0, [], ["trueHit","hitAll","otherStage"])
+otherStage.desc = ""
 voidSnap = Skill("Void Snap", astral, False, 30, 10, 4, 5, 97, 1, [2,bleed], [""])
+voidSnap.desc = "Open a hole in the fabric of reality to cause damage. May cause bleeding."
 chains = Skill("Chains", normal, True, 30, 2, 1, 5, 90, 1, [], [""])
-earthenVortex = Skill("Earthen Vortex", earth, False, 30, 40, 5, 6, 90, 2, [], ["hitAll"])
+chains.desc = "Whip foes with chains."
+earthenVortex = Skill("Earthen Vortex", earth, False, 30, 40, 5, 6, 90, 2, [2, slowed], ["hitAll"])
+earthenVortex.desc = "Cause a vortex of earthen energy."
 astralVortex = Skill("Astral Vortex", astral, False, 50, 40, 5, 6, 90, 3, [], ["hitAll"])
+astralVortex.desc = "Cause a vortex of astral energy."
 chaosVortex = Skill("Chaos Vortex", chaos, False, 20, 60, 5, 6, 90, 2, [], ["hitAll"])
+chaosVortex.desc = "Cause a vortex of chaotic energy."
 
 againstOdds = Skill("Against The Odds", light, True, 0, 10, 3, 13, 90, 7, [], ["againstOdds"])
+againstOdds.desc = "Against odds stacked against you, you still come out on top."
 takeBlow = Skill("Take The Blow", fighting, True, 0, 0, 12, 10, 100, 1, [], ["takeBlow", "trueHit", "nodam"])
+takeBlow.desc = "Prepare to take a blow for an ally."
 powerStrike = Skill("Power Strike", fighting, True, 75, 10, -1, 0, 40, 1, [], [""])
+powerStrike.desc = "Put all of your strength into one attack. Has a low chance of hitting."
 antiPhysic = Skill("Anti Physic", unknown, False, 30, 20, 5, 15, 90, 2, [], [""])
 mindReading = Skill("Mind Reading", physic, False, 20, 20, 5, 2, 100, 2, [], ["mindReading"])
+mindReading.desc = "Read your foes mind to gain knowledge about their next attack."
 neverThere = Skill("Never There", physic, False, 0,0, 20, 0, 100, 2, [], ["trueHit", "neverThere"])
+neverThere.desc = "You were never there in the first place."
 colorfulBullet = Skill("colorfulBullet", magic, False, 10,5, 1, 2, 90, 0, [], [""])
+colorfulBullet.desc = "Summon a few bullets of magic energy to injure your foes."
 never = Skill("And Never Come Back", unknown, False, 200, 50, 20, 5, 100, 7, [], ["trueHit"])
+never.desc = "Never. Come. Back."
 mindDisk = Skill("Mind disk", physic, False, 20, 10, 4, 5, 100, 1, [2, slowed], ["dodgeUp"])
+mindDisk.desc = "Thow a mind disk at a foe to slow them. Increases your dodge chance."
 daggerStorm = Skill("Dagger Storm", light, True, 40, 50, 10, 7, 99, 3, [], ["hitAll"])
 eldritchAppuratus = Skill("Eldritch Appuratus", tech, False, 0, 0, 3, 2, 100, 3, [], ["powerUp", "recover"])
 windSlash = Skill("Wind Slash", air, False, 20, 10, 5, 3, 90, 1, [], [])
@@ -844,8 +926,8 @@ rejuvinate = Skill("rejuvinate", magic, False, 0,0, 5, 3, 100, 4, [], ["recover"
 
 
 instantkill = Skill("Insta kill", unknown, False, 99999, 9999, 99, 15, 100, 0, [], ["trueHit"])
+instantkill.desc = "BAM! You dead now."
 
-allskills = [instantkill, never, colorfulBullet, neverThere, mindReading, antiPhysic, powerStrike, takeBlow, againstOdds, chaosVortex, astralVortex, earthenVortex, chains, voidSnap, otherStage, moonStage, earthStage, powerTransfer, lifeTransfer, fusion, fission, nuke, slash, scar, rebuke, eggon, sneeze, cleave, observe, exhale, inhale, creepyAtk, blink, stare, recover, mend, psionicRadiance,revenge, bladeFlash, wellspring, energiBeam, bludgeon, stab, confuse, erase, create, chaosBeam, chaosBolt, setFire, forceShield, summon, meditate, lifePact, shroud, bite, kick, dodge, rip, consumeFlesh, powerDrain, block, meteorStorm, vampire, destroy, magicAbsorb, powerUp, magicMute, shardSwarm, defend, axeLegs, earthShot, airBlast, waterSpout, fireBall]
 
 
 class Char(object):
