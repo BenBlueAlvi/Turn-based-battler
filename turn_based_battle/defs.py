@@ -181,11 +181,14 @@ class Effect(object):
 					i.endeffect, planned = 0, True
 			if not planned:
 				target.effects.append(self.buildNew())
+				printb(target.name + " is scheming!")
+			else:
+				printb(target.name+" is perfecting their plans!")
 			target.misc += 1
+			print "planned: ", target.misc
 			target.crit += 2
-			target.int = target.int + (target.int / 10)
-			target.str = target.str + (target.str / 10)
-			printb(target.name + " is scheming!")
+			target.int = target.int + (target.int / 20)
+			target.str = target.str + (target.str / 20)
 			
 		if self.effect == "dodgeUp":
 			target.dodgeChance += 25
@@ -240,8 +243,8 @@ class Effect(object):
 		if self.effect == "planAhead":
 			for i in range(target.misc):
 				target.crit = target.crit - 2
-				target.int = target.int - (target.int / 10)
-				target.str = target.str - (target.str / 10)
+				target.int = target.int - (target.int / 20)
+				target.str = target.str - (target.str / 20)
 			target.misc = 0
 			printb(target.name + " is no longer scheming!")
 		
@@ -588,7 +591,7 @@ class Skill(object):
 					temp = target.mag
 					if temp <= 0:
 						temp = (-1)/(-1 + temp)
-					print "Detected devision by 0. Modding to: "+temp
+						print "Detected devision by 0. Modding to: "+str(temp)
 					damage = math.floor((user.int * (1.08 ** target.marks))/target.mag)
 				if i == "endeffect":
 					user.effects = []
@@ -916,7 +919,7 @@ colorfulBullet = Skill("colorfulBullet", magic, False, 10,5, 1, 2, 90, 0, [], ["
 colorfulBullet.desc = "Summon a few bullets of magic energy to injure your foes."
 never = Skill("And Never Come Back", unknown, False, 200, 50, 20, 5, 100, 7, [], ["trueHit"])
 never.desc = "Never. Come. Back."
-mindDisk = Skill("Mind disk", physic, False, 20, 10, 4, 5, 100, 1, [2, slowed], ["dodgeUp"])
+mindDisk = Skill("Mind disk", physic, False, 20, 10, 4, 5, 100, 0, [2, slowed], ["dodgeUp"])
 mindDisk.desc = "Thow a mind disk at a foe to slow them. Increases your dodge chance."
 daggerStorm = Skill("Dagger Storm", light, True, 40, 50, 10, 7, 99, 3, [], ["hitAll"])
 eldritchAppuratus = Skill("Eldritch Appuratus", tech, False, 0, 0, 3, 2, 100, 3, [], ["powerUp", "recover"])
@@ -972,6 +975,7 @@ class Char(object):
 		self.ym = 1
 		self.guarder = "hi"
 		self.misc = 0
+		self.vital = True
 		#AI stuff
 		self.savingfor = "none"
 		self.aimisc = 0

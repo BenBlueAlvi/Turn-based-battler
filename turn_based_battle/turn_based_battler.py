@@ -180,7 +180,12 @@ class Battle(object):
 			
 		if self.post == "Get catsome":
 			self.battlers1 = [defs.Protagonist.buildNew(), defs.NO, defs.Catsome.buildNew()]
-			
+		
+		if self.post == "dandylion":
+			self.battlers2[0].vital, self.battlers2[2].vital = False, False
+
+		if self.post == "Coos":
+			self.battlers2[2].vital = False
 		
 		thesebattlers += self.battlers1 + self.battlers2
 		for i in self.battlers1:
@@ -236,7 +241,7 @@ class Battle(object):
 					
 					
 			talking = 0
-			while talking <= 120* len(textc):
+			while talking <= 120 * len(textc):
 				defs.gScreen.fill(WHITE)
 				defs.gScreen.blit(self.arena.img, [0,0])
 				pygame.draw.rect(gScreen, BLACK, [0,size[1] - 150,size[0],150])
@@ -249,9 +254,12 @@ class Battle(object):
 						defs.gScreen.blit(textc[l-1], [thesebattlers[speaker].basex - font.size(text[l-1])[0], thesebattlers[speaker].basey - (30 + ((l-1) * font.size(text[l-1])[1]))])
 				
 				for k in thesebattlers:
+					defs.gScreen.blit(k.image,[k.basex, k.basey])	
 				
-					
-					defs.gScreen.blit(k.image,[k.basex, k.basey])
+				for event in pygame.event.get():
+					if event.type == pygame.KEYDOWN:
+						talking = 120 * len(textc) +1
+
 				pygame.display.flip()
 				clock.tick(60)
 					
@@ -317,7 +325,6 @@ class Battle(object):
 							
 							thisxcord = 330 + x*175
 							thisycord = y*30 + 370 + size[1] - 500
-							print dispskill.name
 							if hitDetect(mouse_pos, mouse_pos,[thisxcord, thisycord], [thisxcord + 165, thisycord + 25]):
 								
 								if x == 0 and y ==0:
@@ -534,7 +541,13 @@ class Battle(object):
 						
 			for i in thesebattlers:
 				i.updated = False
-			if len(self.battlers1) == 0:
+
+			loss = True
+			for i in self.battlers1:
+				print i.vital
+				if i.vital and i.hp > 0:
+					loss = False
+			if loss:
 				defs.printb("Player 2 WINS!")
 				print "Player 2 Wins"
 				for b in thesebattlers:
@@ -543,8 +556,13 @@ class Battle(object):
 				self.music.stop()
 				battling = False
 				break
-				
-			if len(self.battlers2) == 0:
+
+			loss = True
+			for i in self.battlers2:
+				print i.vital
+				if i.vital and i.hp > 0:
+					loss = False
+			if loss:
 				defs.printb("Player 1 WINS!")
 				print "Player 1 Wins"
 				for b in thesebattlers:
@@ -586,6 +604,9 @@ class Battle(object):
 					
 					for k in origbattlers:
 						defs.gScreen.blit(k.image,[k.basex, k.basey])
+					for event in pygame.event.get():
+						if event.type == pygame.KEYDOWN:
+							talking = 120 * len(textc) +1
 					pygame.display.flip()
 					clock.tick(60)
 					
@@ -617,6 +638,9 @@ class Battle(object):
 					
 					for k in origbattlers:
 						defs.gScreen.blit(k.image,[k.basex, k.basey])
+					for event in pygame.event.get():
+						if event.type == pygame.KEYDOWN:
+							talking = 120 * len(textc) +1
 					pygame.display.flip()
 					clock.tick(60)
 					
@@ -642,13 +666,13 @@ MiecFight = Battle([], [defs.Maice.buildNew(), defs.Maice.buildNew(), defs.Maice
 
 #forest stage 1
 ForDial = Dialoge([[0, "So this is the forest."], [3, "Why hello, fine traveler.", "What brings you to my forest?"], [1, "Who are you, with that fine maine?"], [3, "I am a Dandy Lion."], [2, "*click*"], [0, "wait, what was that noise?"], [4, "*click*"], [3 ,"and I must have you", "LEAVE MY FOREST!"]],[[3, "And I wish you a good day."]],[[3, "If... I must.", "You have proven yourself worthy to enter my forest."], [1, "Thank you, my fellow feline."]])
-ForFight1 = Battle([], [defs.Axeurlegs.buildNew(), defs.Axeurlegs.buildNew(), defs.Axeurlegs.buildNew()], defultarena, ForDial, False, defs.maicetheme, "")
+ForFight1 = Battle([], [defs.Axeurlegs.buildNew(), defs.Dandylion.buildNew(), defs.Axeurlegs.buildNew()], defultarena, ForDial, False, defs.maicetheme, "dandylion")
 Alphight = Battle([], [defs.Axeurlegs.buildNew(), defs.Alpha.buildNew(), defs.Axeurlegs.buildNew()], defultarena, ForDial, False, defs.sivtheme, "")
 
 CooDial = Dialoge([[2, "Ah, Coosome! it's been a while!"], [3, "Indeed it has, Cat."], [0, "You know him?"], [2, "Of course! We are all over each other!"], [3, "What Cat means to say, is that we are one and the same."], [2, "We stick together! so Lets have a FOURSOME!"], [0, "But who else is joining me?"], [1, "I'll stand in for Catsome. Lets do this."]], [[3, "You fought well.", "But not well enough."], [2, "Is that really all? I'm not satisfied yet."]], [[3, "Nice one, you fought well there."], [2, "Is it done already? I'm not quite satisfied yet..."]])
-Coo33Fight = Battle([], [defs.Catsome.buildNew(), defs.NO, defs.CoosomeJoe.buildNew()], defultarena, CooDial, False, defs.cootheme,"") 
+CoosomeFight = Battle([], [defs.Catsome.buildNew(), defs.NO, defs.CoosomeJoe.buildNew()], defultarena, CooDial, False, defs.cootheme, "coosome") 
 C33Dial = Dialoge([[5, "Ah, Coosome! it's been a while!"], [4, "Indeed it has, Cat."], [1, "You know him?"], [5, "Of course! We are all over each other!"], [4, "What Cat means to say, is that we are one and the same."], [5, "We stick together! so Lets have a FOURSOME!"], [1, "But who else is joining me?"], [2, "I'll stand in for Catsome. Lets do this."]], [[4, "You fought well.", "But not well enough."], [5, "Is that really all? I'm not satisfied yet."]], [[4, "Nice one, you fought well there."], [5, "Is it done already? I'm not quite satisfied yet..."]])
-Coo33Fight = Battle([], [defs.CoosomeJoe.buildNew(), defs.Coo33.buildNew(), defs.Catsome.buildNew()], defultarena, C33Dial, False, defs.cootheme, "")
+Coo33Fight = Battle([], [defs.CoosomeJoe.buildNew(), defs.Coo33.buildNew(), defs.Catsome.buildNew()], defultarena, C33Dial, False, defs.cootheme, "Coos")
 
 NouDial = Dialoge([[3, "!"], [2, "Hello?"], [3, "Hiya!"], [1, "Finally, a person in this strange place.", "We have-"], [3, "Oh yes I know, I know everything.", "Except for what my master Knows!", "She truely knows everything"], [0, "Even more than-"], [3, "Yes, even more than that, abomination.", "I must say that you and you're group seem very excited to get you're hands on this knowledge", "Unforunatly, I cannot allwow that"]], [[0, "Ugg"]], [[0, "Ugg"]])
 NouFight = Battle([], [defs.Nou.buildNew()], rift, NouDial, False, defs.noutheme, "")
@@ -1094,7 +1118,6 @@ def Bookolore(unlockedchars):
 		defs.gScreen.fill(WHITE)
 		for i in allskills:
 			for l in range(len(allskills)):
-				print l
 				defs.gScreen.blit(font.render(i.name, True, BLACK), [25 + l * 50, l * 10 + 10])
 	   
 		
