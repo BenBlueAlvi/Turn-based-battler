@@ -1105,33 +1105,6 @@ def CharSelect(mult):
 #--------------------------------------------------------------------------------------------------------------------------------------------------	
 #--------------------------------------------------------------------------------------------------------------------------------------------------	
 #--------------------------------------------------------------------------------------------------------------------------------------------------	
-def Bookolore(unlockedchars):
-	done = False
-	allskills = defs.allskills
-	while not done:
-   
-		for event in pygame.event.get(): 
-			if event.type == pygame.QUIT: 
-				done = True 
-		  
-	  
-		defs.gScreen.fill(WHITE)
-		for i in allskills:
-			for l in range(len(allskills)):
-				defs.gScreen.blit(font.render(i.name, True, BLACK), [25 + l * 50, l * 10 + 10])
-	   
-		
-		
-		pygame.display.flip()
-	   
-	   
-		clock.tick(60)
-		
-
-
-
-
-
 done = False
 while not done:
 

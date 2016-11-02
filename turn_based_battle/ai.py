@@ -20,12 +20,13 @@ def runAI(player, battlersL, battlersR):
 	for i in battlersR:
 		if i.name == "???" or i == defs.NO or i == defs.NOT:
 			battlersR.remove(i)
-	consort, mgdsort, dmgtaken, potdam = [], [], [], []
+	consort, mgdsort, dmgtaken, potdam, dodcha = [], [], [], [], []
 	for i in battlersL:
 		dmgtaken.append(i)
 		consort.append(i)
 		mgdsort.append(i)
 		potdam.append(i)
+		dodcha.append(i)
 	#greatest to least damage taken of enemies
 	for i in range(len(dmgtaken)):
 		for j in range(len(dmgtaken)-1-i):
@@ -46,9 +47,13 @@ def runAI(player, battlersL, battlersR):
 		for j in range(len(potdam)-1-i):
 			if potdam[j].int + potdam[j].str > potdam[j+1].int + potdam[j+1].str:
 				potdam[j], potdam[j+1] = potdam[j+1], potdam[j]
+				
+	#Greatest to least dodge chance of enemies:
+	for i in range(len(dodcha)):
+		for j in range(len(dodcha)-1-i):
+			if dodcha[j].dodgeChance > dodcha[j+1].dodgeChance:
+				dodcha[j], dodcha[j+1] = dodcha[j+1], dodcha[j]
 
-	for i in potdam:
-		print "potdam:", i.name
 	
 	#allies
 	hptotal = []
@@ -173,14 +178,20 @@ def runAI(player, battlersL, battlersR):
 			
 		if player.savingfor == "mindReading":
 			if player.power >= player.skills[2].cost:
-				player.goskill, player.target = player.skills[2], [potdam[0]]
-			else:
-				if rand == 1:
-				
-					player.goskill, player.target = player.skills[1], [potdam[0]]
+				player.goskill = player.skills[2]
 				if rand == 0:
+					player.target = [potdam[0]]
+				else:
+					player.target = [battlersL[random.randint(0, len(battlersL))]]
+			else:
 				
-					player.goskill, player.target = player.skills[0], [potdam[0]]
+			
+				player.goskill = player.skills[1]
+				if rand == 0:
+					player.target = [potdam[0]]
+				else:
+					player.target = [battlersL[random.randint(0, len(battlersL))]]
+				
 		if player.savingfor == "rejuvinate":
 			if player.power >= player.skills[5].cost:
 				player.goskill, player.target = player.skills[2], [player]
@@ -192,13 +203,13 @@ def runAI(player, battlersL, battlersR):
 			if player.power >= player.skills[6].cost:
 				player.goskill, player.target = player.skills[6], [player]
 			else:
-				player.goskill, player.target = player.skills[0], [potdam[0]]
+				player.goskill, player.target = player.skills[0], [dodcha[0]]
 		
 		if player.savingfor == "forceShield":
 			if player.power >= player.skills[4].cost:
 				player.goskill, player.target = player.skills[4], [player]
 			else:
-				player.goskill, player.target = player.skills[0], [potdam[0]]
+				player.goskill, player.target = player.skills[0], [dodcha[0]]
 			
 	if player.name == "Knowing Eye":
 		player.aimisc -= 1
