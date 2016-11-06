@@ -212,6 +212,9 @@ class Effect(object):
 		if self.effect == "passedOut":
 			printb(target.name+" passed out!")
 			target.effects.append(self.buildNew())
+		if self.effect == "mindSpiked":
+			printb(target.name+" has been mind spiked!")
+			target.effects.append(self.buildNew())
 			
 	def end(self, target):
 		target.effects.remove(self)
@@ -262,7 +265,10 @@ class Effect(object):
 			printb(target.name + " is no longer slowed!")
 		if self.effect == "passedOut":
 			printb(target.name + " is no longer passed out!")
-			
+		if self.effect == "mindSpiked":
+			printb(target.name + " is no longer mind spiked!")
+		
+		
 	def update(self, target):
 		if self.effect == "magicMute":
 			target.power -= 1
@@ -407,6 +413,10 @@ class Effect(object):
 			self.endeffect = random.randint(1,2)
 			if self.endeffect == 1:
 				self.end(target)
+		if self.effect == "mindSpike":
+			self.endeffect = random.randint(1,3)
+			if self.endeffect == 1:
+				self.end(target)
 		
 		if self.effect == "death":
 			pass
@@ -446,6 +456,7 @@ guarded = Effect("guarded")
 passedOut = Effect("passedOut")
 neverTheref = Effect("neverThere")
 slowed = Effect("slowed")
+mindSpiked = Effect("mindSpiked")
 
 negeff = [burn, magicmute, bleed, poison, confusion]
 poseff = [defense, forceshield, immortal, block, rebuff, meditatef, planAheadf, dodgeUp, earthStagef, otherStagef, moonStagef]
@@ -472,7 +483,7 @@ class Skill(object):
 	def use(self, user, target, battlers1, battlers2, thesebattlers):
 		
 		message = ""
-		hit = self.hitChance - target.dodgeChance
+		hit = self.hitChance - (target.dodgeChance + target.equipDodgeChance)
 		
 		if guarded in target.effects:
 			target = target.guarder
@@ -488,9 +499,9 @@ class Skill(object):
 			critical, effective = False, False
 
 			if self.phys:
-				damage = (user.str + self.atk+ random.randint(0, self.var)) - target.con
+				damage = (user.str + user.equipStr + self.atk+ random.randint(0, self.var)) - (target.con + target.equipCon)
 			else:
-				damage = (user.int + self.atk + random.randint(0, self.var)) - target.mag
+				damage = (user.int + user.equipInt + self.atk + random.randint(0, self.var)) - (target.mag + target.equipMag)
 				
 			for i in target.types:
 				if self.type.name in i.weks:
@@ -502,7 +513,7 @@ class Skill(object):
 					message = " It's not very effective!"
 					effective = False
 					
-			if random.randint(1,30) + user.crit > 30:
+			if random.randint(1,30) + user.crit + user.equipCrit > 30:
 				if effective:
 					message += " CRITICAL HIT!"
 				else:
@@ -719,6 +730,8 @@ class Skill(object):
 						i.basex = x * (size[0] - 150) + 50
 						i.basey = y * 75 + 325
 						y += 1
+				if i == "mindSpike":
+					mindSpiked.apply(target)
 
 
 			if user.ability == "Frenzy" and user.hp <= user.maxhp/5:
@@ -736,6 +749,12 @@ class Skill(object):
 					damage = 0
 
 				printb(user.name + " uses " + self.name + " and deals " + str(damage) + " damage to " + target.name + message)
+				
+				if mindSpiked in user.effects:
+					printb(user.name + " is mind spiked!")
+					printb("The mind spike dealt " + str(damage) + " back to " + user.name)
+					user.hp -= damage
+					
 				target.hp -= damage
 				
 		else:
@@ -923,15 +942,34 @@ never.desc = "Never. Come. Back."
 mindDisk = Skill("Mind disk", physic, False, 20, 10, 4, 5, 100, 0, [2, slowed], ["dodgeUp"])
 mindDisk.desc = "Thow a mind disk at a foe to slow them. Increases your dodge chance."
 daggerStorm = Skill("Dagger Storm", light, True, 40, 50, 10, 7, 99, 3, [], ["hitAll"])
+daggerStorm.desc = "Summon a swarm of daggers to shred your foes."
 eldritchAppuratus = Skill("Eldritch Appuratus", tech, False, 0, 0, 3, 2, 100, 3, [], ["powerUp", "recover"])
 windSlash = Skill("Wind Slash", air, False, 20, 10, 5, 3, 90, 1, [], [])
+windSlash.desc = "Slash so fast, your opponents will not even know what hit them."
 rejuvinate = Skill("rejuvinate", magic, False, 0,0, 5, 3, 100, 4, [], ["recover", "recover"])
-
+rejuvinate.desc = "Heal yourself alot."
+mindSpike = Skill("Mind Spike", physic, False, 0,0, 5, 3, 100, 3, [], ["mindSpike", "nodam"])
+mindSpike.desc = "Make them pay for hurting you or your friends."
 
 
 instantkill = Skill("Insta kill", unknown, False, 99999, 9999, 99, 15, 100, 0, [], ["trueHit"])
 instantkill.desc = "BAM! You dead now."
 
+
+class Equip(object):
+	def __init__(self, name, atk, int, con, mag, agil, crit, dodgeChance, lvl, slot):
+		self.name = name
+		self.atk = atk
+		self.int = int
+		self.con = con
+		self.mag = mag
+		self.agil = agil
+		self.crit = crit
+		self.dodgeChance = dodgeChance
+		self.lvl = lvl
+		self.slot = slot
+		
+emptySlot = Equip("Nothing", 0, 0, 0, 0, 0, 0, 0, 0, "")
 
 
 class Char(object):
@@ -981,6 +1019,21 @@ class Char(object):
 		self.savingfor = "none"
 		self.aimisc = 0
 		self.isAi = False
+		self.equips = {"Head":emptySlot, "Chest":emptySlot, "Legs":emptySlot, "Feet":emptySlot, "Weapon":emptySlot}
+
+
+	def updateEquips(self):
+		self.equipStr = self.equips["Head"].str + self.equips["Chest"].str + self.equips["Legs"].str + self.equips["Feet"].str + self.equips["Weapon"].str
+		self.equipInt = self.equips["Head"].int + self.equips["Chest"].int + self.equips["Legs"].int + self.equips["Feet"].int + self.equips["Weapon"].int
+		self.equipCon = self.equips["Head"].con + self.equips["Chest"].con + self.equips["Legs"].con + self.equips["Feet"].con + self.equips["Weapon"].con
+		self.equipMag = self.equips["Head"].mag + self.equips["Chest"].mag + self.equips["Legs"].mag + self.equips["Feet"].mag + self.equips["Weapon"].mag
+		self.equipAgil = self.equips["Head"].agil + self.equips["Chest"].agil + self.equips["Legs"].agil + self.equips["Feet"].agil + self.equips["Weapon"].agil
+		self.equipCrit = self.equips["Head"].crit + self.equips["Chest"].crit + self.equips["Legs"].crit + self.equips["Feet"].crit + self.equips["Weapon"].crit
+		self.equipDodgeChance = self.equips["Head"].dodgeChance + self.equips["Chest"].dodgeChance + self.equips["Legs"].dodgeChance + self.equips["Feet"].dodgeChance + self.equips["Weapon"].dodgeChance
+		
+		
+		
+		
 		
 	def buildNew(self):
 		newchar = Char(self.name, self.types, self.hp, self.str, self.int, self.con, self.mag, self.agil, self.crit, self.dodgeChance, self.lvl, self.xp, self.skills, self.ability, pygame.transform.scale(pygame.image.load(self.image), [50, 50]), self.cords, pygame.transform.scale(pygame.image.load(self.image), [42, 42]))
@@ -992,6 +1045,7 @@ class Char(object):
 		newchar = Char(self.name, self.types, self.hp, self.str, self.int, self.con, self.mag, self.agil, self.crit, self.dodgeChance, self.lvl, self.xp, self.skills, self.ability, self.image, self.cords, self.menuImg)
 		newchar.img = self.image
 		return newchar
+	
 		
 NOT = Char("???", [unknown], 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, [nothing], "", "Assets/battlers/locked.png", [-1,0], "")
 
@@ -1038,3 +1092,11 @@ miniCreep = Char("Creepy Bald Guy", [physic, unknown, minion], 300, 6, 6, 8, 10,
 
 
 NO = NOT.buildNew()	
+
+
+
+		
+	
+
+
+

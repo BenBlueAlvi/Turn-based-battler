@@ -293,6 +293,7 @@ class Battle(object):
 				
 					
 				p.power += 1
+				p.updateEquips()
 				p.x = p.basex
 				p.y = p.basey
 				ready, selected = False, False
@@ -502,7 +503,7 @@ class Battle(object):
 			for i in range(len(agillist)):
 				for j in range(len(agillist)-1-i):
 					
-					if agillist[j].agil + agillist[j].goskill.spd  < agillist[j+1].agil + agillist[j+1].goskill.spd:
+					if agillist[j].agil + agillist[j].equipAgil + agillist[j].goskill.spd  < agillist[j+1].agil + agillist[j + 1].equipAgil + agillist[j+1].goskill.spd:
 						agillist[j], agillist[j+1] = agillist[j+1], agillist[j] 
 			
 			for p in agillist:
@@ -1025,6 +1026,7 @@ def CharSelect(mult):
 					
 			if mouse_down:
 				if mult == False and aitest == False:
+					
 					return player1.battlers
 				else:
 					thisplayer = player2
