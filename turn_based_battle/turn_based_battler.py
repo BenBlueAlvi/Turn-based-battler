@@ -125,7 +125,7 @@ def hitDetect(p1, p2, p3, p4):
 		return True
 
 unlockedchars = [defs.Koishi.buildNew(), defs.Lapis.buildNew(), defs.Flan.buildNew(), defs.Okuu.buildNew(), defs.Nue.buildNew(), defs.Scarlet.buildNew(), defs.Mage.buildNew(), defs.Mouther.buildNew(), defs.Nic.buildNew(), defs.Siv.buildNew(), defs.Coo33.buildNew(), defs.CoosomeJoe.buildNew(), defs.Epic.buildNew(), defs.Alpha.buildNew(), defs.Durric.buildNew(), defs.Creep.buildNew(), defs.Catsome.buildNew(), defs.KnowingEye.buildNew(), defs.Protagonist.buildNew(), defs.Worshipper.buildNew(), defs.miniCreep.buildNew(), defs.Axeurlegs.buildNew(), defs.Dandylion.buildNew(), defs.Cubes.buildNew()]
-
+equipment = []
 
 class Arena(object):
 	def __init__(self, name, effect, img):
@@ -811,6 +811,7 @@ class Player(object):
 		self.name = name
 		self.wins = 0
 		self.losses = 0
+		self.scrolls = []
 	
 		
 		self.x1 = 0
