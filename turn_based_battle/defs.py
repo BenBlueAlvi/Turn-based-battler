@@ -43,6 +43,9 @@ maicetheme = Music("A_Tiny_Tiny_Clever_Commander")
 sivtheme = Music("WaterflameFinalBattle")
 noutheme = Music("supierior_nouledge")
 maptheme = Music("Raxxo_Bent_to_the_Core")
+durrictheme = Music("the_legend_durric")
+alphatheme = Music("Hiroari_Shoots_a_Strange_Bird_Till When_Remix")
+
 def bubble_sort(items):
 	""" Implementation of bubble sort """
 	for i in range(len(items)):
@@ -1061,7 +1064,7 @@ NOT = Char("???", [unknown], 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, [nothing], "", "Asset
 NOT.ableSkills = [nothing]
 
 Mage = Char("Meigis", [normal, chaos], 500, 5, 15, 5, 15, 4, 0, 10, 1, 0, [basicAtk, fireBall, waterSpout, airBlast, earthShot, defend], "", "Assets/battlers/Mage.png", [5,0], "")
-Mage.ableSkills = [fireball, waterSpout, airBlast, earthShot]
+Mage.ableSkills = [fireBall, waterSpout, airBlast, earthShot]
 
 Mouther = Char("Mouther", [earth], 500, 20, 0, 10, 5, 4, 0, 10, 1, 0, [basicAtk, bite, consumeFlesh, defend], "", "Assets/battlers/Mouther.png", [4,0], "")
 Mouther.ableSkills = []

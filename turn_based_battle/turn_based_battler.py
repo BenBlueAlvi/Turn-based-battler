@@ -248,7 +248,7 @@ class Battle(object):
 				talking += 1
 				if thesebattlers[speaker] in self.battlers1:
 					for l in range(len(textc)):
-						defs.gScreen.blit(textc[l-1], [thesebattlers[speaker].basex, thesebattlers[speaker].basey - (30 + ((l-1) * font.size(text[l-1])[1]))])
+						defs.gScreen.blit(textc[l-1], [thesebattlers[speaker].basex + 55, thesebattlers[speaker].basey - (30 + ((l-1) * font.size(text[l-1])[1]))])
 				else:
 					for l in range(len(textc)):
 						defs.gScreen.blit(textc[l-1], [thesebattlers[speaker].basex - font.size(text[l-1])[0], thesebattlers[speaker].basey - (30 + ((l-1) * font.size(text[l-1])[1]))])
@@ -632,7 +632,7 @@ class Battle(object):
 					talking += 1
 					if origbattlers[speaker] in origbattlers1:
 						for l in range(len(textc)):
-							defs.gScreen.blit(textc[l-1], [origbattlers[speaker].basex, origbattlers[speaker].basey - (30 + ((l-1) * font.size(text[l-1])[1]))])
+							defs.gScreen.blit(textc[l-1], [origbattlers[speaker].basex + 55, origbattlers[speaker].basey - (30 + ((l-1) * font.size(text[l-1])[1]))])
 					else:
 						for l in range(len(textc)):
 							defs.gScreen.blit(textc[l-1], [origbattlers[speaker].basex - font.size(text[l-1])[0], origbattlers[speaker].basey - (30 + ((l-1) * font.size(text[l-1])[1]))])
