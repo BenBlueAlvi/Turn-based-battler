@@ -673,66 +673,101 @@ class Skill(object):
 					spawned = miniCreep.buildNew()
 					if user in battlers1 and len(battlers1) < 3:
 						battlers1.append(spawned)
-						thesebattlers.append(spawned)
+						x = 0
+						y = 0
+						for i in battlers1:
+							if y > 2:
+								y = 0
+								x += 1
+							if not i.basex == x * (size[0] - 150) + 50 and not i.basey == y * 75 + 325:
+								spawned.basex = x * (size[0] - 150) + 50
+								spawned.basey = y * 75 + 325
+								break
+							y += 1
+						
+						
 					elif user in battlers2 and len(battlers2) < 3:
 						spawned.isAi = True
 						battlers2.append(spawned)
-						thesebattlers.append(spawned)
-					
-					else:
-						pass
-					x = 0
-					y = 0
-					for i in thesebattlers:
-						if y > 2:
-							y = 0
-							x += 1
-						i.basex = x * (size[0] - 150) + 50
-						i.basey = y * 75 + 325
-						y += 1
+						x = 0
+						y = 3
+						for i in battlers2:
+							if y > 2:
+								y = 0
+								x += 1
+							if not i.basex == x * (size[0] - 150) + 50 and not i.basey == y * 75 + 325:
+								spawned.basex = x * (size[0] - 150) + 50
+								spawned.basey = y * 75 + 325
+								break
+							y += 1
+					thesebattlers.append(spawned)
 				
 				if i == "createWorship":
 					spawned = Worshipper.buildNew()
 					if user in battlers1 and len(battlers1) < 3:
 						battlers1.append(spawned)
-						thesebattlers.append(spawned)
+						x = 0
+						y = 0
+						for i in battlers1:
+							if y > 2:
+								y = 0
+								x += 1
+							if not i.basex == x * (size[0] - 150) + 50 and not i.basey == y * 75 + 325:
+								spawned.basex = x * (size[0] - 150) + 50
+								spawned.basey = y * 75 + 325
+								break
+							y += 1
+						
+						
 					elif user in battlers2 and len(battlers2) < 3:
 						spawned.isAi = True
 						battlers2.append(spawned)
-						thesebattlers.append(spawned)
-					else:
-						pass
-					x = 0
-					y = 0
-					for i in thesebattlers:
-						if y > 2:
-							y = 0
-							x += 1
-						i.basex = x * (size[0] - 150) + 50
-						i.basey = y * 75 + 325
-						y += 1
+						x = 0
+						y = 3
+						for i in battlers2:
+							if y > 2:
+								y = 0
+								x += 1
+							if not i.basex == x * (size[0] - 150) + 50 and not i.basey == y * 75 + 325:
+								spawned.basex = x * (size[0] - 150) + 50
+								spawned.basey = y * 75 + 325
+								break
+							y += 1
+					thesebattlers.append(spawned)
 
 				if i == "createCubes":
 					spawned = Cubes.buildNew()
 					if user in battlers1 and len(battlers1) < 3:
 						battlers1.append(spawned)
-						thesebattlers.append(spawned)
+						x = 0
+						y = 0
+						for i in battlers1:
+							if y > 2:
+								y = 0
+								x += 1
+							if not i.basex == x * (size[0] - 150) + 50 and not i.basey == y * 75 + 325:
+								spawned.basex = x * (size[0] - 150) + 50
+								spawned.basey = y * 75 + 325
+								break
+							y += 1
+						
+						
 					elif user in battlers2 and len(battlers2) < 3:
 						spawned.isAi = True
 						battlers2.append(spawned)
-						thesebattlers.append(spawned)
-					
-					else:
-						pass
-					x = 0
-					y = 0
-					for i in thesebattlers:
-						if y > 2:
-							y = 0
-							x += 1
-						i.basex = x * (size[0] - 150) + 50
-						i.basey = y * 75 + 325
-						y += 1
+						x = 0
+						y = 3
+						for i in battlers2:
+							if y > 2:
+								y = 0
+								x += 1
+							if not i.basex == x * (size[0] - 150) + 50 and not i.basey == y * 75 + 325:
+								spawned.basex = x * (size[0] - 150) + 50
+								spawned.basey = y * 75 + 325
+								break
+							y += 1
+						
+					thesebattlers.append(spawned)
 				if i == "mindSpike":
 					mindSpiked.apply(target)
 

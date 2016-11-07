@@ -690,6 +690,12 @@ class Stage(object):
 		for i in self.battles:
 			i.battlers1 = self.playerbattlers
 		for i in self.battles:
+		
+			for j in i.battlers1:
+				if j.name == "???" or j == defs.NO or j == defs.NOT:
+					i.battlers1.remove(j)
+		
+					
 			if len(i.battlers1) == 1:
 				i.battlers1 = [defs.NO, i.battlers1[0], defs.NO]
 			if len(i.battlers1) == 2:
