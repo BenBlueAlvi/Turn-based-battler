@@ -45,6 +45,7 @@ noutheme = Music("supierior_nouledge")
 maptheme = Music("Raxxo_Bent_to_the_Core")
 durrictheme = Music("the_legend_durric")
 alphatheme = Music("Hiroari_Shoots_a_Strange_Bird_Till When_Remix")
+zaroltheme = Music("dBu_music_Suwa_Foughten_Field")
 
 def bubble_sort(items):
 	""" Implementation of bubble sort """

@@ -1022,7 +1022,7 @@ def CharSelect(mult):
 						mult = False
 						for i in player2.battlers:
 							i.isAi = True
-					theBattle = Battle(player1.battlers, player2.battlers, defultarena, NoDial, mult, defs.cattheme, "")
+					theBattle = Battle(player1.battlers, player2.battlers, defultarena, NoDial, mult, defs.zaroltheme, "")
 		
 					theBattle.battle()
 					player1.reBuild()
