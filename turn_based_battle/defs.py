@@ -677,31 +677,28 @@ class Skill(object):
 						x = 0
 						y = 0
 						for i in battlers1:
-							if y > 2:
-								y = 0
-								x += 1
+							
 							if not i.basex == x * (size[0] - 150) + 50 and not i.basey == y * 75 + 325:
 								spawned.basex = x * (size[0] - 150) + 50
 								spawned.basey = y * 75 + 325
 								break
 							y += 1
+						thesebattlers.append(spawned)
 						
 						
 					elif user in battlers2 and len(battlers2) < 3:
 						spawned.isAi = True
 						battlers2.append(spawned)
-						x = 0
-						y = 3
+						x = 1
+						y = 0
 						for i in battlers2:
-							if y > 2:
-								y = 0
-								x += 1
+							
 							if not i.basex == x * (size[0] - 150) + 50 and not i.basey == y * 75 + 325:
 								spawned.basex = x * (size[0] - 150) + 50
 								spawned.basey = y * 75 + 325
 								break
 							y += 1
-					thesebattlers.append(spawned)
+						thesebattlers.append(spawned)
 				
 				if i == "createWorship":
 					spawned = Worshipper.buildNew()
@@ -710,31 +707,29 @@ class Skill(object):
 						x = 0
 						y = 0
 						for i in battlers1:
-							if y > 2:
-								y = 0
-								x += 1
+							
 							if not i.basex == x * (size[0] - 150) + 50 and not i.basey == y * 75 + 325:
 								spawned.basex = x * (size[0] - 150) + 50
 								spawned.basey = y * 75 + 325
 								break
 							y += 1
+						thesebattlers.append(spawned)
 						
 						
 					elif user in battlers2 and len(battlers2) < 3:
-						spawned.isAi = True
+						if user.isAi:
+							spawned.isAi = True
 						battlers2.append(spawned)
-						x = 0
-						y = 3
+						x = 1
+						y = 0
 						for i in battlers2:
-							if y > 2:
-								y = 0
-								x += 1
+							
 							if not i.basex == x * (size[0] - 150) + 50 and not i.basey == y * 75 + 325:
 								spawned.basex = x * (size[0] - 150) + 50
 								spawned.basey = y * 75 + 325
 								break
 							y += 1
-					thesebattlers.append(spawned)
+						thesebattlers.append(spawned)
 
 				if i == "createCubes":
 					spawned = Cubes.buildNew()
@@ -756,12 +751,10 @@ class Skill(object):
 					elif user in battlers2 and len(battlers2) < 3:
 						spawned.isAi = True
 						battlers2.append(spawned)
-						x = 0
-						y = 3
+						x = 1
+						y = 0
 						for i in battlers2:
-							if y > 2:
-								y = 0
-								x += 1
+							
 							if not i.basex == x * (size[0] - 150) + 50 and not i.basey == y * 75 + 325:
 								spawned.basex = x * (size[0] - 150) + 50
 								spawned.basey = y * 75 + 325
