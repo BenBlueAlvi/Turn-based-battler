@@ -676,9 +676,10 @@ class Skill(object):
 						battlers1.append(spawned)
 						x = 0
 						y = 0
-						for i in battlers1:
+						
+						for j in battlers1:
 							
-							if not i.basex == x * (size[0] - 150) + 50 and not i.basey == y * 75 + 325:
+							if not j.basex == x * (size[0] - 150) + 50 and not j.basey == y * 75 + 325:
 								spawned.basex = x * (size[0] - 150) + 50
 								spawned.basey = y * 75 + 325
 								break
@@ -691,9 +692,9 @@ class Skill(object):
 						battlers2.append(spawned)
 						x = 1
 						y = 0
-						for i in battlers2:
+						for j in battlers2:
 							
-							if not i.basex == x * (size[0] - 150) + 50 and not i.basey == y * 75 + 325:
+							if not j.basex == x * (size[0] - 150) + 50 and not j.basey == y * 75 + 325:
 								spawned.basex = x * (size[0] - 150) + 50
 								spawned.basey = y * 75 + 325
 								break
@@ -701,14 +702,14 @@ class Skill(object):
 						thesebattlers.append(spawned)
 				
 				if i == "createWorship":
-					spawned = Worshipper.buildNew()
 					if user in battlers1 and len(battlers1) < 3:
+						spawned = Worshipper.buildNew()
 						battlers1.append(spawned)
 						x = 0
 						y = 0
-						for i in battlers1:
+						for j in battlers1:
 							
-							if not i.basex == x * (size[0] - 150) + 50 and not i.basey == y * 75 + 325:
+							if not j.basex == x * (size[0] - 150) + 50 and not j.basey == y * 75 + 325:
 								spawned.basex = x * (size[0] - 150) + 50
 								spawned.basey = y * 75 + 325
 								break
@@ -717,14 +718,15 @@ class Skill(object):
 						
 						
 					elif user in battlers2 and len(battlers2) < 3:
+						spawned = Worshipper.buildNew()
 						if user.isAi:
 							spawned.isAi = True
 						battlers2.append(spawned)
 						x = 1
 						y = 0
-						for i in battlers2:
+						for j in battlers2:
 							
-							if not i.basex == x * (size[0] - 150) + 50 and not i.basey == y * 75 + 325:
+							if not j.basex == x * (size[0] - 150) + 50 and not j.basey == y * 75 + 325:
 								spawned.basex = x * (size[0] - 150) + 50
 								spawned.basey = y * 75 + 325
 								break
@@ -737,11 +739,11 @@ class Skill(object):
 						battlers1.append(spawned)
 						x = 0
 						y = 0
-						for i in battlers1:
+						for j in battlers1:
 							if y > 2:
 								y = 0
 								x += 1
-							if not i.basex == x * (size[0] - 150) + 50 and not i.basey == y * 75 + 325:
+							if not j.basex == x * (size[0] - 150) + 50 and not j.basey == y * 75 + 325:
 								spawned.basex = x * (size[0] - 150) + 50
 								spawned.basey = y * 75 + 325
 								break
@@ -753,9 +755,9 @@ class Skill(object):
 						battlers2.append(spawned)
 						x = 1
 						y = 0
-						for i in battlers2:
+						for j in battlers2:
 							
-							if not i.basex == x * (size[0] - 150) + 50 and not i.basey == y * 75 + 325:
+							if not j.basex == x * (size[0] - 150) + 50 and not j.basey == y * 75 + 325:
 								spawned.basex = x * (size[0] - 150) + 50
 								spawned.basey = y * 75 + 325
 								break
