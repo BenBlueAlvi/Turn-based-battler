@@ -19,7 +19,7 @@ pygame.mixer.pre_init(22050, -16, 3, 8)
 pygame.mixer.init()
 
 
-
+mouseCoordDebug = False
 musicPlay = True
 
 
@@ -319,6 +319,8 @@ class Battle(object):
 								mouse_down = False
 								
 						mouse_pos = pygame.mouse.get_pos()
+						if mouseCoordDebug:
+							print mouse_pos
 						
 						#displaying and picking skills
 						if p.hp > 0 and not defs.passedOut in p.effects:

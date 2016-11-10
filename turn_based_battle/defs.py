@@ -704,6 +704,9 @@ class Skill(object):
 				if i == "createWorship":
 					if user in battlers1 and len(battlers1) < 3:
 						spawned = Worshipper.buildNew()
+						spawned.printBaseXYCoord()
+						if user.isAi:
+							spawned.isAi = True
 						battlers1.append(spawned)
 						x = 0
 						y = 0
@@ -715,10 +718,12 @@ class Skill(object):
 								break
 							y += 1
 						thesebattlers.append(spawned)
+						spawned.printBaseXYCoord()
 						
 						
 					elif user in battlers2 and len(battlers2) < 3:
 						spawned = Worshipper.buildNew()
+						spawned.printBaseXYCoord()
 						if user.isAi:
 							spawned.isAi = True
 						battlers2.append(spawned)
@@ -732,6 +737,8 @@ class Skill(object):
 								break
 							y += 1
 						thesebattlers.append(spawned)
+						spawned.printBaseXYCoord()
+					
 
 				if i == "createCubes":
 					spawned = Cubes.buildNew()
@@ -1062,6 +1069,12 @@ class Char(object):
 		self.equipCrit = 0
 		self.equipDodgeChance = 0
 		self.ableSkills = []
+		
+	def printBaseXYCoord(self):
+		print str(self.basex) + ", " + str(self.basey)
+		
+#	def toString(self):
+# 		return ("Name: " + str(self.name) + "\nHP: " + str(self.hp) + "\nMax HP: " + str(self.maxhp) + "\nStrength: " + str(self.str) + "\n"
 
 
 	def updateEquips(self):
