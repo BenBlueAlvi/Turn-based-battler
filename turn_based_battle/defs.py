@@ -701,7 +701,7 @@ class Skill(object):
 							y += 1
 						thesebattlers.append(spawned)
 				
-				if i == "createWorship":
+				if i == "createWorship": #the problem is inside of this function, see below
 					if user in battlers1 and len(battlers1) < 3:
 						spawned = Worshipper.buildNew()
 						spawned.printBaseXYCoord()
@@ -737,7 +737,7 @@ class Skill(object):
 								break
 							y += 1
 						thesebattlers.append(spawned)
-						spawned.printBaseXYCoord()
+						spawned.printBaseXYCoord() #when this is called it outputs (1150, 475), the top-left corner of the bottom character on the right side
 					
 
 				if i == "createCubes":
