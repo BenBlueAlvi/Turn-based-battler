@@ -1600,7 +1600,7 @@ class Battle(object):
 							gScreen.blit(mouse_pointer,mouse_pos)
 						for i in thesebattlers:
 							if i.hp <= 0:
-								i.effects.append(	death)
+								i.effects.append(death)
 								
 						if thebattler == len(thesebattlers):
 							pygame.draw.rect(gScreen, BLACK, [0,size[1] - 150,size[0],150])

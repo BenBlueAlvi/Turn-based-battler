@@ -78,24 +78,27 @@ def PreDialogeRun(battle, battlers1, battlers2, thesebattlers):
 			for event in pygame.event.get(): 
 				if event.type == pygame.QUIT: 
 					running = False 
-			print "Talking!"
+				if event.type == pygame.KEYDOWN:
+					print "skip"
+					talking = 120 * len(textc) +1
+			
 			defs.gScreen.fill(WHITE)
 			defs.gScreen.blit(battle.arena.img, [0,0])
 			pygame.draw.rect(defs.gScreen, BLACK, [0,defs.size[1] - 150,defs.size[0],150])
 			talking += 1
 			if thesebattlers[speaker] in battlers1:
-				
+				# Dialog bubble --> pygame.draw.rect(defs.gScreen, WHITE, [thesebattlers[speaker].basex + 55, thesebattlers[speaker].basey - 10, font.size(textc)[0], font.size(textc)[1]])
 				defs.gScreen.blit(textf, [thesebattlers[speaker].basex + 55, thesebattlers[speaker].basey - 10])
-			else:
 				
+			else:
+				pygame.draw.rect(defs.gScreen, BLACK, [0,defs.size[1] - 150,defs.size[0],150])
 				defs.gScreen.blit(textf, [thesebattlers[speaker].basex - font.size(textc)[0], thesebattlers[speaker].basey - 10])
 			
 			for k in thesebattlers:
 				defs.gScreen.blit(k.image,[k.basex, k.basey])	
 			
-			for event in pygame.event.get():
-				if event.type == pygame.KEYDOWN:
-					talking = 120 * len(textc) +1
+			
+				
 
 			pygame.display.flip()
 			clock.tick(60)
@@ -174,12 +177,11 @@ def LossDialogeRun(battle, battlers1, battlers2, thesebattlers):
 			print "Talking!"
 			defs.gScreen.fill(WHITE)
 			defs.gScreen.blit(battle.arena.img, [0,0])
-			pygame.draw.rect(defs.gScreen, BLACK, [0,defs.size[1] - 150,defs.size[0],150])
+			
 			talking += 1
 			if thesebattlers[speaker] in battlers1:
 				
 				defs.gScreen.blit(textf, [thesebattlers[speaker].basex + 55, thesebattlers[speaker].basey - 10])
-			else:
 				
 				defs.gScreen.blit(textf, [thesebattlers[speaker].basex - font.size(textc)[0], thesebattlers[speaker].basey - 10])
 			
