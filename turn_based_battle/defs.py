@@ -1696,7 +1696,11 @@ class Battle(object):
 				clock.tick(60)
 			
 		#-------------------------------POST BATTLE----------------------------
-		speaker = 0
+		if len(self.battlers1) == 0:
+			dialog.LossDialogeRun(self, origbattlers1, origbattlers2, thesebattlers)
+		if len(self.battlers2) == 0:
+			dialog.WinDialogeRun(self, origbattlers1, origbattlers2, thesebattlers)
+		'''speaker = 0
 		if len(self.battlers1) == 0:
 			for i in self.dialog.lossbattle:
 				textc, text = [], []
@@ -1762,7 +1766,7 @@ class Battle(object):
 						if event.type == pygame.KEYDOWN:
 							talking = 120 * len(textc) +1
 					pygame.display.flip()
-					clock.tick(60)
+					clock.tick(60)'''
 					
 					
 		

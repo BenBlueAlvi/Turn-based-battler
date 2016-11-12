@@ -110,7 +110,7 @@ class SpreetSheet(object):
 		image.blit(self.sheet, (0, 0), rect)
 		return image
 
-		
+testAnim = SpreetSheet("Assets/animations/testAnimation.png", 1, 4)
 
 turn = 0
 
@@ -165,6 +165,7 @@ while not done:
 	defs.gScreen.blit(font.render("Story",True,BLACK), [60,35])
 	pygame.draw.rect(gScreen, BLUE, [110,50,16,16])
 	defs.gScreen.blit(font.render("Ai testing",True,BLACK), [110,35])
+	testAnim.animation.blit(gScreen, [500, 500])
 	if defs.hitDetect(mouse_pos, mouse_pos, [10,50], [26, 66]):
 		if mouse_down:
 			mult = True
