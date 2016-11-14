@@ -285,8 +285,8 @@ class Effect(object):
 			target.misc += 1
 			print "planned: ", target.misc
 			target.crit += 2
-			target.int = target.int + (target.int / 20)
-			target.str = target.str + (target.str / 20)
+			target.int = target.int + (target.int / 5)
+			target.str = target.str + (target.str / 5)
 			
 		if self.effect == "dodgeUp":
 			target.dodgeChance += 25
@@ -350,8 +350,8 @@ class Effect(object):
 		if self.effect == "planAhead":
 			for i in range(target.misc):
 				target.crit = target.crit - 2
-				target.int = target.int - (target.int / 20)
-				target.str = target.str - (target.str / 20)
+				target.int = target.int - (target.int / 5)
+				target.str = target.str - (target.str / 5)
 			target.misc = 0
 			printb(target.name + " is no longer scheming!")
 		
