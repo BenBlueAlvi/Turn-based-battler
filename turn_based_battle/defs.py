@@ -875,6 +875,7 @@ shardSwarm = Skill("Shard Swarm", chaos, False, 20, 30, 4, 0,90, 10, [], [""])
 shardSwarm.desc = "Summons a swarm of sharp energy shards to slice up your foes."
 magicMute = Skill("Magic Mute", chaos, False, 0, 0, -2, 0,100, 5, [1,magicmute], ["trueHit"])
 magicMute.desc = "Prevents opponents from gaining power."
+
 powerUp = Skill("Power Up", chaos, False, 0, 0, 10, 0,100, 2, [], ["powerup", "trueHit"])
 powerUp.desc = "Builds power by absorbing choatic energy."
 
@@ -927,6 +928,7 @@ stab = Skill("Stab", fighting, True, 5, 7, 2, 0,100, 0, [], [""])
 stab.desc = "Stab Stab Stab!"
 confuse = Skill("Confuse", physic, False, 0, 0, 10, 0,80, 2, [1,confusion], [""])
 confuse.desc = "Confuse your foe to lower their damage and defenses."
+
 planAhead = Skill("Plan Ahead", tech, False, 0, 0, -10, 0,100, 0, [], ["atkUp", "trueHit"])
 planAhead.desc = "Focus on planning your next move, immporving its weak points."
 erase =Skill("Erase", unknown, False, 0, 0, -10, 0,100, 5, [], ["division"])
@@ -967,6 +969,7 @@ blink = Skill("Blink", physic, True, 5, 5, 1, 0,100, 0, [], ["mark"])
 blink.desc = "Blink Blink"
 creepyAtk = Skill("Creep Attack", physic, False, 5, 5, 1, 0,90, 0, [], ["creepyAtk"])
 creepyAtk.desc = "Use all the knowledge you have about your enemy to find their weakest point."
+
 inhale = Skill("Inhale", air, False, 0, 0, 3, 0,100, 0, [], ["defend", "heal", "trueHit"])
 inhale.desc = "Inhale to absorb some healthy particles, healing yourself and defending."
 observe = Skill("Observe", unknown, False, 0, 0, 3, 2, 100, 1, [], ["mark", "mark", "mark", "mark", "mark", "mark", "nodam", "trueHit"])
@@ -1041,6 +1044,102 @@ mindSpike.desc = "Make them pay for hurting you or your friends."
 
 instantkill = Skill("Insta kill", unknown, False, 99999, 9999, 99, 15, 100, 0, [], ["trueHit"])
 instantkill.desc = "BAM! You dead now."
+
+allSkills = [instantkill, mindSpike, rejuvinate, windSlash, eldritchAppuratus, daggerStorm, mindDisk, never, colorfulBullet, neverThere, mindReading, antiPhysic, powerStrike, takeBlow, againstOdds, chaosVortex, astralVortex, earthenVortex, chains, voidSnap, otherStage, moonStage, earthStage, powerTransfer, lifeTransfer, fusion, fission, blast, rebuke, eggon, sneeze, exhale, inhale, observe, creepyAtk, blink, stare, psionicRadiance, recover, obsidianBlast, revenge, cleave, bladeFlash, wellspring, energiBeam, zap, mend, erase, planAhead, confuse, stab, bludgeon, shroud, lifePact, meditate, chaosBeam, forceShield, setFire, chaosBolt, consumeFlesh, rip, dodge, kick, bite, slash, tangle, powerDrain, block, meteorStorm, vampire, destroy, powerUp, magicMute, shardSwarm, nuke, scar, defend, axeLegs, earthShot, airBlast, waterSpout, fireBall, basicAtk, nothing]
+allSkillScrolls = []
+for i in allSkills:
+	scroll = SkillScroll(i))
+	allSkillScrolls.append(scroll.buildNew())
+
+
+class SkillScroll(object):
+	def __init__(self, skill):
+		self.skill = skill
+	def apply(self, char, player):
+		
+		while running:
+			for event in pygame.event.get(): 
+				if event.type == pygame.QUIT: 
+					running = False
+				elif event.type == pygame.MOUSEBUTTONDOWN:
+					mouse_down = True
+							
+				elif event.type == pygame.MOUSEBUTTONUP:
+					mouse_down = False
+								
+			mouse_pos = pygame.mouse.get_pos()
+			x = 0
+			y = 0
+			for i in p.skills:
+							
+				if x > 1:
+					x = 0
+					y += 1
+								
+				thisxcord = 330 + x*175
+				thisycord = y*30 + 370 + size[1] - 500
+				if hitDetect(mouse_pos, mouse_pos,[thisxcord, thisycord], [thisxcord + 165, thisycord + 25]):
+					if x == 0 and y ==0:
+						dispskill = p.skills[0]
+						if mouse_down:
+							char.skills[0] = self.skill
+							running = False
+						
+					elif x == 1 and y == 0:
+						dispskill = p.skills[1]
+						if mouse_down:
+							char.skills[1] = self.skill
+							running = False
+					elif x == 0 and y == 1:
+						dispskill = p.skills[2]
+						if mouse_down:
+							char.skills[2] = self.skill
+							running = False
+					elif x == 1 and y == 1:
+						dispskill = p.skills[3]
+						if mouse_down:
+							char.skills[3] = self.skill
+							running = False
+					elif x == 0 and y == 2:
+						dispskill = p.skills[4]
+						if mouse_down:
+							char.skills[4] = self.skill
+							running = False
+					elif x == 1 and y == 2:
+						dispskill = p.skills[5]
+						if mouse_down:
+							char.skills[5] = self.skill
+							running = False
+					elif x == 0 and y == 3:
+						dispskill = p.skills[6]
+						if mouse_down:
+							char.skills[6] = self.skill
+							running = False
+					elif x == 1 and y == 3:
+						dispskill = p.skills[7]
+						if mouse_down:
+							char.skills[7] = self.skill
+							running = False
+					else:
+						dispskill = nothing
+					
+				
+				x += 1
+			
+			
+			pygame.draw.rect(gScreen, GREY, [0,0,size[0],size[1]])
+		
+			dispSkills(char)
+			gScreen.blit(font.render(self.skill.name + "   Cost: " + str(self.skill.cost), True, WHITE), [0, 0])
+			gScreen.blit(font.render(self.skill.desc, True, WHITE), [0, 15])
+			gScreen.blit(font.render(dispskill.name + "   Cost: " + str(dispskill.cost), True, WHITE), [700, size[1] - 140])
+			gScreen.blit(font.render(dispskill.desc, True, WHITE), [700, size[1] - 125])
+			
+	def buildNew(self):
+		newscroll = SkillScroll(self.skill)
+		return newscroll
+		
+			
 
 
 class Equip(object):
@@ -1695,7 +1794,8 @@ class Battle(object):
 						for b in origbattlers2:
 							battler.xp += b.xp
 					for b in origbattlers1:
-						if b.xp > b.lvl * 50:
+						#xp curve equaation:
+						if b.xp >= 50 * 2 ** b.lvl:
 							b.xp = 0
 							b.lvl += 1
 							printb(b.name + " leveled up!")
@@ -2169,22 +2269,4 @@ def CharSelect(mult):
 
 		pygame.display.flip()	
 		clock.tick(60)
-	
-	
-
-
-
-
-
-
-
-
-
-
-
-
-		
-	
-
-
 
