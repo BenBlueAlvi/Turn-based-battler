@@ -234,6 +234,10 @@ class Effect(object):
 		self.damage = 0
 		
 	def apply(self, target):
+		if self.effect == "bleed":
+			printb(target.name + " is bleeding out!")
+			target.effects.append(self.buildNew())
+			
 		if self.effect == "defend":
 			target.con += target.basecon * target.basecon
 			printb(target.name + " is defending!")
@@ -308,6 +312,9 @@ class Effect(object):
 			
 	def end(self, target):
 		target.effects.remove(self)
+		if self.effect == "bleed":
+			printb(target.name + " is no longer bleeding!")
+		
 		
 		if self.effect == "defend":
 			printb(target.name + " is no longer defending!")
@@ -613,9 +620,7 @@ class Skill(object):
 				if not len(self.effects) == 0:
 					self.effects[1].apply(target)
 					
-			if not len(self.effects) == 0:
-				if random.randint(1,self.effects[0]) == 1:
-					self.effects[1].apply(target)
+			
 					
 			if target.ability == "Creepus":
 				user.marks += 1
@@ -884,6 +889,10 @@ class Skill(object):
 					printb(user.name + " is mind spiked!")
 					printb("The mind spike dealt " + str(damage) + " back to " + user.name)
 					user.hp = user.hp * usermultiplier - damage
+					
+				if not len(self.effects) == 0:
+					if random.randint(1,self.effects[0]) == 1:
+						self.effects[1].apply(target)
 					
 				target.hp = target.hp * targetmultiplier - damage
 				
