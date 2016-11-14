@@ -68,7 +68,8 @@ def PreDialogeRun(battle, battlers1, battlers2, thesebattlers):
 			if i == 0:
 				textc = "UHHHHH SOMETHING BROKE"
 				speaker = 1
-				
+			else:
+				break
 		
 		talking = 0
 		textf = font.render(textc, True, BLACK)
