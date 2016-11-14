@@ -1047,9 +1047,7 @@ instantkill.desc = "BAM! You dead now."
 
 allSkills = [instantkill, mindSpike, rejuvinate, windSlash, eldritchAppuratus, daggerStorm, mindDisk, never, colorfulBullet, neverThere, mindReading, antiPhysic, powerStrike, takeBlow, againstOdds, chaosVortex, astralVortex, earthenVortex, chains, voidSnap, otherStage, moonStage, earthStage, powerTransfer, lifeTransfer, fusion, fission, blast, rebuke, eggon, sneeze, exhale, inhale, observe, creepyAtk, blink, stare, psionicRadiance, recover, obsidianBlast, revenge, cleave, bladeFlash, wellspring, energiBeam, zap, mend, erase, planAhead, confuse, stab, bludgeon, shroud, lifePact, meditate, chaosBeam, forceShield, setFire, chaosBolt, consumeFlesh, rip, dodge, kick, bite, slash, tangle, powerDrain, block, meteorStorm, vampire, destroy, powerUp, magicMute, shardSwarm, nuke, scar, defend, axeLegs, earthShot, airBlast, waterSpout, fireBall, basicAtk, nothing]
 allSkillScrolls = []
-for i in allSkills:
-	scroll = SkillScroll(i))
-	allSkillScrolls.append(scroll.buildNew())
+
 
 
 class SkillScroll(object):
@@ -1139,6 +1137,10 @@ class SkillScroll(object):
 	def buildNew(self):
 		newscroll = SkillScroll(self.skill)
 		return newscroll
+		
+for i in allSkills:
+	scroll = SkillScroll(i)
+	allSkillScrolls.append(scroll.buildNew())
 		
 def ScrollSelect(player, char):
 	while running:
@@ -1273,20 +1275,20 @@ class Char(object):
 		
 		
 	def buildNew(self):
-		newchar = Char(self.name, self.types, self.hp, self.str, self.int, self.con, self.mag, self.agil, self.crit, self.dodgeChance, self.lvl, self.xp, self.skills, self.ability, pygame.transform.scale(pygame.image.load(self.image), [50, 50]), self.cords, pygame.transform.scale(pygame.image.load(self.image), [42, 42]))
+		newchar = Char(self.name, self.types, self.hp, self.str, self.int, self.con, self.mag, self.agil, self.crit, self.dodgeChance, self.skills, self.ability, pygame.transform.scale(pygame.image.load(self.image), [50, 50]), self.cords, pygame.transform.scale(pygame.image.load(self.image), [42, 42]))
 		newchar.img = pygame.image.load(self.image)
 		newchar.ableSkills = self.ableSkills
 		newchar.target = [NOT]
 		return newchar
 		
 	def reBuild(self):
-		newchar = Char(self.name, self.types, self.hp, self.str, self.int, self.con, self.mag, self.agil, self.crit, self.dodgeChance, self.lvl, self.xp, self.skills, self.ability, self.image, self.cords, self.menuImg)
+		newchar = Char(self.name, self.types, self.hp, self.str, self.int, self.con, self.mag, self.agil, self.crit, self.dodgeChance, self.skills, self.ability, self.image, self.cords, self.menuImg)
 		newchar.img = self.image
 		newchar.ableSkills = self.ableSkills
 		return newchar
 	
 		
-NOT = Char("???", [unknown], 0, 0, 0, 0, 0, 0, [nothing], "", "Assets/battlers/locked.png", [-1,0], "")
+NOT = Char("???", [unknown], 0, 0, 0, 0, 0, 0, 0, 0, [nothing], "", "Assets/battlers/locked.png", [-1,0], "")
 NOT.ableSkills = [nothing]
 
 Mage = Char("Meigis", [normal, chaos], 500, 5, 15, 5, 15, 4, 0, 10, [basicAtk, fireBall, waterSpout, airBlast, earthShot, defend], "", "Assets/battlers/Mage.png", [5,0], "")

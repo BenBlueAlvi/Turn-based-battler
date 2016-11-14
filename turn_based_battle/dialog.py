@@ -12,7 +12,7 @@ clock = pygame.time.Clock()
 def PreDialogeRun(battle, battlers1, battlers2, thesebattlers):
 	running = True
 	print "Dialog go!"
-	for i in range(10):
+	for i in range(100):
 		print "dialog loop", i
 		if battle.name == "Maice Fight":
 			print "Maice Fight"
