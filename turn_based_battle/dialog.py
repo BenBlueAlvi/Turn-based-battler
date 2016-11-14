@@ -45,7 +45,6 @@ def prints(thesebattlers, battle, textc, speaker):
 
 def PreDialogeRun(battle, battlers1, battlers2, thesebattlers):
 	global running
-	print "Dialog go!"
 	for i in range(100):
 		print "dialog loop", i
 		if battle.name == "Maice Fight":
@@ -100,7 +99,6 @@ def PreDialogeRun(battle, battlers1, battlers2, thesebattlers):
 			break
 		
 		prints(thesebattlers, battle, textc, speaker)
-
 		if not running:
 			break
 #---------------------------------------------------------------			
@@ -159,7 +157,6 @@ def LossDialogeRun(battle, battlers1, battlers2, thesebattlers):
 		else:
 			print "Broken"
 			break
-		
 		
 		prints(thesebattlers, battle, textc, speaker)
 
@@ -223,7 +220,7 @@ def WinDialogeRun(battle, battlers1, battlers2, thesebattlers):
 		else:
 			print "Broken"
 			break
-				
+			
 		prints(thesebattlers, battle, textc, speaker)
 
 		if not running:
