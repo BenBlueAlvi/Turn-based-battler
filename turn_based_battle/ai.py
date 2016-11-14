@@ -182,7 +182,7 @@ def runAI(player, battlersL, battlersR):
 				if rand == 0:
 					player.target = [potdam[0]]
 				else:
-					player.target = [battlersL[random.randint(0, len(battlersL))]]
+					player.target = [battlersL[random.randint(0, len(battlersL) - 1)]]
 			else:
 				
 			
@@ -190,7 +190,7 @@ def runAI(player, battlersL, battlersR):
 				if rand == 0:
 					player.target = [potdam[0]]
 				else:
-					player.target = [battlersL[random.randint(0, len(battlersL))]]
+					player.target = [battlersL[random.randint(0, len(battlersL) - 1)]]
 				
 		if player.savingfor == "rejuvinate":
 			if player.power >= player.skills[5].cost:

@@ -234,6 +234,10 @@ class Effect(object):
 		self.damage = 0
 		
 	def apply(self, target):
+		if self.effect == "burn":
+			printb(target.name + " is on fire!")
+			target.effects.append(self.buildNew())
+			
 		if self.effect == "bleed":
 			printb(target.name + " is bleeding out!")
 			target.effects.append(self.buildNew())
@@ -314,6 +318,9 @@ class Effect(object):
 		target.effects.remove(self)
 		if self.effect == "bleed":
 			printb(target.name + " is no longer bleeding!")
+		
+		if self.effect == "burn":
+			printb(target.name + " is no longer on fire!")
 		
 		
 		if self.effect == "defend":
@@ -719,7 +726,7 @@ class Skill(object):
 					if critical:
 						target.hp += math.floor(user.hp/5)
 				if i == "powerTransfer":
-					transfered = 0
+					transfered = user.power
 					if critical:
 						transfered += 1
 					if magicMute in target.effects:
