@@ -169,6 +169,61 @@ unknown = Type("Unknown", ["none"], ["none"])
 chaos = Type("Chaos", ["Tech"], ["Physic"])
 minion = Type("Minion", ["none"], ["none"])
 
+
+		
+def ScrollSelect(player, char):
+	while running:
+		for event in pygame.event.get(): 
+			if event.type == pygame.QUIT: 
+				running = False
+			elif event.type == pygame.MOUSEBUTTONDOWN:
+				mouse_down = True
+						
+			elif event.type == pygame.MOUSEBUTTONUP:
+				mouse_down = False
+	
+		mouse_pos = pygame.mouse.get_pos()
+		
+		pygame.draw.rect(gScreen, GRAY, [0,0, size[0], size[1]])
+		x = 0
+		y = 0
+
+		for i in player.scrolls:
+			
+			if x > 1:
+				x = 0
+				y += 1
+			
+			gScreen.blit(i.skill.text, [11 + x*175, y*30 + 10])
+			gScreen.blit(i.skill.type.img, [5 + x*175, y*30 + 5])
+			i.cords = [5 + x*175, y*30 + 5]
+			
+			
+			
+			x += 1
+		for i in player.scrolls:
+			if hitDetect(mouse_pos, mouse_pos, i.cords, [i.cords[0] + 165, i.cords[1] + 25]):
+				if mouse_down:
+					i.apply(char, player)
+					mouse_down = False
+	
+class Equip(object):
+	def __init__(self, name, str, int, con, mag, agil, crit, dodgeChance, lvl, slot):
+		self.name = name
+		self.str = str
+		self.int = int
+		self.con = con
+		self.mag = mag
+		self.agil = agil
+		self.crit = crit
+		self.dodgeChance = dodgeChance
+		self.lvl = lvl
+		self.slot = slot
+		
+emptySlot = Equip("Nothing", 0, 0, 0, 0, 0, 0, 0, 0, "")
+
+
+
 				
 class Effect(object):
 	def __init__(self, effect):
@@ -1217,150 +1272,6 @@ player1 = Player("1")
 player2 = Player("2")
 
 
-class SkillScroll(object):
-	def __init__(self, skill):
-		self.skill = skill
-		self.cords = []
-	def apply(self, char, player):
-		
-		while running:
-			for event in pygame.event.get(): 
-				if event.type == pygame.QUIT: 
-					running = False
-				elif event.type == pygame.MOUSEBUTTONDOWN:
-					mouse_down = True
-							
-				elif event.type == pygame.MOUSEBUTTONUP:
-					mouse_down = False
-								
-			mouse_pos = pygame.mouse.get_pos()
-			x = 0
-			y = 0
-			for i in p.skills:
-							
-				if x > 1:
-					x = 0
-					y += 1
-								
-				thisxcord = 330 + x*175
-				thisycord = y*30 + 370 + size[1] - 500
-				if hitDetect(mouse_pos, mouse_pos,[thisxcord, thisycord], [thisxcord + 165, thisycord + 25]):
-					if x == 0 and y ==0:
-						dispskill = p.skills[0]
-						if mouse_down:
-							char.skills[0] = self.skill
-							running = False
-						
-					elif x == 1 and y == 0:
-						dispskill = p.skills[1]
-						if mouse_down:
-							char.skills[1] = self.skill
-							running = False
-					elif x == 0 and y == 1:
-						dispskill = p.skills[2]
-						if mouse_down:
-							char.skills[2] = self.skill
-							running = False
-					elif x == 1 and y == 1:
-						dispskill = p.skills[3]
-						if mouse_down:
-							char.skills[3] = self.skill
-							running = False
-					elif x == 0 and y == 2:
-						dispskill = p.skills[4]
-						if mouse_down:
-							char.skills[4] = self.skill
-							running = False
-					elif x == 1 and y == 2:
-						dispskill = p.skills[5]
-						if mouse_down:
-							char.skills[5] = self.skill
-							running = False
-					elif x == 0 and y == 3:
-						dispskill = p.skills[6]
-						if mouse_down:
-							char.skills[6] = self.skill
-							running = False
-					elif x == 1 and y == 3:
-						dispskill = p.skills[7]
-						if mouse_down:
-							char.skills[7] = self.skill
-							running = False
-					else:
-						dispskill = nothing
-					
-				
-				x += 1
-			
-			
-			pygame.draw.rect(gScreen, GREY, [0,0,size[0],size[1]])
-		
-			dispSkills(char)
-			gScreen.blit(font.render(self.skill.name + "   Cost: " + str(self.skill.cost), True, WHITE), [0, 0])
-			gScreen.blit(font.render(self.skill.desc, True, WHITE), [0, 15])
-			gScreen.blit(font.render(dispskill.name + "   Cost: " + str(dispskill.cost), True, WHITE), [700, size[1] - 140])
-			gScreen.blit(font.render(dispskill.desc, True, WHITE), [700, size[1] - 125])
-			
-	def buildNew(self):
-		newscroll = SkillScroll(self.skill)
-		return newscroll
-		
-for i in allSkills:
-	scroll = SkillScroll(i)
-	allSkillScrolls.append(scroll.buildNew())
-		
-def ScrollSelect(player, char):
-	while running:
-		for event in pygame.event.get(): 
-			if event.type == pygame.QUIT: 
-				running = False
-			elif event.type == pygame.MOUSEBUTTONDOWN:
-				mouse_down = True
-						
-			elif event.type == pygame.MOUSEBUTTONUP:
-				mouse_down = False
-	
-		mouse_pos = pygame.mouse.get_pos()
-		
-		pygame.draw.rect(gScreen, GRAY, [0,0, size[0], size[1]])
-		x = 0
-		y = 0
-
-		for i in player.scrolls:
-			
-			if x > 1:
-				x = 0
-				y += 1
-			
-			gScreen.blit(i.skill.text, [11 + x*175, y*30 + 10])
-			gScreen.blit(i.skill.type.img, [5 + x*175, y*30 + 5])
-			i.cords = [5 + x*175, y*30 + 5]
-			
-			
-			
-			x += 1
-		for i in player.scrolls:
-			if hitDetect(mouse_pos, mouse_pos, i.cords, [i.cords[0] + 165, i.cords[1] + 25]):
-				if mouse_down:
-					i.apply(char, player)
-					mouse_down = False
-	
-class Equip(object):
-	def __init__(self, name, str, int, con, mag, agil, crit, dodgeChance, lvl, slot):
-		self.name = name
-		self.str = str
-		self.int = int
-		self.con = con
-		self.mag = mag
-		self.agil = agil
-		self.crit = crit
-		self.dodgeChance = dodgeChance
-		self.lvl = lvl
-		self.slot = slot
-		
-emptySlot = Equip("Nothing", 0, 0, 0, 0, 0, 0, 0, 0, "")
-
-
 class Arena(object):
 	def __init__(self, name, effect, img):
 		self.name = name
@@ -1954,6 +1865,97 @@ class World(object):
 
 theWorld = World([st1, st2, st3])
 
+class SkillScroll(object):
+	def __init__(self, skill):
+		self.skill = skill
+		self.cords = []
+	def apply(self, char, player):
+		
+		while running:
+			for event in pygame.event.get(): 
+				if event.type == pygame.QUIT: 
+					running = False
+				elif event.type == pygame.MOUSEBUTTONDOWN:
+					mouse_down = True
+							
+				elif event.type == pygame.MOUSEBUTTONUP:
+					mouse_down = False
+								
+			mouse_pos = pygame.mouse.get_pos()
+			x = 0
+			y = 0
+			for i in p.skills:
+							
+				if x > 1:
+					x = 0
+					y += 1
+								
+				thisxcord = 330 + x*175
+				thisycord = y*30 + 370 + size[1] - 500
+				if hitDetect(mouse_pos, mouse_pos,[thisxcord, thisycord], [thisxcord + 165, thisycord + 25]):
+					if x == 0 and y ==0:
+						dispskill = p.skills[0]
+						if mouse_down:
+							char.skills[0] = self.skill
+							running = False
+						
+					elif x == 1 and y == 0:
+						dispskill = p.skills[1]
+						if mouse_down:
+							char.skills[1] = self.skill
+							running = False
+					elif x == 0 and y == 1:
+						dispskill = p.skills[2]
+						if mouse_down:
+							char.skills[2] = self.skill
+							running = False
+					elif x == 1 and y == 1:
+						dispskill = p.skills[3]
+						if mouse_down:
+							char.skills[3] = self.skill
+							running = False
+					elif x == 0 and y == 2:
+						dispskill = p.skills[4]
+						if mouse_down:
+							char.skills[4] = self.skill
+							running = False
+					elif x == 1 and y == 2:
+						dispskill = p.skills[5]
+						if mouse_down:
+							char.skills[5] = self.skill
+							running = False
+					elif x == 0 and y == 3:
+						dispskill = p.skills[6]
+						if mouse_down:
+							char.skills[6] = self.skill
+							running = False
+					elif x == 1 and y == 3:
+						dispskill = p.skills[7]
+						if mouse_down:
+							char.skills[7] = self.skill
+							running = False
+					else:
+						dispskill = nothing
+					
+				
+				x += 1
+			
+			
+			pygame.draw.rect(gScreen, GREY, [0,0,size[0],size[1]])
+		
+			dispSkills(char)
+			gScreen.blit(font.render(self.skill.name + "   Cost: " + str(self.skill.cost), True, WHITE), [0, 0])
+			gScreen.blit(font.render(self.skill.desc, True, WHITE), [0, 15])
+			gScreen.blit(font.render(dispskill.name + "   Cost: " + str(dispskill.cost), True, WHITE), [700, size[1] - 140])
+			gScreen.blit(font.render(dispskill.desc, True, WHITE), [700, size[1] - 125])
+			
+	def buildNew(self):
+		newscroll = SkillScroll(self.skill)
+		return newscroll
+		
+for i in allSkills:
+	scroll = SkillScroll(i)
+	allSkillScrolls.append(scroll.buildNew())
 
 def CharSelect(mult):
 	global aitest
