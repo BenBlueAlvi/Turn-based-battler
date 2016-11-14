@@ -11,7 +11,6 @@ text = font.render("hi",True,BLACK)
 clock = pygame.time.Clock()
 def PreDialogeRun(battle, battlers1, battlers2, thesebattlers):
 	running = True
-	print "Dialog go!"
 	for i in range(100):
 		print "dialog loop", i
 		if battle.name == "Maice Fight":
@@ -73,13 +72,14 @@ def PreDialogeRun(battle, battlers1, battlers2, thesebattlers):
 		
 		talking = 0
 		textf = font.render(textc, True, BLACK)
-		while talking <= 120 * len(textc) and running:
+		while talking <= 120 and running:
 			for event in pygame.event.get(): 
 				if event.type == pygame.QUIT: 
 					running = False 
 				if event.type == pygame.KEYDOWN:
 					print "skip"
-					talking = 120 * len(textc) +1
+					talking = 120+1
+					running = False
 			
 			defs.gScreen.fill(WHITE)
 			defs.gScreen.blit(battle.arena.img, [0,0])
@@ -165,11 +165,16 @@ def LossDialogeRun(battle, battlers1, battlers2, thesebattlers):
 		
 		talking = 0
 		textf = font.render(textc, True, BLACK)
-		while talking <= 120 * len(textc) and running:
+		while talking <= 120 and running:
 			for event in pygame.event.get(): 
 				if event.type == pygame.QUIT: 
 					running = False 
-			print "Talking!"
+				if event.type == pygame.KEYDOWN:
+					print "skip"
+					talking = 120+1
+					running = False
+			
+		
 			defs.gScreen.fill(WHITE)
 			defs.gScreen.blit(battle.arena.img, [0,0])
 			
@@ -259,11 +264,16 @@ def WinDialogeRun(battle, battlers1, battlers2, thesebattlers):
 		
 		talking = 0
 		textf = font.render(textc, True, BLACK)
-		while talking <= 120 * len(textc) and running:
+		while talking <= 120 and running:
 			for event in pygame.event.get(): 
 				if event.type == pygame.QUIT: 
 					running = False 
-			print "Talking!"
+				if event.type == pygame.KEYDOWN:
+					print "skip"
+					talking = 120+1
+					running = False
+			
+		
 			defs.gScreen.fill(WHITE)
 			defs.gScreen.blit(battle.arena.img, [0,0])
 			pygame.draw.rect(defs.gScreen, BLACK, [0,defs.size[1] - 150,defs.size[0],150])

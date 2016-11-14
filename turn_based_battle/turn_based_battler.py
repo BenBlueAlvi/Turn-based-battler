@@ -97,7 +97,7 @@ while not done:
 	if defs.hitDetect(mouse_pos, mouse_pos, [10,50], [26, 66]):
 		if mouse_down:
 			mult = True
-			defs.CharSelect(mult)
+			defs.CharSelect(aitest, mult)
 			mouse_down = False
 	if defs.hitDetect(mouse_pos, mouse_pos, [60,50], [60 + 16, 66]):
 		if mouse_down:
@@ -109,7 +109,7 @@ while not done:
 		if mouse_down:
 			mult = True
 			aitest = True
-			defs.CharSelect(mult)
+			defs.CharSelect(aitest, mult)
 			mouse_down = False
 	
 	if mouse_down:

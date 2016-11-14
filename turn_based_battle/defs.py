@@ -1834,7 +1834,7 @@ class World(object):
 				pygame.draw.rect(gScreen, RED, [i.cords[0], i.cords[1], 16,16])
 				if hitDetect(mouse_pos, mouse_pos, [i.cords[0] + self.cords[0], i.cords[1]+ self.cords[1]], [i.cords[0] + 16, i.cords[1] + 16]):
 					if mouse_down and not i.locked:
-						i.playerbattlers = CharSelect(mult)
+						i.playerbattlers = CharSelect(aitest, mult)
 						i.run()
 						i.completed = True
 					
@@ -1957,8 +1957,7 @@ for i in allSkills:
 	scroll = SkillScroll(i)
 	allSkillScrolls.append(scroll.buildNew())
 
-def CharSelect(mult):
-	global aitest
+def CharSelect(aitest, mult):
 	global done
 	global unlockedchars
 	done = False
