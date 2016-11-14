@@ -528,9 +528,10 @@ class Skill(object):
 		
 		
 	def use(self, user, target, battlers1, battlers2, thesebattlers):
-		
+		targetmultiplier = 1 + ((target.lvl - 1) / 10)
+		usermultiplier = 1 + ((user.lvl - 1) / 10)
 		message = ""
-		hit = self.hitChance - (target.dodgeChance + target.equipDodgeChance)
+		hit = self.hitChance - ((target.dodgeChance + target.equipDodgeChance) * targetmultiplier)
 		
 		if guarded in target.effects:
 			target = target.guarder
@@ -546,9 +547,9 @@ class Skill(object):
 			critical, effective = False, False
 
 			if self.phys:
-				damage = (user.str + user.equipStr + self.atk+ random.randint(0, self.var)) - (target.con + target.equipCon)
+				damage = (user.str + user.equipStr + self.atk+ random.randint(0, self.var)) * usermultiplier - (target.con + target.equipCon) * targetmultiplier
 			else:
-				damage = (user.int + user.equipInt + self.atk + random.randint(0, self.var)) - (target.mag + target.equipMag)
+				damage = (user.int + user.equipInt + self.atk + random.randint(0, self.var)) * usermultiplier  - (target.mag + target.equipMag) * targetmultiplier
 				
 			for i in target.types:
 				if self.type.name in i.weks:
@@ -560,7 +561,7 @@ class Skill(object):
 					message = " It's not very effective!"
 					effective = False
 					
-			if random.randint(1,30) + user.crit + user.equipCrit > 30:
+			if random.randint(1,30) + (user.crit * usermultiplier) + user.equipCrit > 30:
 				if effective:
 					message += " CRITICAL HIT!"
 				else:
@@ -689,7 +690,7 @@ class Skill(object):
 					earthStagef.apply(user)
 				if i == "moonStage":
 					moonStagef.apply(user)
-				if i == "againstOdds":
+				'''if i == "againstOdds":
 					if user in player1.battlers:
 						for b in player2.battlers:
 							damage += b.hp / 10
@@ -701,7 +702,7 @@ class Skill(object):
 						for c in player2.battlers:
 							damage += (c.maxhp - c.hp) / 6
 					damage += target.hp / 6
-					damage = math.floor(damage) - target.con
+					damage = math.floor(damage) - target.con'''
 				if i == "takeBlow":
 					target.guarder = user
 					guarded.apply(target)
@@ -834,12 +835,14 @@ class Skill(object):
 
 				printb(user.name + " uses " + self.name + " and deals " + str(damage) + " damage to " + target.name + message)
 				
+				
+				
 				if mindSpiked in user.effects:
 					printb(user.name + " is mind spiked!")
 					printb("The mind spike dealt " + str(damage) + " back to " + user.name)
-					user.hp -= damage
+					user.hp = user.hp * usermultiplier - damage
 					
-				target.hp -= damage
+				target.hp = target.hp * targetmultiplier - damage
 				
 		else:
 			damage = 0
@@ -1057,7 +1060,7 @@ emptySlot = Equip("Nothing", 0, 0, 0, 0, 0, 0, 0, 0, "")
 
 
 class Char(object):
-	def __init__(self, name, types, hp, str, int, con, mag, agil, crit, dodgeChance, lvl, xp, skills, ability, image, cords, menuImg):
+	def __init__(self, name, types, hp, str, int, con, mag, agil, crit, dodgeChance, skills, ability, image, cords, menuImg):
 		self.name = name
 		self.hp = hp
 		self.maxhp = hp
@@ -1072,8 +1075,8 @@ class Char(object):
 		self.basemag = mag
 		self.agil = agil
 		self.baseagil = agil
-		self.lvl = lvl
-		self.xp = xp
+		self.lvl = 1
+		self.xp = 0
 		self.effects = []
 		self.skills = skills
 		self.image = image
@@ -1147,61 +1150,61 @@ class Char(object):
 		return newchar
 	
 		
-NOT = Char("???", [unknown], 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, [nothing], "", "Assets/battlers/locked.png", [-1,0], "")
+NOT = Char("???", [unknown], 0, 0, 0, 0, 0, 0, [nothing], "", "Assets/battlers/locked.png", [-1,0], "")
 NOT.ableSkills = [nothing]
 
-Mage = Char("Meigis", [normal, chaos], 500, 5, 15, 5, 15, 4, 0, 10, 1, 0, [basicAtk, fireBall, waterSpout, airBlast, earthShot, defend], "", "Assets/battlers/Mage.png", [5,0], "")
+Mage = Char("Meigis", [normal, chaos], 500, 5, 15, 5, 15, 4, 0, 10, [basicAtk, fireBall, waterSpout, airBlast, earthShot, defend], "", "Assets/battlers/Mage.png", [5,0], "")
 Mage.ableSkills = [fireBall, waterSpout, airBlast, earthShot]
 
-Mouther = Char("Mouther", [earth], 500, 20, 0, 10, 5, 4, 0, 10, 1, 0, [basicAtk, bite, consumeFlesh, defend], "", "Assets/battlers/Mouther.png", [4,0], "")
+Mouther = Char("Mouther", [earth], 500, 20, 0, 10, 5, 4, 0, 10, [basicAtk, bite, consumeFlesh, defend], "", "Assets/battlers/Mouther.png", [4,0], "")
 Mouther.ableSkills = []
 
-Maice = Char("Maice", [normal], 500, 15, 15, 10, 10, 6, 2, 11, 1, 0, [basicAtk, slash, bite, eggon], "", "Assets/battlers/nazrin.png", [3, 0], "") 
+Maice = Char("Maice", [normal], 500, 15, 15, 10, 10, 6, 2, 11, [basicAtk, slash, bite, eggon], "", "Assets/battlers/nazrin.png", [3, 0], "") 
 Maice.ableSkills = []
 
-Nic = Char("Nic", [chaos], 500, 15, 50, 10, 25, 4, 0, 10, 1, 0, [basicAtk, magicMute, shardSwarm, powerUp, defend], "", "Assets/battlers/nic.png", [5,8], "")
+Nic = Char("Nic", [chaos], 500, 15, 50, 10, 25, 4, 0, 10, [basicAtk, magicMute, shardSwarm, powerUp, defend], "", "Assets/battlers/nic.png", [5,8], "")
 Nic.ableSkills = []
-Epic = Char("Epic", [tech], 1000, 25, 50, 35, 45, 7, 10, 10, 1, 0, [basicAtk,energiBeam, wellspring, defend], "", "Assets/battlers/epic.png", [7,8], "")
+Epic = Char("Epic", [tech], 1000, 25, 50, 35, 45, 7, 10, 10, [basicAtk,energiBeam, wellspring, defend], "", "Assets/battlers/epic.png", [7,8], "")
 Epic.ableSkills = []
 
-Scarlet = Char("Scarlet", [dark, blood], 100, 20, 20, 5, 20, 6, 0, 10, 1, 0, [basicAtk, scar, vampire, destroy, lifePact, defend], "", "Assets/battlers/vamp.png", [1,0], "")
+Scarlet = Char("Scarlet", [dark, blood], 100, 20, 20, 5, 20, 6, 0, 10, [basicAtk, scar, vampire, destroy, lifePact, defend], "", "Assets/battlers/vamp.png", [1,0], "")
 Scarlet.ableSkills = [scar, vampire, destroy, lifePact, consumeFlesh]
 
-Flan = Char("Flan", [dark,blood], 200, 35, 30, 10, 20, 7, 10, 20, 1, 0, [slash, rip, scar, vampire, destroy, lifePact, setFire, lifeTransfer], "watch them burn", "Assets/battlers/flandre.png", [5,7], "")
-Nue = Char("Nue", [astral, dark], 300, 25, 40, 10, 50, 4, 15, 10, 1, 0, [basicAtk, meteorStorm, powerTransfer, forceShield, powerDrain, stab, meditate, defend], "Unidentifiable", "Assets/battlers/nue.png", [4,7], "")
-Okuu = Char("Okuu", [fire, tech], 500, 15, 50, 30, 10, 1, 5, 5, 1, 0, [bludgeon, blast, fusion, fission, nuke, forceShield, recover], "Radiation", "Assets/battlers/reiji.png", [3,7], "")
-Lapis = Char("Lapis", [astral], 400, 20, 20, 10, 10, 4, 5, 20, 1, 0, [chains, voidSnap, earthStage, moonStage, otherStage, earthenVortex, chaosVortex, astralVortex], "3 worlds", "Assets/battlers/lapis.png", [6,7], "")
+Flan = Char("Flan", [dark,blood], 200, 35, 30, 10, 20, 7, 10, 20, [slash, rip, scar, vampire, destroy, lifePact, setFire, lifeTransfer], "watch them burn", "Assets/battlers/flandre.png", [5,7], "")
+Nue = Char("Nue", [astral, dark], 300, 25, 40, 10, 50, 4, 15, 10, [basicAtk, meteorStorm, powerTransfer, forceShield, powerDrain, stab, meditate, defend], "Unidentifiable", "Assets/battlers/nue.png", [4,7], "")
+Okuu = Char("Okuu", [fire, tech], 500, 15, 50, 30, 10, 1, 5, 5, [bludgeon, blast, fusion, fission, nuke, forceShield, recover], "Radiation", "Assets/battlers/reiji.png", [3,7], "")
+Lapis = Char("Lapis", [astral], 400, 20, 20, 10, 10, 4, 5, 20, [chains, voidSnap, earthStage, moonStage, otherStage, earthenVortex, chaosVortex, astralVortex], "3 worlds", "Assets/battlers/lapis.png", [6,7], "")
 
-Koishi = Char("Koishi", [unknown, physic], 400, 10, 55, 80, 100, 10, 6, 30, 1, 0, [colorfulBullet,mindReading, antiPhysic, neverThere, never, recover, voidSnap], "", "Assets/battlers/komeiji.png", [7,7], "")
+Koishi = Char("Koishi", [unknown, physic], 400, 10, 55, 80, 100, 10, 6, 30, [colorfulBullet,mindReading, antiPhysic, neverThere, never, recover, voidSnap], "", "Assets/battlers/komeiji.png", [7,7], "")
 #def __init__(self, name, types, hp, str, int, con, mag, agil, crit, dodgeChance, lvl, xp, skills, ability, image, cords, menuImg):
-Nou = Char("Nou Furueteru", [physic], 300, 10, 50, 55, 90, 11, 7, 25, 1, 0, [colorfulBullet, mindDisk, mindReading, recover, forceShield, rejuvinate, meditate, defend], "", "Assets/battlers/Nou.png", [8,8], "")
+Nou = Char("Nou Furueteru", [physic], 300, 10, 50, 55, 90, 11, 7, 25, [colorfulBullet, mindDisk, mindReading, recover, forceShield, rejuvinate, meditate, defend], "", "Assets/battlers/Nou.png", [8,8], "")
 
-Alpha = Char("Alpha", [normal, earth, fighting], 500, 50, -50, 30, 5, 5, 0, 10, 1, 0, [basicAtk, slash, cleave, bladeFlash, revenge, mend, defend], "", "Assets/battlers/alpha.png", [8,4], "")
+Alpha = Char("Alpha", [normal, earth, fighting], 500, 50, -50, 30, 5, 5, 0, 10, [basicAtk, slash, cleave, bladeFlash, revenge, mend, defend], "", "Assets/battlers/alpha.png", [8,4], "")
 Alpha.ableSkills = [slash, cleave, bladeFlash, revenge, mend, windSlash] 
-Siv = Char("Siv", [normal, earth, dark, physic, chaos, magic], 250, 0, 50, 0, 38, 5, 7, 10, 1, 0, [basicAtk, chaosBolt, setFire, forceShield, chaosBeam, meditate, lifePact, shroud], "", "Assets/battlers/siv.png", [4,2], "")
+Siv = Char("Siv", [normal, earth, dark, physic, chaos, magic], 250, 0, 50, 0, 38, 5, 7, 10, [basicAtk, chaosBolt, setFire, forceShield, chaosBeam, meditate, lifePact, shroud], "", "Assets/battlers/siv.png", [4,2], "")
 Siv.ableSkills = [chaosBolt, setFire, forceShield, chaosBeam, meditate, lifePact, shroud, confuse] 
 
-Durric = Char("Durric", [earth, light, fighting, physic], 1000, 25, 25, 75, 25, 0, 0, 1, 1, 0, [basicAtk, forceShield, cleave, obsidianBlast, recover, psionicRadiance, mend, takeBlow], "Regen", "Assets/battlers/Durric.png", [4, 4], "")
+Durric = Char("Durric", [earth, light, fighting, physic], 1000, 25, 25, 75, 25, 0, 0, 1, [basicAtk, forceShield, cleave, obsidianBlast, recover, psionicRadiance, mend, takeBlow], "Regen", "Assets/battlers/Durric.png", [4, 4], "")
 Durric.ableSkills = [forceShield, cleave, obsidianBlast, recover, psionicRadiance, mend, takeBlow, rejuvinate, mindSpike]
 
-Coo33 = Char("Coo33", [dark, blood], 250, 50, 0, 30, 0, 10, 10, 10, 5, 0, [basicAtk, slash, bite, kick, dodge, rip, consumeFlesh, defend], "Blood hunt", "Assets/battlers/Coo33.png", [3,3], "")
+Coo33 = Char("Coo33", [dark, blood], 250, 50, 0, 30, 0, 10, 10, 10,[basicAtk, slash, bite, kick, dodge, rip, consumeFlesh, defend], "Blood hunt", "Assets/battlers/Coo33.png", [3,3], "")
 Coo33.ableSkills = []
-CoosomeJoe = Char("Coosome Joe", [light, tech], 500, 25, 25, 25, 25, 5, 2, 10, 1, 0, [basicAtk, bludgeon, erase, create2, confuse, planAhead, mend, defend], "Frenzy", "Assets/battlers/Coosome.png",  [3, 4], "")
+CoosomeJoe = Char("Coosome Joe", [light, tech], 500, 25, 25, 25, 25, 5, 2, 10, [basicAtk, bludgeon, erase, create2, confuse, planAhead, mend, defend], "Frenzy", "Assets/battlers/Coosome.png",  [3, 4], "")
 CoosomeJoe.ableSkills = []
-Catsome = Char("Catsome", [light, physic], 1000, 10, 35, 10, 15, 5, 5, 10, 1, 0, [slash, bite, eggon, rebuke, mend, recover], "Cuteness", "Assets/battlers/catsome.png",[6,9], "")
+Catsome = Char("Catsome", [light, physic], 1000, 10, 35, 10, 15, 5, 5, 10, [slash, bite, eggon, rebuke, mend, recover], "Cuteness", "Assets/battlers/catsome.png",[6,9], "")
 Catsome.ableSkills = []
-Cubes = Char("Cubes", [tech], 400, 25, 35, 60, 30, 4, 5, 30, 1, 0, [zap, energiBeam, wellspring, planAhead, create3], "", "Assets/battlers/wip.png", [0,13], "")
+Cubes = Char("Cubes", [tech], 400, 25, 35, 60, 30, 4, 5, 30, [zap, energiBeam, wellspring, planAhead, create3], "", "Assets/battlers/wip.png", [0,13], "")
 
-Creep = Char("Creepy Bald Guy", [physic, unknown], 750, 10, 10, 15, 50, 0, 0, 0, 1, 0, [creepyAtk, blink, stare, inhale, exhale, observe], "Creepus", "Assets/battlers/Creepy_Bald_Guy.png", [3, 15], "")
-KnowingEye = Char("Knowing Eye", [physic, unknown, astral], 750, 0, 75, 0, 75, 5, 6, 5, 1, 0, [creepyAtk, observe, meditate, magicMute, forceShield, create], "Creepus", "Assets/battlers/knowingeye.png", [4, 15], "")
+Creep = Char("Creepy Bald Guy", [physic, unknown], 750, 10, 10, 15, 50, 0, 0, 0, [creepyAtk, blink, stare, inhale, exhale, observe], "Creepus", "Assets/battlers/Creepy_Bald_Guy.png", [3, 15], "")
+KnowingEye = Char("Knowing Eye", [physic, unknown, astral], 750, 0, 75, 0, 75, 5, 6, 5, [creepyAtk, observe, meditate, magicMute, forceShield, create], "Creepus", "Assets/battlers/knowingeye.png", [4, 15], "")
 
-Protagonist = Char("Protagonist", [normal], 750, 25, 15, 20, 10, 2, 6, 5, 1, 0, [basicAtk, powerStrike, eggon, mend, instantkill], "Frenzy", "Assets/battlers/wip.png", [1,1], "")
+Protagonist = Char("Protagonist", [normal], 750, 25, 15, 20, 10, 2, 6, 5, [basicAtk, powerStrike, eggon, mend, instantkill], "Frenzy", "Assets/battlers/wip.png", [1,1], "")
 
-Axeurlegs = Char("Axurlegs", [grass], 10, 30, 0, 0, 1, 2, 3, 0, 1, 0, [axeLegs], "", "Assets/battlers/wip.png", [10,0], "")
-Dandylion = Char("Dandy Lion", [grass], 600, 20, 15, 5, 20, 2, 2, 10, 1, 0, [slash, bite, tangle], "Frenzy", "Assets/battlers/wip.png", [11,0], "")
+Axeurlegs = Char("Axurlegs", [grass], 10, 30, 0, 0, 1, 2, 3, 0, [axeLegs], "", "Assets/battlers/wip.png", [10,0], "")
+Dandylion = Char("Dandy Lion", [grass], 600, 20, 15, 5, 20, 2, 2, 10, [slash, bite, tangle], "Frenzy", "Assets/battlers/wip.png", [11,0], "")
 
-Worshipper = Char("Worshipper", [magic, chaos, minion], 300, 5, 15, 6, 10, 0, 0, 0, 1, 0, [basicAtk, fireBall, powerTransfer, lifeTransfer, meditate], "Frenzy", "Assets/battlers/wip.png", [2,0], "")
-miniCreep = Char("Creepy Bald Guy", [physic, unknown, minion], 300, 6, 6, 8, 10, 0, 0, 0, 1, 0, [creepyAtk, blink, stare, inhale, exhale, observe], "Creepus", "Assets/battlers/Creepy_Bald_Guy.png", [3, 14], "")
+Worshipper = Char("Worshipper", [magic, chaos, minion], 300, 5, 15, 6, 10, 0, 0, 0, [basicAtk, fireBall, powerTransfer, lifeTransfer, meditate], "Frenzy", "Assets/battlers/wip.png", [2,0], "")
+miniCreep = Char("Creepy Bald Guy", [physic, unknown, minion], 300, 6, 6, 8, 10, 0, 0, 0, [creepyAtk, blink, stare, inhale, exhale, observe], "Creepus", "Assets/battlers/Creepy_Bald_Guy.png", [3, 14], "")
 
 
 NO = NOT.buildNew()	
@@ -1687,6 +1690,17 @@ class Battle(object):
 					print "Player 1 Wins"
 					for b in thesebattlers:
 						b = b.reBuild()
+					for battler in origbattlers1:
+					
+						for b in origbattlers2:
+							battler.xp += b.xp
+					for b in origbattlers1:
+						if b.xp > b.lvl * 50:
+							b.xp = 0
+							b.lvl += 1
+							printb(b.name + " leveled up!")
+							
+						
 					self.music.reset()
 					self.music.stop()
 					battling = False

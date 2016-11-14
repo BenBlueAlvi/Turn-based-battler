@@ -102,7 +102,7 @@ class SpreetSheet(object):
 		self.img = img
 		self.row = row
 		self.colm = colm
-		self.animation = pyganim.PygAnimation(list(zip(pyganim.getImagesFromSpriteSheet(self.img, rows = self.row, cols = self.colm, rects = []),[200] * self.row * self.colm)))
+		self.animation = pyganim.PygAnimation(list(zip(pyganim.getImagesFromSpriteSheet(self.img, rows = self.row, cols = self.colm, rects = []),[100] * self.row * self.colm)))
 		self.animation.play()
 	def image_at(self, rectangle):
 		rect = pygame.Rect(rectangle)
@@ -110,7 +110,7 @@ class SpreetSheet(object):
 		image.blit(self.sheet, (0, 0), rect)
 		return image
 
-testAnim = SpreetSheet("Assets/animations/testAnimation.png", 1, 4)
+testAnim = SpreetSheet("Assets/animations/alpha.png", 1, 16)
 
 turn = 0
 
