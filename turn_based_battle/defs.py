@@ -1055,6 +1055,7 @@ for i in allSkills:
 class SkillScroll(object):
 	def __init__(self, skill):
 		self.skill = skill
+		self.cords = []
 	def apply(self, char, player):
 		
 		while running:
@@ -1139,7 +1140,43 @@ class SkillScroll(object):
 		newscroll = SkillScroll(self.skill)
 		return newscroll
 		
+def ScrollSelect(player, char):
+	while running:
+		for event in pygame.event.get(): 
+			if event.type == pygame.QUIT: 
+				running = False
+			elif event.type == pygame.MOUSEBUTTONDOWN:
+				mouse_down = True
+						
+			elif event.type == pygame.MOUSEBUTTONUP:
+				mouse_down = False
+	
+		mouse_pos = pygame.mouse.get_pos()
+		
+		pygame.draw.rect(gScreen, GRAY, [0,0, size[0], size[1]])
+		x = 0
+		y = 0
+
+		for i in player.scrolls:
 			
+			if x > 1:
+				x = 0
+				y += 1
+			
+			gScreen.blit(i.skill.text, [11 + x*175, y*30 + 10])
+			gScreen.blit(i.skill.type.img, [5 + x*175, y*30 + 5])
+			i.cords = [5 + x*175, y*30 + 5]
+			
+			
+			
+			x += 1
+		for i in player.scrolls:
+			if hitDetect(mouse_pos, mouse_pos, i.cords, [i.cords[0] + 165, i.cords[1] + 25]):
+				if mouse_down:
+					i.apply(char, player)
+					mouse_down = False
+				
+		
 
 
 class Equip(object):
@@ -1959,6 +1996,7 @@ st1 = Stage("", "", [MousFight, CatsomeFight, MiecFight], [317,48], [st2])
 		
 st1.locked = False
 st3.locked = False
+
 
 class World(object):
 	def __init__(self, stages):
