@@ -70,8 +70,6 @@ def PreDialogeRun(battle, battlers1, battlers2, thesebattlers):
 				speaker = 1
 				
 		
-		
-		
 		talking = 0
 		textf = font.render(textc, True, BLACK)
 		while talking <= 120 * len(textc) and running:
@@ -97,8 +95,6 @@ def PreDialogeRun(battle, battlers1, battlers2, thesebattlers):
 			for k in thesebattlers:
 				defs.gScreen.blit(k.image,[k.basex, k.basey])	
 			
-			
-				
 
 			pygame.display.flip()
 			clock.tick(60)
@@ -164,8 +160,6 @@ def LossDialogeRun(battle, battlers1, battlers2, thesebattlers):
 			if i == 0:
 				textc = "UHHHHH SOMETHING BROKE"
 				speaker = 1
-				
-		
 		
 		
 		talking = 0

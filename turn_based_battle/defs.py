@@ -6,8 +6,6 @@ import pyganim
 import ai
 import dialog
 
-
-
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 GREEN = (0, 255, 0)
@@ -71,6 +69,7 @@ def bubble_sort(items):
 def hitDetect(p1, p2, p3, p4):
 	if p2[0] > p3[0] and p1[0] < p4[0] and p2[1] > p3[1] and p1[1] < p4[1]:
 		return True
+
 log =[]				
 timer = 0
 printing = False			
@@ -80,27 +79,16 @@ def printb(text):
 	global log
 	global timer
 
-	
 	newtext = font.render(text,True,WHITE)
 	log.append(text)
 
-	
 	disptext = newtext
 	timer = 90
 	for i in range(timer):
-		
-					
-				
-	
 		pygame.draw.rect(gScreen, BLACK, [0,size[1] - 150,size[0],150])
 		#gScreen.blit(disptext, [10, 320 + size[1] - 500])
 		gScreen.blit(disptext, [10, size[1] - 140])
 		printing = True
-		
-		#pygame.draw.rect(gScreen, WHITE, [0,350 + size[1] - 500,700,150])
-		#pygame.draw.rect(gScreen, BLACK, [0 + size[0] - 200,size[1] - 500,700,150])
-		
-		
 			
 		pygame.display.flip()	
 		clock.tick(60)
@@ -1050,6 +1038,185 @@ allSkillScrolls = []
 
 
 
+
+class Char(object):
+	def __init__(self, name, types, hp, str, int, con, mag, agil, crit, dodgeChance, skills, ability, image, cords, menuImg):
+		self.name = name
+		self.hp = hp
+		self.maxhp = hp
+		self.str = str
+		self.basestr = str
+		self.types = types
+		self.int = int
+		self.baseint = int
+		self.con = con
+		self.basecon = con
+		self.mag = mag
+		self.basemag = mag
+		self.agil = agil
+		self.baseagil = agil
+		self.lvl = 1
+		self.xp = 0
+		self.effects = []
+		self.skills = skills
+		self.image = image
+		self.img = image
+		self.cords = cords
+		self.maxhp = hp
+		self.crit = crit
+		self.basecrit = crit
+		self.dodgeChance = dodgeChance
+		self.basedodgeChance = dodgeChance
+		self.ability = ability
+		self.marks = 0
+		self.power = 1
+		self.menuImg = menuImg
+		self.goskill = nothing
+		self.target = ["bob"]
+		self.updated = False
+		self.x = 0
+		self.y = 0
+		self.basey = 0
+		self.basex = 0
+		self.ym = 1
+		self.guarder = "hi"
+		self.misc = 0
+		self.vital = True
+		#AI stuff
+		self.savingfor = "none"
+		self.aimisc = 0
+		self.isAi = False
+		self.equips = {"Head":emptySlot, "Chest":emptySlot, "Legs":emptySlot, "Feet":emptySlot, "Weapon":emptySlot}
+		self.equipStr = 0
+		self.equipInt = 0
+		self.equipCon = 0
+		self.equipMag = 0
+		self.equipAgil = 0
+		self.equipCrit = 0
+		self.equipDodgeChance = 0
+		self.ableSkills = []
+		self.battlerpos = 0
+
+	def updateEquips(self):
+		self.equipStr = self.equips["Head"].str + self.equips["Chest"].str + self.equips["Legs"].str + self.equips["Feet"].str + self.equips["Weapon"].str
+		self.equipInt = self.equips["Head"].int + self.equips["Chest"].int + self.equips["Legs"].int + self.equips["Feet"].int + self.equips["Weapon"].int
+		self.equipCon = self.equips["Head"].con + self.equips["Chest"].con + self.equips["Legs"].con + self.equips["Feet"].con + self.equips["Weapon"].con
+		self.equipMag = self.equips["Head"].mag + self.equips["Chest"].mag + self.equips["Legs"].mag + self.equips["Feet"].mag + self.equips["Weapon"].mag
+		self.equipAgil = self.equips["Head"].agil + self.equips["Chest"].agil + self.equips["Legs"].agil + self.equips["Feet"].agil + self.equips["Weapon"].agil
+		self.equipCrit = self.equips["Head"].crit + self.equips["Chest"].crit + self.equips["Legs"].crit + self.equips["Feet"].crit + self.equips["Weapon"].crit
+		self.equipDodgeChance = self.equips["Head"].dodgeChance + self.equips["Chest"].dodgeChance + self.equips["Legs"].dodgeChance + self.equips["Feet"].dodgeChance + self.equips["Weapon"].dodgeChance
+		
+		
+		
+		
+		
+	def buildNew(self):
+		newchar = Char(self.name, self.types, self.hp, self.str, self.int, self.con, self.mag, self.agil, self.crit, self.dodgeChance, self.skills, self.ability, pygame.transform.scale(pygame.image.load(self.image), [50, 50]), self.cords, pygame.transform.scale(pygame.image.load(self.image), [42, 42]))
+		newchar.img = pygame.image.load(self.image)
+		newchar.ableSkills = self.ableSkills
+		newchar.target = [NOT]
+		return newchar
+		
+	def reBuild(self):
+		newchar = Char(self.name, self.types, self.hp, self.str, self.int, self.con, self.mag, self.agil, self.crit, self.dodgeChance, self.skills, self.ability, self.image, self.cords, self.menuImg)
+		newchar.img = self.image
+		newchar.ableSkills = self.ableSkills
+		return newchar
+	
+		
+NOT = Char("???", [unknown], 0, 0, 0, 0, 0, 0, 0, 0, [nothing], "", "Assets/battlers/locked.png", [-1,0], "")
+NOT.ableSkills = [nothing]
+
+Mage = Char("Meigis", [normal, chaos], 500, 5, 15, 5, 15, 4, 0, 10, [basicAtk, fireBall, waterSpout, airBlast, earthShot, defend], "", "Assets/battlers/Mage.png", [5,0], "")
+Mage.ableSkills = [fireBall, waterSpout, airBlast, earthShot]
+
+Mouther = Char("Mouther", [earth], 500, 20, 0, 10, 5, 4, 0, 10, [basicAtk, bite, consumeFlesh, defend], "", "Assets/battlers/Mouther.png", [4,0], "")
+Mouther.ableSkills = []
+
+Maice = Char("Maice", [normal], 500, 15, 15, 10, 10, 6, 2, 11, [basicAtk, slash, bite, eggon], "", "Assets/battlers/nazrin.png", [3, 0], "") 
+Maice.ableSkills = []
+
+Nic = Char("Nic", [chaos], 500, 15, 50, 10, 25, 4, 0, 10, [basicAtk, magicMute, shardSwarm, powerUp, defend], "", "Assets/battlers/nic.png", [5,8], "")
+Nic.ableSkills = []
+Epic = Char("Epic", [tech], 1000, 25, 50, 35, 45, 7, 10, 10, [basicAtk,energiBeam, wellspring, defend], "", "Assets/battlers/epic.png", [7,8], "")
+Epic.ableSkills = []
+
+Scarlet = Char("Scarlet", [dark, blood], 100, 20, 20, 5, 20, 6, 0, 10, [basicAtk, scar, vampire, destroy, lifePact, defend], "", "Assets/battlers/vamp.png", [1,0], "")
+Scarlet.ableSkills = [scar, vampire, destroy, lifePact, consumeFlesh]
+
+Flan = Char("Flan", [dark,blood], 200, 35, 30, 10, 20, 7, 10, 20, [slash, rip, scar, vampire, destroy, lifePact, setFire, lifeTransfer], "watch them burn", "Assets/battlers/flandre.png", [5,7], "")
+Nue = Char("Nue", [astral, dark], 300, 25, 40, 10, 50, 4, 15, 10, [basicAtk, meteorStorm, powerTransfer, forceShield, powerDrain, stab, meditate, defend], "Unidentifiable", "Assets/battlers/nue.png", [4,7], "")
+Okuu = Char("Okuu", [fire, tech], 500, 15, 50, 30, 10, 1, 5, 5, [bludgeon, blast, fusion, fission, nuke, forceShield, recover], "Radiation", "Assets/battlers/reiji.png", [3,7], "")
+Lapis = Char("Lapis", [astral], 400, 20, 20, 10, 10, 4, 5, 20, [chains, voidSnap, earthStage, moonStage, otherStage, earthenVortex, chaosVortex, astralVortex], "3 worlds", "Assets/battlers/lapis.png", [6,7], "")
+
+Koishi = Char("Koishi", [unknown, physic], 400, 10, 55, 80, 100, 10, 6, 30, [colorfulBullet,mindReading, antiPhysic, neverThere, never, recover, voidSnap], "", "Assets/battlers/komeiji.png", [7,7], "")
+#def __init__(self, name, types, hp, str, int, con, mag, agil, crit, dodgeChance, lvl, xp, skills, ability, image, cords, menuImg):
+Nou = Char("Nou Furueteru", [physic], 300, 10, 50, 55, 90, 11, 7, 25, [colorfulBullet, mindDisk, mindReading, recover, forceShield, rejuvinate, meditate, defend], "", "Assets/battlers/Nou.png", [8,8], "")
+
+Alpha = Char("Alpha", [normal, earth, fighting], 500, 50, -50, 30, 5, 5, 0, 10, [basicAtk, slash, cleave, bladeFlash, revenge, mend, defend], "", "Assets/battlers/alpha.png", [8,4], "")
+Alpha.ableSkills = [slash, cleave, bladeFlash, revenge, mend, windSlash] 
+Siv = Char("Siv", [normal, earth, dark, physic, chaos, magic], 250, 0, 50, 0, 38, 5, 7, 10, [basicAtk, chaosBolt, setFire, forceShield, chaosBeam, meditate, lifePact, shroud], "", "Assets/battlers/siv.png", [4,2], "")
+Siv.ableSkills = [chaosBolt, setFire, forceShield, chaosBeam, meditate, lifePact, shroud, confuse] 
+
+Durric = Char("Durric", [earth, light, fighting, physic], 1000, 25, 25, 75, 25, 0, 0, 1, [basicAtk, forceShield, cleave, obsidianBlast, recover, psionicRadiance, mend, takeBlow], "Regen", "Assets/battlers/Durric.png", [4, 4], "")
+Durric.ableSkills = [forceShield, cleave, obsidianBlast, recover, psionicRadiance, mend, takeBlow, rejuvinate, mindSpike]
+
+Coo33 = Char("Coo33", [dark, blood], 250, 50, 0, 30, 0, 10, 10, 10,[basicAtk, slash, bite, kick, dodge, rip, consumeFlesh, defend], "Blood hunt", "Assets/battlers/Coo33.png", [3,3], "")
+Coo33.ableSkills = []
+CoosomeJoe = Char("Coosome Joe", [light, tech], 500, 25, 25, 25, 25, 5, 2, 10, [basicAtk, bludgeon, erase, create2, confuse, planAhead, mend, defend], "Frenzy", "Assets/battlers/Coosome.png",  [3, 4], "")
+CoosomeJoe.ableSkills = []
+Catsome = Char("Catsome", [light, physic], 1000, 10, 35, 10, 15, 5, 5, 10, [slash, bite, eggon, rebuke, mend, recover], "Cuteness", "Assets/battlers/catsome.png",[6,9], "")
+Catsome.ableSkills = []
+Cubes = Char("Cubes", [tech], 400, 25, 35, 60, 30, 4, 5, 30, [zap, energiBeam, wellspring, planAhead, create3], "", "Assets/battlers/wip.png", [0,13], "")
+
+Creep = Char("Creepy Bald Guy", [physic, unknown], 750, 10, 10, 15, 50, 0, 0, 0, [creepyAtk, blink, stare, inhale, exhale, observe], "Creepus", "Assets/battlers/Creepy_Bald_Guy.png", [3, 15], "")
+KnowingEye = Char("Knowing Eye", [physic, unknown, astral], 750, 0, 75, 0, 75, 5, 6, 5, [creepyAtk, observe, meditate, magicMute, forceShield, create], "Creepus", "Assets/battlers/knowingeye.png", [4, 15], "")
+
+Protagonist = Char("Protagonist", [normal], 750, 25, 15, 20, 10, 2, 6, 5, [basicAtk, powerStrike, eggon, mend, instantkill], "Frenzy", "Assets/battlers/wip.png", [1,1], "")
+
+Axeurlegs = Char("Axurlegs", [grass], 10, 30, 0, 0, 1, 2, 3, 0, [axeLegs], "", "Assets/battlers/wip.png", [10,0], "")
+Dandylion = Char("Dandy Lion", [grass], 600, 20, 15, 5, 20, 2, 2, 10, [slash, bite, tangle], "Frenzy", "Assets/battlers/wip.png", [11,0], "")
+
+Worshipper = Char("Worshipper", [magic, chaos, minion], 300, 5, 15, 6, 10, 0, 0, 0, [basicAtk, fireBall, powerTransfer, lifeTransfer, meditate], "Frenzy", "Assets/battlers/wip.png", [2,0], "")
+miniCreep = Char("Creepy Bald Guy", [physic, unknown, minion], 300, 6, 6, 8, 10, 0, 0, 0, [creepyAtk, blink, stare, inhale, exhale, observe], "Creepus", "Assets/battlers/Creepy_Bald_Guy.png", [3, 14], "")
+
+
+NO = NOT.buildNew()	
+
+unlockedchars = [Koishi.buildNew(), Lapis.buildNew(), Flan.buildNew(), Okuu.buildNew(), Nue.buildNew(), Scarlet.buildNew(), Mage.buildNew(), Mouther.buildNew(), Nic.buildNew(), Siv.buildNew(), Coo33.buildNew(), CoosomeJoe.buildNew(), Epic.buildNew(), Alpha.buildNew(), Durric.buildNew(), Creep.buildNew(), Catsome.buildNew(), KnowingEye.buildNew(), Protagonist.buildNew(), Worshipper.buildNew(), miniCreep.buildNew(), Axeurlegs.buildNew(), Dandylion.buildNew(), Cubes.buildNew()]
+equipment = []
+
+class Player(object):
+	def __init__(self, name):
+		
+		self.battlers = [NO, NO, NO]
+		self.name = name
+		self.wins = 0
+		self.losses = 0
+		self.scrolls = []
+	
+		
+		self.x1 = 0
+		self.y1 = 0
+		self.x2 = 0
+		self.y2 = 0
+		self.x3 = 0
+		self.y3 = 0
+		
+	def reBuild(self):
+		self.battlers = [NO, NO, NO]
+		self.x1 = 0
+		self.y1 = 0
+		self.x2 = 0
+		self.y2 = 0
+		self.x3 = 0
+		self.y3 = 0
+	
+	
+player1 = Player("1")
+player2 = Player("2")
+
+
 class SkillScroll(object):
 	def __init__(self, skill):
 		self.skill = skill
@@ -1177,10 +1344,7 @@ def ScrollSelect(player, char):
 				if mouse_down:
 					i.apply(char, player)
 					mouse_down = False
-				
-		
-
-
+	
 class Equip(object):
 	def __init__(self, name, str, int, con, mag, agil, crit, dodgeChance, lvl, slot):
 		self.name = name
@@ -1196,189 +1360,6 @@ class Equip(object):
 		
 emptySlot = Equip("Nothing", 0, 0, 0, 0, 0, 0, 0, 0, "")
 
-
-class Char(object):
-	def __init__(self, name, types, hp, str, int, con, mag, agil, crit, dodgeChance, skills, ability, image, cords, menuImg):
-		self.name = name
-		self.hp = hp
-		self.maxhp = hp
-		self.str = str
-		self.basestr = str
-		self.types = types
-		self.int = int
-		self.baseint = int
-		self.con = con
-		self.basecon = con
-		self.mag = mag
-		self.basemag = mag
-		self.agil = agil
-		self.baseagil = agil
-		self.lvl = 1
-		self.xp = 0
-		self.effects = []
-		self.skills = skills
-		self.image = image
-		self.img = image
-		self.cords = cords
-		self.maxhp = hp
-		self.crit = crit
-		self.basecrit = crit
-		self.dodgeChance = dodgeChance
-		self.basedodgeChance = dodgeChance
-		self.ability = ability
-		self.marks = 0
-		self.power = 1
-		self.menuImg = menuImg
-		self.goskill = nothing
-		self.target = ["bob"]
-		self.updated = False
-		self.x = 0
-		self.y = 0
-		self.basey = 0
-		self.basex = 0
-		self.ym = 1
-		self.guarder = "hi"
-		self.misc = 0
-		self.vital = True
-		#AI stuff
-		self.savingfor = "none"
-		self.aimisc = 0
-		self.isAi = False
-		self.equips = {"Head":emptySlot, "Chest":emptySlot, "Legs":emptySlot, "Feet":emptySlot, "Weapon":emptySlot}
-		self.equipStr = 0
-		self.equipInt = 0
-		self.equipCon = 0
-		self.equipMag = 0
-		self.equipAgil = 0
-		self.equipCrit = 0
-		self.equipDodgeChance = 0
-		self.ableSkills = []
-		self.battlerpos = 0
-		
-	
-		
-#	def toString(self):
-# 		return ("Name: " + str(self.name) + "\nHP: " + str(self.hp) + "\nMax HP: " + str(self.maxhp) + "\nStrength: " + str(self.str) + "\n"
-
-
-	def updateEquips(self):
-		self.equipStr = self.equips["Head"].str + self.equips["Chest"].str + self.equips["Legs"].str + self.equips["Feet"].str + self.equips["Weapon"].str
-		self.equipInt = self.equips["Head"].int + self.equips["Chest"].int + self.equips["Legs"].int + self.equips["Feet"].int + self.equips["Weapon"].int
-		self.equipCon = self.equips["Head"].con + self.equips["Chest"].con + self.equips["Legs"].con + self.equips["Feet"].con + self.equips["Weapon"].con
-		self.equipMag = self.equips["Head"].mag + self.equips["Chest"].mag + self.equips["Legs"].mag + self.equips["Feet"].mag + self.equips["Weapon"].mag
-		self.equipAgil = self.equips["Head"].agil + self.equips["Chest"].agil + self.equips["Legs"].agil + self.equips["Feet"].agil + self.equips["Weapon"].agil
-		self.equipCrit = self.equips["Head"].crit + self.equips["Chest"].crit + self.equips["Legs"].crit + self.equips["Feet"].crit + self.equips["Weapon"].crit
-		self.equipDodgeChance = self.equips["Head"].dodgeChance + self.equips["Chest"].dodgeChance + self.equips["Legs"].dodgeChance + self.equips["Feet"].dodgeChance + self.equips["Weapon"].dodgeChance
-		
-		
-		
-		
-		
-	def buildNew(self):
-		newchar = Char(self.name, self.types, self.hp, self.str, self.int, self.con, self.mag, self.agil, self.crit, self.dodgeChance, self.skills, self.ability, pygame.transform.scale(pygame.image.load(self.image), [50, 50]), self.cords, pygame.transform.scale(pygame.image.load(self.image), [42, 42]))
-		newchar.img = pygame.image.load(self.image)
-		newchar.ableSkills = self.ableSkills
-		newchar.target = [NOT]
-		return newchar
-		
-	def reBuild(self):
-		newchar = Char(self.name, self.types, self.hp, self.str, self.int, self.con, self.mag, self.agil, self.crit, self.dodgeChance, self.skills, self.ability, self.image, self.cords, self.menuImg)
-		newchar.img = self.image
-		newchar.ableSkills = self.ableSkills
-		return newchar
-	
-		
-NOT = Char("???", [unknown], 0, 0, 0, 0, 0, 0, 0, 0, [nothing], "", "Assets/battlers/locked.png", [-1,0], "")
-NOT.ableSkills = [nothing]
-
-Mage = Char("Meigis", [normal, chaos], 500, 5, 15, 5, 15, 4, 0, 10, [basicAtk, fireBall, waterSpout, airBlast, earthShot, defend], "", "Assets/battlers/Mage.png", [5,0], "")
-Mage.ableSkills = [fireBall, waterSpout, airBlast, earthShot]
-
-Mouther = Char("Mouther", [earth], 500, 20, 0, 10, 5, 4, 0, 10, [basicAtk, bite, consumeFlesh, defend], "", "Assets/battlers/Mouther.png", [4,0], "")
-Mouther.ableSkills = []
-
-Maice = Char("Maice", [normal], 500, 15, 15, 10, 10, 6, 2, 11, [basicAtk, slash, bite, eggon], "", "Assets/battlers/nazrin.png", [3, 0], "") 
-Maice.ableSkills = []
-
-Nic = Char("Nic", [chaos], 500, 15, 50, 10, 25, 4, 0, 10, [basicAtk, magicMute, shardSwarm, powerUp, defend], "", "Assets/battlers/nic.png", [5,8], "")
-Nic.ableSkills = []
-Epic = Char("Epic", [tech], 1000, 25, 50, 35, 45, 7, 10, 10, [basicAtk,energiBeam, wellspring, defend], "", "Assets/battlers/epic.png", [7,8], "")
-Epic.ableSkills = []
-
-Scarlet = Char("Scarlet", [dark, blood], 100, 20, 20, 5, 20, 6, 0, 10, [basicAtk, scar, vampire, destroy, lifePact, defend], "", "Assets/battlers/vamp.png", [1,0], "")
-Scarlet.ableSkills = [scar, vampire, destroy, lifePact, consumeFlesh]
-
-Flan = Char("Flan", [dark,blood], 200, 35, 30, 10, 20, 7, 10, 20, [slash, rip, scar, vampire, destroy, lifePact, setFire, lifeTransfer], "watch them burn", "Assets/battlers/flandre.png", [5,7], "")
-Nue = Char("Nue", [astral, dark], 300, 25, 40, 10, 50, 4, 15, 10, [basicAtk, meteorStorm, powerTransfer, forceShield, powerDrain, stab, meditate, defend], "Unidentifiable", "Assets/battlers/nue.png", [4,7], "")
-Okuu = Char("Okuu", [fire, tech], 500, 15, 50, 30, 10, 1, 5, 5, [bludgeon, blast, fusion, fission, nuke, forceShield, recover], "Radiation", "Assets/battlers/reiji.png", [3,7], "")
-Lapis = Char("Lapis", [astral], 400, 20, 20, 10, 10, 4, 5, 20, [chains, voidSnap, earthStage, moonStage, otherStage, earthenVortex, chaosVortex, astralVortex], "3 worlds", "Assets/battlers/lapis.png", [6,7], "")
-
-Koishi = Char("Koishi", [unknown, physic], 400, 10, 55, 80, 100, 10, 6, 30, [colorfulBullet,mindReading, antiPhysic, neverThere, never, recover, voidSnap], "", "Assets/battlers/komeiji.png", [7,7], "")
-#def __init__(self, name, types, hp, str, int, con, mag, agil, crit, dodgeChance, lvl, xp, skills, ability, image, cords, menuImg):
-Nou = Char("Nou Furueteru", [physic], 300, 10, 50, 55, 90, 11, 7, 25, [colorfulBullet, mindDisk, mindReading, recover, forceShield, rejuvinate, meditate, defend], "", "Assets/battlers/Nou.png", [8,8], "")
-
-Alpha = Char("Alpha", [normal, earth, fighting], 500, 50, -50, 30, 5, 5, 0, 10, [basicAtk, slash, cleave, bladeFlash, revenge, mend, defend], "", "Assets/battlers/alpha.png", [8,4], "")
-Alpha.ableSkills = [slash, cleave, bladeFlash, revenge, mend, windSlash] 
-Siv = Char("Siv", [normal, earth, dark, physic, chaos, magic], 250, 0, 50, 0, 38, 5, 7, 10, [basicAtk, chaosBolt, setFire, forceShield, chaosBeam, meditate, lifePact, shroud], "", "Assets/battlers/siv.png", [4,2], "")
-Siv.ableSkills = [chaosBolt, setFire, forceShield, chaosBeam, meditate, lifePact, shroud, confuse] 
-
-Durric = Char("Durric", [earth, light, fighting, physic], 1000, 25, 25, 75, 25, 0, 0, 1, [basicAtk, forceShield, cleave, obsidianBlast, recover, psionicRadiance, mend, takeBlow], "Regen", "Assets/battlers/Durric.png", [4, 4], "")
-Durric.ableSkills = [forceShield, cleave, obsidianBlast, recover, psionicRadiance, mend, takeBlow, rejuvinate, mindSpike]
-
-Coo33 = Char("Coo33", [dark, blood], 250, 50, 0, 30, 0, 10, 10, 10,[basicAtk, slash, bite, kick, dodge, rip, consumeFlesh, defend], "Blood hunt", "Assets/battlers/Coo33.png", [3,3], "")
-Coo33.ableSkills = []
-CoosomeJoe = Char("Coosome Joe", [light, tech], 500, 25, 25, 25, 25, 5, 2, 10, [basicAtk, bludgeon, erase, create2, confuse, planAhead, mend, defend], "Frenzy", "Assets/battlers/Coosome.png",  [3, 4], "")
-CoosomeJoe.ableSkills = []
-Catsome = Char("Catsome", [light, physic], 1000, 10, 35, 10, 15, 5, 5, 10, [slash, bite, eggon, rebuke, mend, recover], "Cuteness", "Assets/battlers/catsome.png",[6,9], "")
-Catsome.ableSkills = []
-Cubes = Char("Cubes", [tech], 400, 25, 35, 60, 30, 4, 5, 30, [zap, energiBeam, wellspring, planAhead, create3], "", "Assets/battlers/wip.png", [0,13], "")
-
-Creep = Char("Creepy Bald Guy", [physic, unknown], 750, 10, 10, 15, 50, 0, 0, 0, [creepyAtk, blink, stare, inhale, exhale, observe], "Creepus", "Assets/battlers/Creepy_Bald_Guy.png", [3, 15], "")
-KnowingEye = Char("Knowing Eye", [physic, unknown, astral], 750, 0, 75, 0, 75, 5, 6, 5, [creepyAtk, observe, meditate, magicMute, forceShield, create], "Creepus", "Assets/battlers/knowingeye.png", [4, 15], "")
-
-Protagonist = Char("Protagonist", [normal], 750, 25, 15, 20, 10, 2, 6, 5, [basicAtk, powerStrike, eggon, mend, instantkill], "Frenzy", "Assets/battlers/wip.png", [1,1], "")
-
-Axeurlegs = Char("Axurlegs", [grass], 10, 30, 0, 0, 1, 2, 3, 0, [axeLegs], "", "Assets/battlers/wip.png", [10,0], "")
-Dandylion = Char("Dandy Lion", [grass], 600, 20, 15, 5, 20, 2, 2, 10, [slash, bite, tangle], "Frenzy", "Assets/battlers/wip.png", [11,0], "")
-
-Worshipper = Char("Worshipper", [magic, chaos, minion], 300, 5, 15, 6, 10, 0, 0, 0, [basicAtk, fireBall, powerTransfer, lifeTransfer, meditate], "Frenzy", "Assets/battlers/wip.png", [2,0], "")
-miniCreep = Char("Creepy Bald Guy", [physic, unknown, minion], 300, 6, 6, 8, 10, 0, 0, 0, [creepyAtk, blink, stare, inhale, exhale, observe], "Creepus", "Assets/battlers/Creepy_Bald_Guy.png", [3, 14], "")
-
-
-NO = NOT.buildNew()	
-
-unlockedchars = [Koishi.buildNew(), Lapis.buildNew(), Flan.buildNew(), Okuu.buildNew(), Nue.buildNew(), Scarlet.buildNew(), Mage.buildNew(), Mouther.buildNew(), Nic.buildNew(), Siv.buildNew(), Coo33.buildNew(), CoosomeJoe.buildNew(), Epic.buildNew(), Alpha.buildNew(), Durric.buildNew(), Creep.buildNew(), Catsome.buildNew(), KnowingEye.buildNew(), Protagonist.buildNew(), Worshipper.buildNew(), miniCreep.buildNew(), Axeurlegs.buildNew(), Dandylion.buildNew(), Cubes.buildNew()]
-equipment = []
-
-class Player(object):
-	def __init__(self, name):
-		
-		self.battlers = [NO, NO, NO]
-		self.name = name
-		self.wins = 0
-		self.losses = 0
-		self.scrolls = []
-	
-		
-		self.x1 = 0
-		self.y1 = 0
-		self.x2 = 0
-		self.y2 = 0
-		self.x3 = 0
-		self.y3 = 0
-		
-	def reBuild(self):
-		self.battlers = [NO, NO, NO]
-		self.x1 = 0
-		self.y1 = 0
-		self.x2 = 0
-		self.y2 = 0
-		self.x3 = 0
-		self.y3 = 0
-	
-	
-player1 = Player("1")
-player2 = Player("2")
 
 class Arena(object):
 	def __init__(self, name, effect, img):
@@ -1446,13 +1427,10 @@ class Battle(object):
 			print i.name
 		for i in self.battlers2:
 			print i.name
-			
-			
 		
 		x = 0
 		y = 0
 		for i in thesebattlers:
-			
 			if y > 2:
 				y = 0
 				x += 1
@@ -1461,8 +1439,6 @@ class Battle(object):
 			y += 1
 		for i in range(len(thesebattlers)):
 			thesebattlers[i-1].battlerpos = i-1
-			
-
 			
 		for i in self.battlers1:
 			if i.name == "???" or i == 	NO or i == 	NOT:
@@ -1482,47 +1458,7 @@ class Battle(object):
 			print "orig:", i.name
 		origbattlers1 = self.battlers1
 		origbattlers2 = self.battlers2
-
-		
-		
-		'''for i in self.dialog.prebattle:
-			textc, text = [], []
-			for l in range(len(i)):
-				if l == 0:
-					speaker = i[l]
-					print speaker
-				else:
-					textc.append(font.render(i[l],True,BLACK))
-					text.append(i[l])
-					
-					
-			talking = 0
-			while talking <= 120 * len(textc):
-				gScreen.fill(WHITE)
-				gScreen.blit(self.arena.img, [0,0])
-				pygame.draw.rect(gScreen, BLACK, [0,size[1] - 150,size[0],150])
-				talking += 1
-				if thesebattlers[speaker] in self.battlers1:
-					for l in range(len(textc)):
-						gScreen.blit(textc[l-1], [thesebattlers[speaker].basex + 55, thesebattlers[speaker].basey - (30 + ((l-1) * font.size(text[l-1])[1]))])
-				else:
-					for l in range(len(textc)):
-						gScreen.blit(textc[l-1], [thesebattlers[speaker].basex - font.size(text[l-1])[0], thesebattlers[speaker].basey - (30 + ((l-1) * font.size(text[l-1])[1]))])
-				
-				for k in thesebattlers:
-					gScreen.blit(k.image,[k.basex, k.basey])	
-				
-				for event in pygame.event.get():
-					if event.type == pygame.KEYDOWN:
-						talking = 120 * len(textc) +1
-
-				pygame.display.flip()
-				clock.tick(60)'''
 		dialog.PreDialogeRun(self, self.battlers1, self.battlers2, thesebattlers)
-					
-					
-			
-			
 		
 		quitting = False
 		while battling:
@@ -1853,75 +1789,6 @@ class Battle(object):
 			dialog.LossDialogeRun(self, origbattlers1, origbattlers2, thesebattlers)
 		if len(self.battlers2) == 0:
 			dialog.WinDialogeRun(self, origbattlers1, origbattlers2, thesebattlers)
-		'''speaker = 0
-		if len(self.battlers1) == 0:
-			for i in self.dialog.lossbattle:
-				textc, text = [], []
-				for l in range(len(i)):
-					if l == 0:
-						speaker = i[l]
-						print "speaker:", speaker
-					else:
-						textc.append(font.render(i[l],True,BLACK))
-						text.append(i[l])
-						
-						
-				talking = 0
-				while talking <= 120* len(textc):
-					gScreen.fill(WHITE)
-					gScreen.blit(self.arena.img, [0,0])
-					pygame.draw.rect(gScreen, BLACK, [0,350 + size[0] - 500,700,150])
-					talking += 1
-					if origbattlers[speaker] in origbattlers1:
-						for l in range(len(textc)):
-							gScreen.blit(textc[l-1], [origbattlers[speaker].basex + 55, origbattlers[speaker].basey - (30 + ((l-1) * font.size(text[l-1])[1]))])
-					else:
-						for l in range(len(textc)):
-							gScreen.blit(textc[l-1], [origbattlers[speaker].basex - font.size(text[l-1])[0], origbattlers[speaker].basey - (30 + ((l-1) * font.size(text[l-1])[1]))])
-					
-					for k in origbattlers:
-							gScreen.blit(k.image,[k.basex, k.basey])
-					for event in pygame.event.get():
-						if event.type == pygame.KEYDOWN:
-							talking = 120 * len(textc)+1
-					pygame.display.flip()
-					clock.tick(60)
-					
-		if len(self.battlers2) == 0:
-			for i in self.dialog.winbattle:
-				textc, text = [], []
-				for l in range(len(i)):
-					if l == 0:
-						speaker = i[l]
-						print "speaker:", speaker
-						
-					else:
-						textc.append(font.render(i[l],True,BLACK))
-						text.append(i[l])
-						
-						
-				talking = 0
-				while talking <= 120* len(textc):
-					gScreen.fill(WHITE)
-					gScreen.blit(self.arena.img, [0,0])
-					pygame.draw.rect(gScreen, BLACK, [0,350 + size[0] - 500,700,150])
-					talking += 1
-					if origbattlers[speaker] in origbattlers1:
-						for l in range(len(textc)):
-							gScreen.blit(textc[l-1], [origbattlers[speaker].basex + 55, origbattlers[speaker].basey - (30 + ((l-1) * font.size(text[l-1])[1]))])
-					else:
-						for l in range(len(textc)):
-							gScreen.blit(textc[l-1], [origbattlers[speaker].basex - font.size(text[l-1])[0], origbattlers[speaker].basey - (30 + ((l-1) * font.size(text[l-1])[1]))])
-					
-					for k in origbattlers:
-							gScreen.blit(k.image,[k.basex, k.basey])
-					for event in pygame.event.get():
-						if event.type == pygame.KEYDOWN:
-							talking = 120 * len(textc) +1
-					pygame.display.flip()
-					clock.tick(60)'''
-					
-					
 		
 #preb is list of lists, inb is dictionary, losb is list of lists, winb is list of lists
 class Dialoge(object):
@@ -2174,15 +2041,12 @@ def CharSelect(mult):
 			
 			for f in unlockedchars:
 				if thisplayer.x1 == f.cords[0] and thisplayer.y1 == f.cords[1]:
-					
 					dispchar = f
-					
 					thisplayer.battlers[0] = f.reBuild()
 					break
-					
 				else:
-					dispchar = 	NO
-					thisplayer.battlers[0] = 	NO
+					dispchar = NO
+					thisplayer.battlers[0] = NO
 
 			x += 1
 			
@@ -2196,15 +2060,12 @@ def CharSelect(mult):
 			
 			for f in unlockedchars:
 				if thisplayer.x2 == f.cords[0] and thisplayer.y2 == f.cords[1]:
-					
 					dispchar2 = f
-					
 					thisplayer.battlers[1] = f.reBuild()
 					break
-		
 				else:
-					dispchar2 = 	NO
-					thisplayer.battlers[1] = 	NO
+					dispchar2 = NO
+					thisplayer.battlers[1] = NO
 
 			x += 1
 			
@@ -2217,15 +2078,12 @@ def CharSelect(mult):
 				y += 1
 			for f in unlockedchars:
 				if thisplayer.x3 == f.cords[0] and thisplayer.y3 == f.cords[1]:
-					
 					dispchar2 = f
-					
 					thisplayer.battlers[2] = f.reBuild()
 					break
-					
 				else:
-					dispchar2 = 	NO
-					thisplayer.battlers[2] = 	NO
+					dispchar2 = NO
+					thisplayer.battlers[2] = NO
 
 			x += 1
 
@@ -2237,7 +2095,6 @@ def CharSelect(mult):
 						for i in player2.battlers:
 							i.isAi = True
 					theBattle = Battle(player1.battlers, player2.battlers, defultarena, NoDial, mult, 	zaroltheme, "")
-		
 					theBattle.battle()
 					player1.reBuild()
 					player2.reBuild()
@@ -2248,7 +2105,6 @@ def CharSelect(mult):
 							
 			if mouse_down:
 				if mult == False and aitest == False:
-					
 					return player1.battlers
 				else:
 					thisplayer = player2
@@ -2283,11 +2139,8 @@ def CharSelect(mult):
 		gScreen.blit(selector3, [thisplayer.x3*22 + 1, thisplayer.y3*22 + 3])
 		
 		for i in range(len(thisplayer.battlers)):
-		
 			localbattler = thisplayer.battlers[i]
-		
 			#	gScreen.blit(dispchar2.image, [644, 370])
-		
 			gScreen.blit(localbattler.menuImg, [4, i * 47 + 559])
 			gScreen.blit(font.render(localbattler.name, True, BLACK), [56, i * 47 + 559])
 			
@@ -2302,11 +2155,7 @@ def CharSelect(mult):
 		else:
 			gScreen.blit(mouse_pointer,mouse_pos)
 		
-		
-		
-		
 		cootheme.reset()
-
 		pygame.display.flip()	
 		clock.tick(60)
 

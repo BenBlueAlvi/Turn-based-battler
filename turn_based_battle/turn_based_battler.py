@@ -1,6 +1,3 @@
-
-
-
 import pygame
 import random
 import time
@@ -9,19 +6,15 @@ import pyganim
 import ai
 import defs
 from decimal import *
-
 from pygame.locals import *
-
 
 clock = pygame.time.Clock()
 
 pygame.mixer.pre_init(22050, -16, 3, 8)
 pygame.mixer.init()
 
-
 mouseCoordDebug = False
 musicPlay = True
-
 
 # Define some colors
 BLACK = (0, 0, 0)
@@ -34,44 +27,20 @@ GREY = (100,100,100)
 done = False
 running = True
 
-health = 278
-player_attack = 10
-player_turn = True
-gameover = False
-
-player_x = 50
-player_y = 150
-player_x_vel = 0
-player_y_vel = 0
-animate = True
 pygame.init()
  
 # Set the width and height of the screen [width, height]
 size = (1250, 700)
 gScreen = pygame.display.set_mode(size)
-
 font = pygame.font.SysFont('Calibri', 15, True, False)
 text = font.render("hi",True,BLACK)
  
 pygame.display.set_caption("TBB: To Be Renamed")
-
 #pygame.mixer.music.play(-1, 0.0)
 pygame.mouse.set_visible(False)
 
-#Images:
-
-
-
-testEnemy = ["James", "null", 50, 1, 1, 1, 1]
-
-enemy = testEnemy
 mouse_down = False
 disptext = font.render("Place holder",True,BLACK)
-
-
-
-
-
 
 def bubble_sort(items):
 	""" Implementation of bubble sort """
@@ -80,15 +49,6 @@ def bubble_sort(items):
 			if items[j] > items[j+1]:
 				items[j], items[j+1] = items[j+1], items[j] 
 	return items
-
-
-
-		
-		
-
-
-		
-
 
 recte = []
 test = pyganim.getImagesFromSpriteSheet("Assets/ui/animationtest.png",rows = 5,cols=5, rects = recte)
@@ -112,41 +72,9 @@ class SpreetSheet(object):
 
 testAnim = SpreetSheet("Assets/animations/alpha.png", 1, 16)
 
-turn = 0
-
-
-
-
-
-		
-	
-
-
-
-			
-
-
-
-
-
-
-
-
-	
-
-
-		
+turn = 0		
 aitest = False
 
-#--------------------------------------------------------------------------------------------------------------------------------------------------		
-#--------------------------------------------------------------------------------------------------------------------------------------------------	
-#--------------------------------------------------------------------------------------------------------------------------------------------------	
-#--------------------------------------------------------------------------------------------------------------------------------------------------	
-#--------------------------------------------------------------------------------------------------------------------------------------------------	
-#--------------------------------------------------------------------------------------------------------------------------------------------------	
-#--------------------------------------------------------------------------------------------------------------------------------------------------	
-#--------------------------------------------------------------------------------------------------------------------------------------------------	
-done = False
 while not done:
 
 	for event in pygame.event.get(): 
@@ -183,9 +111,6 @@ while not done:
 			aitest = True
 			defs.CharSelect(mult)
 			mouse_down = False
-			
-		
-
 	
 	if mouse_down:
 		defs.gScreen.blit(defs.mouse_pointer2,mouse_pos)
@@ -193,19 +118,5 @@ while not done:
 		defs.gScreen.blit(defs.mouse_pointer,mouse_pos)
 		
 	defs.cootheme.play()
-
 	pygame.display.flip()
-
-
 	clock.tick(60)
-	
-
-	
-
-
-
-	
-
-		
-		
-	
