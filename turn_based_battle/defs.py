@@ -189,7 +189,6 @@ def ScrollSelect(player, char):
 		y = 0
 
 		for i in player.scrolls:
-			
 			if x > 1:
 				x = 0
 				y += 1
@@ -197,8 +196,6 @@ def ScrollSelect(player, char):
 			gScreen.blit(i.skill.text, [11 + x*175, y*30 + 10])
 			gScreen.blit(i.skill.type.img, [5 + x*175, y*30 + 5])
 			i.cords = [5 + x*175, y*30 + 5]
-			
-			
 			
 			x += 1
 		for i in player.scrolls:
@@ -266,7 +263,7 @@ class Effect(object):
 			target.effects.append(self.buildNew())
 			
 		if self.effect == "meditate":
-			target.power += 3
+			target.power += 1
 			target.con -= 10
 			target.mag += 5
 			printb(target.name + " is meditating!")
@@ -285,6 +282,7 @@ class Effect(object):
 			target.misc += 1
 			print "planned: ", target.misc
 			target.crit += 2
+			target.modHitChance += 10
 			target.int = target.int + (target.int / 5)
 			target.str = target.str + (target.str / 5)
 			
@@ -307,9 +305,11 @@ class Effect(object):
 		if self.effect == "magicMute":
 			printb(target.name+" is Muted!")
 			target.effects.append(self.buildNew())
+
 		if self.effect == "passedOut":
 			printb(target.name+" passed out!")
 			target.effects.append(self.buildNew())
+
 		if self.effect == "mindSpiked":
 			printb(target.name+" has been mind spiked!")
 			target.effects.append(self.buildNew())
@@ -321,7 +321,6 @@ class Effect(object):
 		
 		if self.effect == "burn":
 			printb(target.name + " is no longer on fire!")
-		
 		
 		if self.effect == "defend":
 			printb(target.name + " is no longer defending!")
@@ -349,7 +348,8 @@ class Effect(object):
 		
 		if self.effect == "planAhead":
 			for i in range(target.misc):
-				target.crit = target.crit - 2
+				target.crit -= 2
+				target.modHitChance -= 10
 				target.int = target.int - (target.int / 5)
 				target.str = target.str - (target.str / 5)
 			target.misc = 0
@@ -367,8 +367,10 @@ class Effect(object):
 			target.agil -= 5
 			target.dodgeChance -= 10
 			printb(target.name + " is no longer slowed!")
+
 		if self.effect == "passedOut":
 			printb(target.name + " is no longer passed out!")
+
 		if self.effect == "mindSpiked":
 			printb(target.name + " is no longer mind spiked!")
 		
@@ -432,8 +434,8 @@ class Effect(object):
 				printb(target.name + "'s Meditate was Muted!")
 			else:
 				printb(target.name + " is Meditating.")
-				target.power += 3
-			if self.endeffect == 1:
+				target.power += 1
+			if self.endeffect == 3:
 				self.end(target)
 			self.endeffect += 1
 				
@@ -588,7 +590,7 @@ class Skill(object):
 		targetmultiplier = 1 + ((target.lvl - 1) / 10)
 		usermultiplier = 1 + ((user.lvl - 1) / 10)
 		message = ""
-		hit = self.hitChance - ((target.dodgeChance + target.equipDodgeChance) * targetmultiplier)
+		hit = (self.hitChance + user.modHitChance) - ((target.dodgeChance + target.equipDodgeChance) * targetmultiplier)
 		
 		if guarded in target.effects:
 			target = target.guarder
@@ -908,7 +910,7 @@ class Skill(object):
 			printb(user.name + " missed!")
 				
 #Skill("", normal, True, 0, 0, 0, 0, 100, 0, [], [""])
-
+#def __init__(self, name, type, phys, atk, var, spd, crit, hitChance, cost, effects, spec):
 
 nothing = Skill("nothing", normal, True, 0, 0, 0, 0, 100, 0, [], ["nodam", "trueHit"])
 nothing.desc = ""
@@ -1138,6 +1140,7 @@ class Char(object):
 		self.basecrit = crit
 		self.dodgeChance = dodgeChance
 		self.basedodgeChance = dodgeChance
+		self.modHitChance = 0
 		self.ability = ability
 		self.marks = 0
 		self.power = 1
