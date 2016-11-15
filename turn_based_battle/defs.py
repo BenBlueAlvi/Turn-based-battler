@@ -37,7 +37,6 @@ class Music(object):
 	def fadeout(self, time):
 		pygame.mixer.music.fadeout(time)
 		
-		
 cattheme = Music("Raxxo_Patchy_Aid")
 cootheme = Music("Raxxo_Stand_Your_Ground")
 maicetheme = Music("A_Tiny_Tiny_Clever_Commander")
@@ -58,13 +57,6 @@ mouse_pointer = pygame.image.load('Assets/mouse.png')
 mouse_pointer2 = pygame.image.load('Assets/mouse2.png')
 health_border = pygame.image.load('Assets/health_border.png')
 aitest = False
-
-def bubble_sort(items):
-	""" Implementation of bubble sort """
-	for i in range(len(items)):
-		for j in range(len(items)-1-i):
-			if items[j] > items[j+1]:
-				items[j], items[j+1] = items[j+1], items[j] 
 				
 def hitDetect(p1, p2, p3, p4):
 	if p2[0] > p3[0] and p1[0] < p4[0] and p2[1] > p3[1] and p1[1] < p4[1]:
@@ -92,8 +84,6 @@ def printb(text):
 			
 		pygame.display.flip()	
 		clock.tick(60)
-	
-						
 
 def printc(text, battler, thesebattlers):
 	global disptextc
@@ -218,9 +208,6 @@ class Equip(object):
 		self.slot = slot
 		
 emptySlot = Equip("Nothing", 0, 0, 0, 0, 0, 0, 0, 0, "")
-
-
-
 				
 class Effect(object):
 	def __init__(self, effect):
@@ -373,7 +360,6 @@ class Effect(object):
 
 		if self.effect == "mindSpiked":
 			printb(target.name + " is no longer mind spiked!")
-		
 		
 	def update(self, target):
 		if self.effect == "magicMute":
@@ -665,7 +651,7 @@ class Skill(object):
 					damage = 0
 					planAheadf.apply(user)
 				if i == "division":
-					damage = target.hp/5
+					damage = target.maxhp/5
 				if i == "immortal":
 					immortal.apply(user)
 				if i == "heal":
@@ -712,8 +698,8 @@ class Skill(object):
 				if i == "endeffect":
 					user.effects = []
 				if i == "removeEff":
-					for j in negeff:
-						if j in target.effects:
+					for j in target.effects:
+						if j in negeff:
 							j.end(target)
 				if i == "removeUff":
 					target.con = target.basecon
@@ -771,110 +757,43 @@ class Skill(object):
 				if i == "neverThere":
 					neverTheref.apply(user)
 				
-				if i == "createCreep":
-					spawned = miniCreep.buildNew()
-					if user in battlers1 and len(battlers1) < 3:
-						battlers1.append(spawned)
-						x = 0
-						y = 0
-						
-						for j in battlers1:
-							
-							if not j.basex == x * (size[0] - 150) + 50 and not j.basey == y * 75 + 325:
-								spawned.basex = x * (size[0] - 150) + 50
-								spawned.basey = y * 75 + 325
-								break
-							y += 1
-						thesebattlers.append(spawned)
-						
-						
-					elif user in battlers2 and len(battlers2) < 3:
-						spawned.isAi = True
-						battlers2.append(spawned)
-						x = 1
-						y = 0
-						for j in battlers2:
-							
-							if not j.basex == x * (size[0] - 150) + 50 and not j.basey == y * 75 + 325:
-								spawned.basex = x * (size[0] - 150) + 50
-								spawned.basey = y * 75 + 325
-								break
-							y += 1
-						thesebattlers.append(spawned)
-				
-				if i == "createWorship": #the problem is inside of this function, see below
-					if user in battlers1 and len(battlers1) < 3:
+				if "create" in i:
+					spawned = ""
+					if "Creep" in i:
+						spawned = miniCreep.buildNew()
+					if "Worship" in i:
 						spawned = Worshipper.buildNew()
-						
+					if "Cubes" in i:
+						spawned = Cubes.buildNew()
+					#Be sure spawned is valid!
+					if spawned != "":
 						if user.isAi:
 							spawned.isAi = True
-						battlers1.append(spawned)
-						x = 0
-						y = 0
-						for j in battlers1:
-							
-							if not j.basex == x * (size[0] - 150) + 50 and not j.basey == y * 75 + 325:
-								spawned.basex = x * (size[0] - 150) + 50
-								spawned.basey = y * 75 + 325
-								break
-							y += 1
-						thesebattlers.append(spawned)
-						
-						
-						
-					elif user in battlers2 and len(battlers2) < 3:
-						spawned = Worshipper.buildNew()
-						
-						if user.isAi:
-							spawned.isAi = True
-						battlers2.append(spawned)
-						x = 1
-						y = 0
-						for j in battlers2:
-							
-							if not j.basex == x * (size[0] - 150) + 50 and not j.basey == y * 75 + 325:
-								spawned.basex = x * (size[0] - 150) + 50
-								spawned.basey = y * 75 + 325
-								break
-							y += 1
-						thesebattlers.append(spawned)
-						 #when this is called it outputs (1150, 475), the top-left corner of the bottom character on the right side
-					
+						if user in battlers1:
+							Left = True
+							rand1 = battlers1
+						else:
+							Left = False
+							rand1 = battlers2
 
-				if i == "createCubes":
-					spawned = Cubes.buildNew()
-					if user in battlers1 and len(battlers1) < 3:
-						battlers1.append(spawned)
-						x = 0
-						y = 0
-						for j in battlers1:
-							if y > 2:
-								y = 0
-								x += 1
-							if not j.basex == x * (size[0] - 150) + 50 and not j.basey == y * 75 + 325:
-								spawned.basex = x * (size[0] - 150) + 50
-								spawned.basey = y * 75 + 325
+						for x in range(3):
+							rand, succeded = x*75 + 325, True
+							for y in rand1:
+								if rand == y.basey:
+									succeded = False
+							if succeded:
+								spawned.basey = rand
+								if Left:
+									spawned.basex = 50
+									battlers1.append(spawned)
+								else:
+									spawned.basex = size[0] - 100
+									battlers2.append(spawned)
+								thesebattlers.append(spawned)
 								break
-							y += 1
-						
-						
-					elif user in battlers2 and len(battlers2) < 3:
-						spawned.isAi = True
-						battlers2.append(spawned)
-						x = 1
-						y = 0
-						for j in battlers2:
-							
-							if not j.basex == x * (size[0] - 150) + 50 and not j.basey == y * 75 + 325:
-								spawned.basex = x * (size[0] - 150) + 50
-								spawned.basey = y * 75 + 325
-								break
-							y += 1
-						
-					thesebattlers.append(spawned)
+
 				if i == "mindSpike":
 					mindSpiked.apply(target)
-
 
 			if user.ability == "Frenzy" and user.hp <= user.maxhp/5:
 				damage = math.floor(damage * 1.25)
@@ -1076,9 +995,9 @@ chaosVortex = Skill("Chaos Vortex", chaos, False, 20, 60, 5, 6, 90, 2, [], ["hit
 chaosVortex.desc = "Cause a vortex of chaotic energy."
 
 againstOdds = Skill("Against The Odds", light, True, 0, 10, 3, 13, 90, 7, [], ["againstOdds"])
-againstOdds.desc = "Against odds stacked against you, you still come out on top."
+againstOdds.desc = "Perservere against the odds stacked against you."
 takeBlow = Skill("Take The Blow", fighting, True, 0, 0, 12, 10, 100, 1, [], ["takeBlow", "trueHit", "nodam"])
-takeBlow.desc = "Prepare to take a blow for an ally."
+takeBlow.desc = "Jump in to take a blow for an ally."
 powerStrike = Skill("Power Strike", fighting, True, 75, 10, -1, 0, 40, 1, [], [""])
 powerStrike.desc = "Put all of your strength into one attack. Has a low chance of hitting."
 antiPhysic = Skill("Anti Physic", unknown, False, 30, 20, 5, 15, 90, 2, [], [""])
@@ -1108,9 +1027,6 @@ instantkill.desc = "BAM! You dead now."
 
 allSkills = [instantkill, mindSpike, rejuvinate, windSlash, eldritchAppuratus, daggerStorm, mindDisk, never, colorfulBullet, neverThere, mindReading, antiPhysic, powerStrike, takeBlow, againstOdds, chaosVortex, astralVortex, earthenVortex, chains, voidSnap, otherStage, moonStage, earthStage, powerTransfer, lifeTransfer, fusion, fission, blast, rebuke, eggon, sneeze, exhale, inhale, observe, creepyAtk, blink, stare, psionicRadiance, recover, obsidianBlast, revenge, cleave, bladeFlash, wellspring, energiBeam, zap, mend, erase, planAhead, confuse, stab, bludgeon, shroud, lifePact, meditate, chaosBeam, forceShield, setFire, chaosBolt, consumeFlesh, rip, dodge, kick, bite, slash, tangle, powerDrain, block, meteorStorm, vampire, destroy, powerUp, magicMute, shardSwarm, nuke, scar, defend, axeLegs, earthShot, airBlast, waterSpout, fireBall, basicAtk, nothing]
 allSkillScrolls = []
-
-
-
 
 class Char(object):
 	def __init__(self, name, types, hp, str, int, con, mag, agil, crit, dodgeChance, skills, ability, image, cords, menuImg):
@@ -1179,10 +1095,6 @@ class Char(object):
 		self.equipAgil = self.equips["Head"].agil + self.equips["Chest"].agil + self.equips["Legs"].agil + self.equips["Feet"].agil + self.equips["Weapon"].agil
 		self.equipCrit = self.equips["Head"].crit + self.equips["Chest"].crit + self.equips["Legs"].crit + self.equips["Feet"].crit + self.equips["Weapon"].crit
 		self.equipDodgeChance = self.equips["Head"].dodgeChance + self.equips["Chest"].dodgeChance + self.equips["Legs"].dodgeChance + self.equips["Feet"].dodgeChance + self.equips["Weapon"].dodgeChance
-		
-		
-		
-		
 		
 	def buildNew(self):
 		newchar = Char(self.name, self.types, self.hp, self.str, self.int, self.con, self.mag, self.agil, self.crit, self.dodgeChance, self.skills, self.ability, pygame.transform.scale(pygame.image.load(self.image), [50, 50]), self.cords, pygame.transform.scale(pygame.image.load(self.image), [42, 42]))
