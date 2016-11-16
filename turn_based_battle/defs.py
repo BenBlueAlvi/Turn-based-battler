@@ -1045,6 +1045,7 @@ absorb.desc = "Shoot a shard of ice to impale your foe. May cause slowness"
 diveBomb = Skill("Dive Bomb", air, True, 30, 5, 7, 4, 87, 2, [], [])
 diveBomb.desc = "Leap into the air and ram into your opponent."
 
+wispFire = Skill("Fire of the Wisp", fire, False, 30, 7, 6, 4, 99, 1 [2, burn], [])
 
 
 
@@ -1201,6 +1202,8 @@ goldShroom = Char("Gold Shroom", [poison], 500, 10, 20, 10, 15, 3, 3, 10, [spore
 
 seeGull = Char("Seegull", [water, air], 300, 15, 20, 6, 10, 7, 4, 15, [airBlast, stare, diveBomb], "", "Assets/battlers/seeGull.png", [15, 15], "")
 crawFish = Char("Craw Fish", [water], 350, 20, 12, 20, 10, 4, 4, 10, [slash, defend], "", "Assets/battlers/crawFish.png", [16, 15], "")
+
+wisp = Char("Wisp", [fire, ghost], 200, 10, 25, 1, 25, 3, 4, 20, [fireball, wispFire], "", "Assets/battlers/wisp.png", [13, 2], "")
 
 #def __init__(self, name, types, hp, str, int, con, mag, agil, crit, dodgeChance, lvl, xp, skills, ability, image, cords, menuImg):
 Worshipper = Char("Worshipper", [magic, chaos, minion], 300, 5, 15, 6, 10, 0, 0, 0, [basicAtk, fireBall, powerTransfer, lifeTransfer, meditate], "Frenzy", "Assets/battlers/wip.png", [2,0], "")
