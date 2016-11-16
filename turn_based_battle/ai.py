@@ -82,6 +82,47 @@ def runAI(player, battlersL, battlersR):
 #LESSER DUDES
 	if player.name == "???":
 		player.goskill, player.target = player.skills[0], [player]
+		
+		
+	if player.name == "Shroom":
+		if rand == 0:
+			player.goskill, player.target = player.skills[0], [consort[len(consort) - 1]]
+		if rand == 1:
+			player.goskill, player.target = player.skills[2], [potdam[0]]
+		if player.hp < player.hp / 2:
+			player.goskill, player.target = player.skills[1], [consort[0]]
+	
+	if player.name == "Frost Shroom":
+		if rand == 0:
+			player.goskill, player.target = player.skills[0], [consort[len(consort) - 1]]
+		if rand == 1:
+			player.goskill, player.target = player.skills[2], [potdam[0]]
+		if player.hp < player.hp / 2:
+			player.goskill, player.target = player.skills[1], [consort[0]]
+			
+	if player.name == "Sand Shroom":
+		if rand == 0:
+			player.goskill, player.target = player.skills[0], [consort[len(consort) - 1]]
+		if rand == 1:
+			player.goskill, player.target = player.skills[2], [potdam[0]]
+		if player.hp < player.hp / 2:
+			player.goskill, player.target = player.skills[1], [consort[0]]
+			
+	if player.name == "Cave Shroom":
+		if rand == 0:
+			player.goskill, player.target = player.skills[0], [consort[len(consort) - 1]]
+		if rand == 1:
+			player.goskill, player.target = player.skills[2], [potdam[0]]
+		if player.hp < player.hp / 2:
+			player.goskill, player.target = player.skills[1], [consort[0]]
+			
+	if player.name == "Gold Shroom":
+		if rand == 0:
+			player.goskill, player.target = player.skills[0], [consort[len(consort) - 1]]
+		if rand == 1:
+			player.goskill, player.target = player.skills[2], [potdam[0]]
+		
+			
 	
 	if player.name == "Axurlegs":
 		player.goskill, player.target = player.skills[0], [consort[0]]

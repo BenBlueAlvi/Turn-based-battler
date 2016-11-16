@@ -225,6 +225,10 @@ class Effect(object):
 		if self.effect == "bleed":
 			printb(target.name + " is bleeding out!")
 			target.effects.append(self.buildNew())
+		
+		if self.effect == "poison":
+			printb(target.name + " is poisoned!")
+			target.effects.append(self.buildNew())
 			
 		if self.effect == "defend":
 			target.con += target.basecon * target.basecon
@@ -303,6 +307,9 @@ class Effect(object):
 			
 	def end(self, target):
 		target.effects.remove(self)
+		if self.effect == "poison":
+			printb(target.name + " is no longer poisoned!")
+			
 		if self.effect == "bleed":
 			printb(target.name + " is no longer bleeding!")
 		
@@ -380,7 +387,7 @@ class Effect(object):
 				
 		if self.effect == "bleed":
 			target.hp -= target.hp / 4
-			printb(target.name + " is on bleeding out!")
+			printb(target.name + " is on bleeding out!   " + target.name + " takes " + str(damage) + " damage")
 			self.endeffect = random.randint(1,3)
 			if self.endeffect == 2:
 				printb(target.name + " is no longer bleeding")
@@ -407,7 +414,6 @@ class Effect(object):
 			printb(target.name + " is poisoned!   " + target.name + " takes " + str(damage) + " damage")
 			self.endeffect = random.randint(1,4)
 			if self.endeffect == 2:
-				printb(target.name + " is no longer poisoned!")
 				self.end(target)
 				
 		if self.effect == "rebuff":
@@ -535,7 +541,7 @@ forceshield = Effect("forceShield")
 confusion = Effect("confusion")
 immortal = Effect("immortal")
 block = Effect("block")
-poison = Effect("poison")
+poisoned = Effect("poison")
 rebuff = Effect("rebuff")
 meditatef = Effect("meditate")
 planAheadf = Effect("planAhead")
@@ -550,7 +556,7 @@ neverTheref = Effect("neverThere")
 slowed = Effect("slowed")
 mindSpiked = Effect("mindSpiked")
 
-negeff = [burn, magicmute, bleed, poison, confusion]
+negeff = [burn, magicmute, bleed, poisoned, confusion]
 poseff = [defense, forceshield, immortal, block, rebuff, meditatef, planAheadf, dodgeUp, earthStagef, otherStagef, moonStagef]
 
 
@@ -1020,6 +1026,26 @@ rejuvinate = Skill("rejuvinate", magic, False, 0,0, 5, 3, 100, 4, [], ["recover"
 rejuvinate.desc = "Heal yourself alot."
 mindSpike = Skill("Mind Spike", physic, False, 0,0, 5, 3, 100, 3, [], ["mindSpike", "nodam"])
 mindSpike.desc = "Make them pay for hurting you or your friends."
+#--Forest--
+leafStorm = Skill("Leaf Storm", grass, False, 20, 15, 8, 4, 90, 1, [],["hitAll"])
+leafStorm.desc = "Send a swarm of leafs through your foe"
+spores = Skill("Spores", poison, False, 5, 5, 2, 3, 90, 1, [1,poisoned], [])
+spores.desc = "Use deadly spores to poison your foe."
+absorb = Skill("Absorb", grass, False, 20, 20, 5, 3, 90, 1, [], ["vampire"])
+absorb.desc = "Absorb some your foe's life force."
+
+sandStorm = Skill("Sandstorm", earth, False, 10, 20, 5, 3, 90, 1, [], ["hitAll"])
+absorb.desc = "Send out a sandstorm to blind your foes."
+
+iceShard = Skill("Ice Shard", ice, False, 15, 15, 5, 6, 90, 1, [2, slowed], [])
+absorb.desc = "Shoot a shard of ice to impale your foe. May cause slowness"
+
+
+
+
+
+#Skill("", normal, True, 0, 0, 0, 0, 100, 0, [], [""])
+#def __init__(self, name, type, phys, atk, var, spd, crit, hitChance, cost, effects, spec):
 
 
 instantkill = Skill("Insta kill", unknown, False, 99999, 9999, 99, 15, 100, 0, [], ["trueHit"])
@@ -1136,7 +1162,7 @@ Okuu = Char("Okuu", [fire, tech], 500, 15, 50, 30, 10, 1, 5, 5, [bludgeon, blast
 Lapis = Char("Lapis", [astral], 400, 20, 20, 10, 10, 4, 5, 20, [chains, voidSnap, earthStage, moonStage, otherStage, earthenVortex, chaosVortex, astralVortex], "3 worlds", "Assets/battlers/lapis.png", [6,7], "")
 
 Koishi = Char("Koishi", [unknown, physic], 400, 10, 55, 80, 100, 10, 6, 30, [colorfulBullet,mindReading, antiPhysic, neverThere, never, recover, voidSnap], "", "Assets/battlers/komeiji.png", [7,7], "")
-#def __init__(self, name, types, hp, str, int, con, mag, agil, crit, dodgeChance, lvl, xp, skills, ability, image, cords, menuImg):
+
 Nou = Char("Nou Furueteru", [physic], 300, 10, 50, 55, 90, 11, 7, 25, [colorfulBullet, mindDisk, mindReading, recover, forceShield, rejuvinate, meditate, defend], "", "Assets/battlers/Nou.png", [8,8], "")
 
 Alpha = Char("Alpha", [normal, earth, fighting], 500, 50, -50, 30, 5, 5, 0, 10, [basicAtk, slash, cleave, bladeFlash, revenge, mend, defend], "", "Assets/battlers/alpha.png", [8,4], "")
@@ -1163,13 +1189,22 @@ Protagonist = Char("Protagonist", [normal], 750, 25, 15, 20, 10, 2, 6, 5, [basic
 Axeurlegs = Char("Axurlegs", [grass], 10, 30, 0, 0, 1, 2, 3, 0, [axeLegs], "", "Assets/battlers/wip.png", [10,0], "")
 Dandylion = Char("Dandy Lion", [grass], 600, 20, 15, 5, 20, 2, 2, 10, [slash, bite, tangle], "Frenzy", "Assets/battlers/wip.png", [11,0], "")
 
+Shroom = Char("Shroom", [grass, poison], 500, 10, 20, 10, 15, 3, 3, 10, [spores, absorb, sneeze], "", "Assets/battlers/shroom.png", [10, 1], "")
+frostShroom = Char("Frost Shroom", [ice, poison], 500, 10, 20, 10, 15, 3, 3, 10, [spores, iceShard, sneeze], "", "Assets/battlers/frostShroom.png", [11, 1], "")
+caveShroom = Char("Cave Shroom", [earth, poison], 500, 10, 20, 10, 15, 3, 3, 10, [spores, earthShot, sneeze], "", "Assets/battlers/caveShroom.png", [12, 1], "")
+sandShroom = Char("Sand Shroom", [earth, poison], 500, 10, 20, 10, 15, 3, 3, 10, [spores, sandStorm, sneeze], "", "Assets/battlers/desertShroom.png", [13, 1], "")
+goldShroom = Char("Gold Shroom", [poison], 500, 10, 20, 10, 15, 3, 3, 10, [spores, sneeze], "", "Assets/battlers/goldShroom.png", [14, 1], "")
+
+
+
+#def __init__(self, name, types, hp, str, int, con, mag, agil, crit, dodgeChance, lvl, xp, skills, ability, image, cords, menuImg):
 Worshipper = Char("Worshipper", [magic, chaos, minion], 300, 5, 15, 6, 10, 0, 0, 0, [basicAtk, fireBall, powerTransfer, lifeTransfer, meditate], "Frenzy", "Assets/battlers/wip.png", [2,0], "")
 miniCreep = Char("Creepy Bald Guy", [physic, unknown, minion], 300, 6, 6, 8, 10, 0, 0, 0, [creepyAtk, blink, stare, inhale, exhale, observe], "Creepus", "Assets/battlers/Creepy_Bald_Guy.png", [3, 14], "")
 
 
 NO = NOT.buildNew()	
 
-unlockedchars = [Koishi.buildNew(), Lapis.buildNew(), Flan.buildNew(), Okuu.buildNew(), Nue.buildNew(), Scarlet.buildNew(), Mage.buildNew(), Mouther.buildNew(), Nic.buildNew(), Siv.buildNew(), Coo33.buildNew(), CoosomeJoe.buildNew(), Epic.buildNew(), Alpha.buildNew(), Durric.buildNew(), Creep.buildNew(), Catsome.buildNew(), KnowingEye.buildNew(), Protagonist.buildNew(), Worshipper.buildNew(), miniCreep.buildNew(), Axeurlegs.buildNew(), Dandylion.buildNew(), Cubes.buildNew()]
+unlockedchars = [Koishi.buildNew(), Lapis.buildNew(), Flan.buildNew(), Okuu.buildNew(), Nue.buildNew(), Scarlet.buildNew(), Mage.buildNew(), Mouther.buildNew(), Nic.buildNew(), Siv.buildNew(), Coo33.buildNew(), CoosomeJoe.buildNew(), Epic.buildNew(), Alpha.buildNew(), Durric.buildNew(), Creep.buildNew(), Catsome.buildNew(), KnowingEye.buildNew(), Protagonist.buildNew(), Worshipper.buildNew(), miniCreep.buildNew(), Axeurlegs.buildNew(), Dandylion.buildNew(), Cubes.buildNew(), Shroom.buildNew(), frostShroom.buildNew(), caveShroom.buildNew(), sandShroom.buildNew(), goldShroom.buildNew()]
 equipment = []
 
 class Player(object):
