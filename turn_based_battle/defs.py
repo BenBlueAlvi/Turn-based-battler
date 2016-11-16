@@ -1074,17 +1074,15 @@ absorb.desc = "Send out a sandstorm to blind your foes."
 iceShard = Skill("Ice Shard", ice, False, 15, 15, 5, 6, 90, 1, [2, slowed], [])
 absorb.desc = "Shoot a shard of ice to impale your foe. May cause slowness"
 
-<<<<<<< HEAD
+
 induceDisgust = Skill("Induce Disgust", acid, False, 0, 2, 3, 3, 95, 2, [1, disgusted], ["nodam"])
 observeDefend = Skill("Observational Defence", fighting, True, 0, 0, 4, 3, 0, 1, [], ["observing", "nodam", "trueHit", "defend"])
-=======
+
 diveBomb = Skill("Dive Bomb", air, True, 30, 5, 7, 4, 87, 2, [], [])
 diveBomb.desc = "Leap into the air and ram into your opponent."
 
 wispFire = Skill("Fire of the Wisp", fire, False, 30, 7, 6, 4, 99, 1 [2, burn], [])
 
-
->>>>>>> origin/master
 
 #Skill("", normal, True, 0, 0, 0, 0, 100, 0, [], [""])
 #def __init__(self, name, type, phys, atk, var, spd, crit, hitChance, cost, effects, spec):
@@ -1253,11 +1251,8 @@ miniCreep = Char("Creepy Bald Guy", [physic, unknown, minion], 300, 6, 6, 8, 10,
 
 NO = NOT.buildNew()	
 
-<<<<<<< HEAD
-unlockedchars = [Koishi.buildNew(), Lapis.buildNew(), Flan.buildNew(), Okuu.buildNew(), Nue.buildNew(), Scarlet.buildNew(), Mage.buildNew(), Mouther.buildNew(), Nic.buildNew(), Siv.buildNew(), Coo33.buildNew(), CoosomeJoe.buildNew(), Epic.buildNew(), Alpha.buildNew(), Durric.buildNew(), Creep.buildNew(), Catsome.buildNew(), KnowingEye.buildNew(), Protagonist.buildNew(), Worshipper.buildNew(), miniCreep.buildNew(), Axeurlegs.buildNew(), Dandylion.buildNew(), Cubes.buildNew(), Shroom.buildNew(), frostShroom.buildNew(), caveShroom.buildNew(), sandShroom.buildNew(), goldShroom.buildNew(), NotScaryGhost.buildNew()]
-=======
-unlockedchars = [Koishi.buildNew(), Lapis.buildNew(), Flan.buildNew(), Okuu.buildNew(), Nue.buildNew(), Scarlet.buildNew(), Mage.buildNew(), Mouther.buildNew(), Nic.buildNew(), Siv.buildNew(), Coo33.buildNew(), CoosomeJoe.buildNew(), Epic.buildNew(), Alpha.buildNew(), Durric.buildNew(), Creep.buildNew(), Catsome.buildNew(), KnowingEye.buildNew(), Protagonist.buildNew(), Worshipper.buildNew(), miniCreep.buildNew(), Axeurlegs.buildNew(), Dandylion.buildNew(), Cubes.buildNew(), Shroom.buildNew(), frostShroom.buildNew(), caveShroom.buildNew(), sandShroom.buildNew(), goldShroom.buildNew(), seeGull.buildNew(), crawFish.buildNew()]
->>>>>>> origin/master
+unlockedchars = [Koishi.buildNew(), Lapis.buildNew(), Flan.buildNew(), Okuu.buildNew(), Nue.buildNew(), Scarlet.buildNew(), Mage.buildNew(), Mouther.buildNew(), Nic.buildNew(), Siv.buildNew(), Coo33.buildNew(), CoosomeJoe.buildNew(), Epic.buildNew(), Alpha.buildNew(), Durric.buildNew(), Creep.buildNew(), Catsome.buildNew(), KnowingEye.buildNew(), Protagonist.buildNew(), Worshipper.buildNew(), miniCreep.buildNew(), Axeurlegs.buildNew(), Dandylion.buildNew(), Cubes.buildNew(), Shroom.buildNew(), frostShroom.buildNew(), caveShroom.buildNew(), sandShroom.buildNew(), goldShroom.buildNew(), NotScaryGhost.buildNew(), seeGull.buildNew(), crawFish.buildNew(), Noseclops.buildNew(), Mouthstash.buildNew()]
+
 equipment = []
 
 class Player(object):
