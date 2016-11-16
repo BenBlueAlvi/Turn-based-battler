@@ -46,6 +46,7 @@ maptheme = Music("Raxxo_Bent_to_the_Core")
 durrictheme = Music("the_legend_durric")
 alphatheme = Music("Hiroari_Shoots_a_Strange_Bird_Till When_Remix")
 zaroltheme = Music("dBu_music_Suwa_Foughten_Field")
+defulttheme = Music("dbu_trick_or_die")
 
 menuui = pygame.image.load("assets/ui/menu.png")
 lockedchar = pygame.image.load("assets/battlers/locked.png")
@@ -401,7 +402,8 @@ class Effect(object):
 				self.end(target)
 				
 		if self.effect == "bleed":
-			target.hp -= target.hp / 4
+			damage = target.hp / 4
+			target.hp -= damage
 			printb(target.name + " is on bleeding out!   " + target.name + " takes " + str(damage) + " damage")
 			self.endeffect = random.randint(1,3)
 			if self.endeffect == 2:
@@ -1072,8 +1074,17 @@ absorb.desc = "Send out a sandstorm to blind your foes."
 iceShard = Skill("Ice Shard", ice, False, 15, 15, 5, 6, 90, 1, [2, slowed], [])
 absorb.desc = "Shoot a shard of ice to impale your foe. May cause slowness"
 
+<<<<<<< HEAD
 induceDisgust = Skill("Induce Disgust", acid, False, 0, 2, 3, 3, 95, 2, [1, disgusted], ["nodam"])
 observeDefend = Skill("Observational Defence", fighting, True, 0, 0, 4, 3, 0, 1, [], ["observing", "nodam", "trueHit", "defend"])
+=======
+diveBomb = Skill("Dive Bomb", air, True, 30, 5, 7, 4, 87, 2, [], [])
+diveBomb.desc = "Leap into the air and ram into your opponent."
+
+wispFire = Skill("Fire of the Wisp", fire, False, 30, 7, 6, 4, 99, 1 [2, burn], [])
+
+
+>>>>>>> origin/master
 
 #Skill("", normal, True, 0, 0, 0, 0, 100, 0, [], [""])
 #def __init__(self, name, type, phys, atk, var, spd, crit, hitChance, cost, effects, spec):
@@ -1221,7 +1232,7 @@ Mouthstash = Char("Mouthstash", [earth, air, poison], 400, 25, 10, 20, 10, 5, 2,
 
 Protagonist = Char("Protagonist", [normal], 750, 25, 15, 20, 10, 2, 6, 5, [basicAtk, powerStrike, eggon, mend, instantkill], "Frenzy", "Assets/battlers/wip.png", [1,1], "")
 
-Axeurlegs = Char("Axurlegs", [grass], 10, 30, 0, 0, 1, 2, 3, 0, [axeLegs], "", "Assets/battlers/wip.png", [10,0], "")
+Axeurlegs = Char("Axurlegs", [grass], 10, 30, 0, 0, 1, 2, 3, 0, [axeLegs], "", "Assets/battlers/axeurlegs.png", [10,0], "")
 Dandylion = Char("Dandy Lion", [grass], 600, 20, 15, 5, 20, 2, 2, 10, [slash, bite, tangle], "Frenzy", "Assets/battlers/wip.png", [11,0], "")
 
 Shroom = Char("Shroom", [grass, poison], 500, 10, 20, 10, 15, 3, 3, 10, [spores, absorb, sneeze], "", "Assets/battlers/shroom.png", [10, 1], "")
@@ -1230,7 +1241,10 @@ caveShroom = Char("Cave Shroom", [earth, poison], 500, 10, 20, 10, 15, 3, 3, 10,
 sandShroom = Char("Sand Shroom", [earth, poison], 500, 10, 20, 10, 15, 3, 3, 10, [spores, sandStorm, sneeze], "", "Assets/battlers/desertShroom.png", [13, 1], "")
 goldShroom = Char("Gold Shroom", [poison], 500, 10, 20, 10, 15, 3, 3, 10, [spores, sneeze], "", "Assets/battlers/goldShroom.png", [14, 1], "")
 
+seeGull = Char("Seegull", [water, air], 300, 15, 20, 6, 10, 7, 4, 15, [airBlast, stare, diveBomb], "", "Assets/battlers/seeGull.png", [15, 15], "")
+crawFish = Char("Craw Fish", [water], 350, 20, 12, 20, 10, 4, 4, 10, [slash, defend], "", "Assets/battlers/crawFish.png", [16, 15], "")
 
+wisp = Char("Wisp", [fire, ghost], 200, 10, 25, 1, 25, 3, 4, 20, [fireball, wispFire], "", "Assets/battlers/wisp.png", [13, 2], "")
 
 #def __init__(self, name, types, hp, str, int, con, mag, agil, crit, dodgeChance, skills, ability, image, cords, menuImg):
 Worshipper = Char("Worshipper", [magic, chaos, minion], 300, 5, 15, 6, 10, 0, 0, 0, [basicAtk, fireBall, powerTransfer, lifeTransfer, meditate], "Frenzy", "Assets/battlers/wip.png", [2,0], "")
@@ -1239,7 +1253,11 @@ miniCreep = Char("Creepy Bald Guy", [physic, unknown, minion], 300, 6, 6, 8, 10,
 
 NO = NOT.buildNew()	
 
+<<<<<<< HEAD
 unlockedchars = [Koishi.buildNew(), Lapis.buildNew(), Flan.buildNew(), Okuu.buildNew(), Nue.buildNew(), Scarlet.buildNew(), Mage.buildNew(), Mouther.buildNew(), Nic.buildNew(), Siv.buildNew(), Coo33.buildNew(), CoosomeJoe.buildNew(), Epic.buildNew(), Alpha.buildNew(), Durric.buildNew(), Creep.buildNew(), Catsome.buildNew(), KnowingEye.buildNew(), Protagonist.buildNew(), Worshipper.buildNew(), miniCreep.buildNew(), Axeurlegs.buildNew(), Dandylion.buildNew(), Cubes.buildNew(), Shroom.buildNew(), frostShroom.buildNew(), caveShroom.buildNew(), sandShroom.buildNew(), goldShroom.buildNew(), NotScaryGhost.buildNew()]
+=======
+unlockedchars = [Koishi.buildNew(), Lapis.buildNew(), Flan.buildNew(), Okuu.buildNew(), Nue.buildNew(), Scarlet.buildNew(), Mage.buildNew(), Mouther.buildNew(), Nic.buildNew(), Siv.buildNew(), Coo33.buildNew(), CoosomeJoe.buildNew(), Epic.buildNew(), Alpha.buildNew(), Durric.buildNew(), Creep.buildNew(), Catsome.buildNew(), KnowingEye.buildNew(), Protagonist.buildNew(), Worshipper.buildNew(), miniCreep.buildNew(), Axeurlegs.buildNew(), Dandylion.buildNew(), Cubes.buildNew(), Shroom.buildNew(), frostShroom.buildNew(), caveShroom.buildNew(), sandShroom.buildNew(), goldShroom.buildNew(), seeGull.buildNew(), crawFish.buildNew()]
+>>>>>>> origin/master
 equipment = []
 
 class Player(object):
@@ -1714,21 +1732,23 @@ NoDial = Dialoge([[0, ""]],[[0, ""]],[[0, ""]])
 
 #stage 1
 MousDial = Dialoge([[1, "Ahh!"], [0, "Wha--?"], [1, "Get-- Agh, I need to.."], [0, "Whoah, Calm Down!"], [1, "GET OUT OF MY WAY!"]], [[1, "*huff*"], [1, "I need to hurry up before that", "monster catches up with me..."]], [[1, "I.. I'm sorry."], [1, "I was panicking there."], [0, "I could tell. Why?"], [1, "Well, I'm being chased by.."], [1, "Well, you look like a nice guy,", "maybe you can help me?"], [0, "Depends, but I'll try"], [1, "A monster named 'Catsome' is chasing after me,","And I need some help dealing with it."], [0, "Sure, where can I-"], [1, "Thanks, I'll be heading off now!"]])
-MousFight = Battle("Maice Fight",[], [NO, Maice.buildNew(), NO], defultarena, MousDial, False, 	maicetheme, "")
+MousFight = Battle("Maice Fight",[], [NO, Maice.buildNew(), NO], defultarena, MousDial, False,	maicetheme, "")
 CatDial = Dialoge([[0, "Are you this 'Catosme' i've heard so much about?"], [1, "Yes, that is one title I reply to..."], [1, "Anyway, have you seen a little friend of mine running about?"], [0, "I was sent here by it to avenge it."], [1, "So it wants you to try to hit on me?"], [0, "Please no."], [1, "So we're going to skip the formalities", "and get right to the good parts, eh?"]], [[1, "Ah, that was nice being on top."], [0, "What is it with you and innuendos?"], [1, "I guess it's just one of the things in me."]], [[1, "Ah, I give! Safe word, Safe word!"], [0, "Please stop with the innuendos."], [1, "Well, that little Maice charachter was", "running away after stealing something of mine."], [1, "So you think you can help me get back", "what was taken from me?"], [0, "Sure, I guess so."], [1, "Then let's head off!"]])
-CatsomeFight = Battle("Catosme Fight", [], [	NO, Catsome.buildNew(), NO], defultarena, CatDial, False, 	cattheme, "")
+CatsomeFight = Battle("Catosme Fight", [], [	NO, Catsome.buildNew(), NO], defultarena, CatDial, False, cattheme, "")
 MiecDial = Dialoge([[1, "Ah, there you are. I see", "you brought some Friends this time."], [3, "Ah! There's the Cat!"], [3, "And.. I thought you were going to help me!", "you TRAITOR!"], [0, "something stole something"], [2, "You are Horrible!"], [4, "Why would you trust this scum?"], [3, "I don't even know."], [1, "Well then,", "Let's start this party."]],[[3, "lol rekt"]],[[3, "omg ded"]])
-MiecFight = Battle("Mouses Fight",[], [Maice.buildNew(), Maice.buildNew(), Maice.buildNew()], defultarena, MiecDial, False, 	maicetheme, "Get catsome")
+MiecFight = Battle("Mouses Fight",[], [Maice.buildNew(), Maice.buildNew(), Maice.buildNew()], defultarena, MiecDial, False, maicetheme, "Get catsome")
 
 #forest stage 1
 ForDial = Dialoge([[0, "So this is the forest."], [3, "Why hello, fine traveler.", "What brings you to my forest?"], [1, "Who are you, with that fine maine?"], [3, "I am a Dandy Lion."], [2, "*click*"], [0, "wait, what was that noise?"], [4, "*click*"], [3 ,"and I must have you", "LEAVE MY FOREST!"]],[[3, "And I wish you a good day."]],[[3, "If... I must.", "You have proven yourself worthy to enter my forest."], [1, "Thank you, my fellow feline."]])
-ForFight1 = Battle("Forest Fight", [], [Axeurlegs.buildNew(), Dandylion.buildNew(), Axeurlegs.buildNew()], defultarena, ForDial, False, 	maicetheme, "dandylion")
-Alphight = Battle("Alpha Fight", [], [Axeurlegs.buildNew(), Alpha.buildNew(), Axeurlegs.buildNew()], defultarena, ForDial, False, 	sivtheme, "")
+
+ForFight1 = Battle("Forest Fight", [], [Axeurlegs.buildNew(), Dandylion.buildNew(), Axeurlegs.buildNew()], defultarena, ForDial, False, defulttheme, "dandylion")
+ForFight2 = Battle("Forest 2", [], [Shroom.buildNew(), Dandylion.buildNew(), Shroom.buildNew()], defultarena, "", False, defulttheme, "")
+Alphight = Battle("Alpha Fight", [], [Axeurlegs.buildNew(), Alpha.buildNew(), Axeurlegs.buildNew()], defultarena, ForDial, False, sivtheme, "")
 
 CooDial = Dialoge([[2, "Ah, Coosome! it's been a while!"], [3, "Indeed it has, Cat."], [0, "You know him?"], [2, "Of course! We are all over each other!"], [3, "What Cat means to say, is that we are one and the same."], [2, "We stick together! so Lets have a FOURSOME!"], [0, "But who else is joining me?"], [1, "I'll stand in for Catsome. Lets do this."]], [[3, "You fought well.", "But not well enough."], [2, "Is that really all? I'm not satisfied yet."]], [[3, "Nice one, you fought well there."], [2, "Is it done already? I'm not quite satisfied yet..."]])
 CoosomeFight = Battle("Coosome Fight", [], [Catsome.buildNew(), NO, CoosomeJoe.buildNew()], defultarena, CooDial, False, 	cootheme, "coosome") 
 C33Dial = Dialoge([[5, "Ah, Coosome! it's been a while!"], [4, "Indeed it has, Cat."], [1, "You know him?"], [5, "Of course! We are all over each other!"], [4, "What Cat means to say, is that we are one and the same."], [5, "We stick together! so Lets have a FOURSOME!"], [1, "But who else is joining me?"], [2, "I'll stand in for Catsome. Lets do this."]], [[4, "You fought well.", "But not well enough."], [5, "Is that really all? I'm not satisfied yet."]], [[4, "Nice one, you fought well there."], [5, "Is it done already? I'm not quite satisfied yet..."]])
-Coo33Fight = Battle("Coo33 fight", [], [CoosomeJoe.buildNew(), Coo33.buildNew(), Catsome.buildNew()], defultarena, C33Dial, False, 	cootheme, "Coos")
+Coo33Fight = Battle("Coo33 fight", [], [CoosomeJoe.buildNew(), Coo33.buildNew(), Catsome.buildNew()], defultarena, C33Dial, False, cootheme, "Coos")
 
 NouDial = Dialoge([[3, "!"], [2, "Hello?"], [3, "Hiya!"], [1, "Finally, a person in this strange place.", "We have-"], [3, "Oh yes I know, I know everything.", "Except for what my master Knows!", "She truely knows everything"], [0, "Even more than-"], [3, "Yes, even more than that, abomination.", "I must say that you and you're group seem very excited to get you're hands on this knowledge", "Unforunatly, I cannot allwow that"]], [[0, "Ugg"]], [[0, "Ugg"]])
 NouFight = Battle("Nou Fight", [], [NO, Nou.buildNew(), NO], rift, NouDial, False, 	noutheme, "")
@@ -1742,6 +1762,10 @@ class Stage(object):
 		self.locked = True
 		self.nextstages = nextstages
 	def run(self):
+		if self.name == "Forest 2":
+			forestbattlelist = [ForFight1]
+			self.battles = forestbattlelist[random.randint(0, len(forestbattlelist) - 1)]
+			
 		for i in self.battles:
 			i.battlers1 = self.playerbattlers
 		for i in self.battles:
@@ -2096,7 +2120,7 @@ def CharSelect(aitest, mult):
 						mult = False
 						for i in player2.battlers:
 							i.isAi = True
-					theBattle = Battle("No name", player1.battlers, player2.battlers, defultarena, NoDial, mult, 	zaroltheme, "")
+					theBattle = Battle("No name", player1.battlers, player2.battlers, defultarena, NoDial, mult, defulttheme, "")
 					theBattle.battle()
 					player1.reBuild()
 					player2.reBuild()

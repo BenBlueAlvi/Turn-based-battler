@@ -83,6 +83,18 @@ def runAI(player, battlersL, battlersR):
 	if player.name == "???":
 		player.goskill, player.target = player.skills[0], [player]
 		
+	if player.name == "Seegull":
+		if player.savingfor == "none":
+			player.savingfor = "divebomb"
+		if player.savingfor == "divebomb":
+			if player.power >= player.skills[2].cost:
+				player.goskill, player.target = player.skills[2], [potdam[0]]
+			else:
+				if rand == 0:
+					player.goskill, player.target = player.skills[0], [potdam[0]]
+				else:
+					player.goskill, player.target = player.skills[1], [potdam[0]]
+		
 		
 	if player.name == "Shroom":
 		if rand == 0:
