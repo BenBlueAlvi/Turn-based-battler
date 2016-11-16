@@ -304,6 +304,12 @@ class Effect(object):
 		if self.effect == "mindSpiked":
 			printb(target.name+" has been mind spiked!")
 			target.effects.append(self.buildNew())
+
+		if self.effect == "disgusted":
+			printb(target.name+" is DISGUSTED")
+			target.effects.append(self.buildNew())
+			target.modHitChance -= 20
+			target.dodgeChance -= 5
 			
 	def end(self, target):
 		target.effects.remove(self)
@@ -367,6 +373,15 @@ class Effect(object):
 
 		if self.effect == "mindSpiked":
 			printb(target.name + " is no longer mind spiked!")
+
+		if self.effect == "disgusted":
+			printb(target.name+" has overcome their disgust!")
+			target.modHitChance += 20
+			target.dodgeChance += 5
+
+		if self.effect == "observing":
+			printb(target.name + " is no longer observing!")
+
 		
 	def update(self, target):
 		if self.effect == "magicMute":
@@ -520,6 +535,17 @@ class Effect(object):
 			pass
 			#Death stufff here
 
+		if self.effect == "disgusted":
+			self.endeffect = random.randint(1, 3)
+			if self.endeffect == 1:
+				self.end(target)
+
+		if self.effect == "observing":
+			if self.endeffect == 1:
+				self.end(target)
+			self.endeffect += 1
+
+
 	def resetStats(self, target):
 		target.con = target.basecon
 		target.mag = target.basemag
@@ -555,9 +581,11 @@ passedOut = Effect("passedOut")
 neverTheref = Effect("neverThere")
 slowed = Effect("slowed")
 mindSpiked = Effect("mindSpiked")
+disgusted = Effect("disgusted")
+observing = Effect("observing")
 
-negeff = [burn, magicmute, bleed, poisoned, confusion]
-poseff = [defense, forceshield, immortal, block, rebuff, meditatef, planAheadf, dodgeUp, earthStagef, otherStagef, moonStagef]
+negeff = [burn, magicmute, bleed, poisoned, confusion, disgusted, mindSpiked, slowed, passedOut]
+poseff = [defense, forceshield, immortal, block, rebuff, meditatef, planAheadf, dodgeUp, earthStagef, otherStagef, moonStagef, observing]
 
 
 class Skill(object):
@@ -593,6 +621,8 @@ class Skill(object):
 			hit += 25
 		if user.ability == "Frenzy" and user.hp <= user.maxhp/5:
 			hit += 2
+		if observing in target.effects:
+			user.marks += 1
 
 		if random.randint(1,100) < hit or "trueHit" in self.spec:
 			critical, effective = False, False
@@ -670,6 +700,8 @@ class Skill(object):
 				if i == "block":
 					damage = 0
 					block.apply(user)
+				if i == "observing":
+					observing.apply(user)
 				if i == "powerdrain":
 					damage = 0
 					if magicMute in user.effects:
@@ -956,7 +988,7 @@ blink.desc = "Blink Blink"
 creepyAtk = Skill("Creep Attack", physic, False, 5, 5, 1, 0,90, 0, [], ["creepyAtk"])
 creepyAtk.desc = "Use all the knowledge you have about your enemy to find their weakest point."
 
-inhale = Skill("Inhale", air, False, 0, 0, 3, 0,100, 0, [], ["defend", "heal", "trueHit"])
+inhale = Skill("Inhale", air, False, 0, 0, 3, 0,100, 0, [], ["defend", "heal", "trueHit", "observe"])
 inhale.desc = "Inhale to absorb some healthy particles, healing yourself and defending."
 observe = Skill("Observe", unknown, False, 0, 0, 3, 2, 100, 1, [], ["mark", "mark", "mark", "mark", "mark", "mark", "nodam", "trueHit"])
 observe.desc = "Watch your foe to learn about them."
@@ -1040,9 +1072,8 @@ absorb.desc = "Send out a sandstorm to blind your foes."
 iceShard = Skill("Ice Shard", ice, False, 15, 15, 5, 6, 90, 1, [2, slowed], [])
 absorb.desc = "Shoot a shard of ice to impale your foe. May cause slowness"
 
-
-
-
+induceDisgust = Skill("Induce Disgust", acid, False, 0, 2, 3, 3, 95, 2, [1, disgusted], ["nodam"])
+observeDefend = Skill("Observational Defence", fighting, True, 0, 0, 4, 3, 0, 1, [], ["observing", "nodam", "trueHit", "defend"])
 
 #Skill("", normal, True, 0, 0, 0, 0, 100, 0, [], [""])
 #def __init__(self, name, type, phys, atk, var, spd, crit, hitChance, cost, effects, spec):
@@ -1183,6 +1214,10 @@ Cubes = Char("Cubes", [tech], 400, 25, 35, 60, 30, 4, 5, 30, [zap, energiBeam, w
 
 Creep = Char("Creepy Bald Guy", [physic, unknown], 750, 10, 10, 15, 50, 0, 0, 0, [creepyAtk, blink, stare, inhale, exhale, observe], "Creepus", "Assets/battlers/Creepy_Bald_Guy.png", [3, 15], "")
 KnowingEye = Char("Knowing Eye", [physic, unknown, astral], 750, 0, 75, 0, 75, 5, 6, 5, [creepyAtk, observe, meditate, magicMute, forceShield, create], "Creepus", "Assets/battlers/knowingeye.png", [4, 15], "")
+NotScaryGhost = Char("Not Scary Ghost", [ghost], 1000, 0, 0, 50, 75, 2, 0, 10, [basicAtk, sneeze, forceShield, recover, takeBlow], "tank", "Assets/battlers/Not_Scary_Ghost.png", [2, 15], "")
+Noseclops = Char("Noseclops", [water, fire, acid], 400, 25, 15, 15, 10, 5, 7, 10, [basicAtk, sneeze, induceDisgust, stare, inhale, observeDefend], "Creepus", "Assets/battlers/wip", [1, 15], "")
+Mouthstash = Char("Mouthstash", [earth, air, poison], 400, 25, 10, 20, 10, 5, 2, 10, [inhale], "Creepus", "Assets/battlers/wip", [0, 15], "")
+#def __init__(self, name, types, hp, str, int, con, mag, agil, crit, dodgeChance, skills, ability, image, cords, menuImg):
 
 Protagonist = Char("Protagonist", [normal], 750, 25, 15, 20, 10, 2, 6, 5, [basicAtk, powerStrike, eggon, mend, instantkill], "Frenzy", "Assets/battlers/wip.png", [1,1], "")
 
@@ -1197,14 +1232,14 @@ goldShroom = Char("Gold Shroom", [poison], 500, 10, 20, 10, 15, 3, 3, 10, [spore
 
 
 
-#def __init__(self, name, types, hp, str, int, con, mag, agil, crit, dodgeChance, lvl, xp, skills, ability, image, cords, menuImg):
+#def __init__(self, name, types, hp, str, int, con, mag, agil, crit, dodgeChance, skills, ability, image, cords, menuImg):
 Worshipper = Char("Worshipper", [magic, chaos, minion], 300, 5, 15, 6, 10, 0, 0, 0, [basicAtk, fireBall, powerTransfer, lifeTransfer, meditate], "Frenzy", "Assets/battlers/wip.png", [2,0], "")
 miniCreep = Char("Creepy Bald Guy", [physic, unknown, minion], 300, 6, 6, 8, 10, 0, 0, 0, [creepyAtk, blink, stare, inhale, exhale, observe], "Creepus", "Assets/battlers/Creepy_Bald_Guy.png", [3, 14], "")
 
 
 NO = NOT.buildNew()	
 
-unlockedchars = [Koishi.buildNew(), Lapis.buildNew(), Flan.buildNew(), Okuu.buildNew(), Nue.buildNew(), Scarlet.buildNew(), Mage.buildNew(), Mouther.buildNew(), Nic.buildNew(), Siv.buildNew(), Coo33.buildNew(), CoosomeJoe.buildNew(), Epic.buildNew(), Alpha.buildNew(), Durric.buildNew(), Creep.buildNew(), Catsome.buildNew(), KnowingEye.buildNew(), Protagonist.buildNew(), Worshipper.buildNew(), miniCreep.buildNew(), Axeurlegs.buildNew(), Dandylion.buildNew(), Cubes.buildNew(), Shroom.buildNew(), frostShroom.buildNew(), caveShroom.buildNew(), sandShroom.buildNew(), goldShroom.buildNew()]
+unlockedchars = [Koishi.buildNew(), Lapis.buildNew(), Flan.buildNew(), Okuu.buildNew(), Nue.buildNew(), Scarlet.buildNew(), Mage.buildNew(), Mouther.buildNew(), Nic.buildNew(), Siv.buildNew(), Coo33.buildNew(), CoosomeJoe.buildNew(), Epic.buildNew(), Alpha.buildNew(), Durric.buildNew(), Creep.buildNew(), Catsome.buildNew(), KnowingEye.buildNew(), Protagonist.buildNew(), Worshipper.buildNew(), miniCreep.buildNew(), Axeurlegs.buildNew(), Dandylion.buildNew(), Cubes.buildNew(), Shroom.buildNew(), frostShroom.buildNew(), caveShroom.buildNew(), sandShroom.buildNew(), goldShroom.buildNew(), NotScaryGhost.buildNew()]
 equipment = []
 
 class Player(object):
