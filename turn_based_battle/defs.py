@@ -1040,6 +1040,8 @@ absorb.desc = "Send out a sandstorm to blind your foes."
 iceShard = Skill("Ice Shard", ice, False, 15, 15, 5, 6, 90, 1, [2, slowed], [])
 absorb.desc = "Shoot a shard of ice to impale your foe. May cause slowness"
 
+diveBomb = Skill("Dive Bomb", air, True, 30, 5, 7, 4, 87, 2, [], [])
+diveBomb.desc = "Leap into the air and ram into your opponent."
 
 
 
@@ -1186,7 +1188,7 @@ KnowingEye = Char("Knowing Eye", [physic, unknown, astral], 750, 0, 75, 0, 75, 5
 
 Protagonist = Char("Protagonist", [normal], 750, 25, 15, 20, 10, 2, 6, 5, [basicAtk, powerStrike, eggon, mend, instantkill], "Frenzy", "Assets/battlers/wip.png", [1,1], "")
 
-Axeurlegs = Char("Axurlegs", [grass], 10, 30, 0, 0, 1, 2, 3, 0, [axeLegs], "", "Assets/battlers/wip.png", [10,0], "")
+Axeurlegs = Char("Axurlegs", [grass], 10, 30, 0, 0, 1, 2, 3, 0, [axeLegs], "", "Assets/battlers/axeurlegs.png", [10,0], "")
 Dandylion = Char("Dandy Lion", [grass], 600, 20, 15, 5, 20, 2, 2, 10, [slash, bite, tangle], "Frenzy", "Assets/battlers/wip.png", [11,0], "")
 
 Shroom = Char("Shroom", [grass, poison], 500, 10, 20, 10, 15, 3, 3, 10, [spores, absorb, sneeze], "", "Assets/battlers/shroom.png", [10, 1], "")
@@ -1195,7 +1197,7 @@ caveShroom = Char("Cave Shroom", [earth, poison], 500, 10, 20, 10, 15, 3, 3, 10,
 sandShroom = Char("Sand Shroom", [earth, poison], 500, 10, 20, 10, 15, 3, 3, 10, [spores, sandStorm, sneeze], "", "Assets/battlers/desertShroom.png", [13, 1], "")
 goldShroom = Char("Gold Shroom", [poison], 500, 10, 20, 10, 15, 3, 3, 10, [spores, sneeze], "", "Assets/battlers/goldShroom.png", [14, 1], "")
 
-
+seeGull = Char("Seegull", [water, air], 300, 15, 20, 6, 10, 7, 4, 15, [airBlast, stare, diveBomb], "", "Assets/battlers/seeGull.png", [15, 15], "")
 
 #def __init__(self, name, types, hp, str, int, con, mag, agil, crit, dodgeChance, lvl, xp, skills, ability, image, cords, menuImg):
 Worshipper = Char("Worshipper", [magic, chaos, minion], 300, 5, 15, 6, 10, 0, 0, 0, [basicAtk, fireBall, powerTransfer, lifeTransfer, meditate], "Frenzy", "Assets/battlers/wip.png", [2,0], "")
