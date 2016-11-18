@@ -1081,7 +1081,7 @@ observeDefend = Skill("Observational Defence", fighting, True, 0, 0, 4, 3, 0, 1,
 diveBomb = Skill("Dive Bomb", air, True, 30, 5, 7, 4, 87, 2, [], [])
 diveBomb.desc = "Leap into the air and ram into your opponent."
 
-wispFire = Skill("Fire of the Wisp", fire, False, 30, 7, 6, 4, 99, 1 [2, burn], [])
+wispFire = Skill("Fire of the Wisp", fire, False, 30, 7, 6, 4, 99, 1, [2, burn], [])
 
 
 #Skill("", normal, True, 0, 0, 0, 0, 100, 0, [], [""])
@@ -1224,8 +1224,8 @@ Cubes = Char("Cubes", [tech], 400, 25, 35, 60, 30, 4, 5, 30, [zap, energiBeam, w
 Creep = Char("Creepy Bald Guy", [physic, unknown], 750, 10, 10, 15, 50, 0, 0, 0, [creepyAtk, blink, stare, inhale, exhale, observe], "Creepus", "Assets/battlers/Creepy_Bald_Guy.png", [3, 15], "")
 KnowingEye = Char("Knowing Eye", [physic, unknown, astral], 750, 0, 75, 0, 75, 5, 6, 5, [creepyAtk, observe, meditate, magicMute, forceShield, create], "Creepus", "Assets/battlers/knowingeye.png", [4, 15], "")
 NotScaryGhost = Char("Not Scary Ghost", [ghost], 1000, 0, 0, 50, 75, 2, 0, 10, [basicAtk, sneeze, forceShield, recover, takeBlow], "tank", "Assets/battlers/Not_Scary_Ghost.png", [2, 15], "")
-Noseclops = Char("Noseclops", [water, fire, acid], 400, 25, 15, 15, 10, 5, 7, 10, [basicAtk, sneeze, induceDisgust, stare, inhale, observeDefend], "Creepus", "Assets/battlers/wip", [1, 15], "")
-Mouthstash = Char("Mouthstash", [earth, air, poison], 400, 25, 10, 20, 10, 5, 2, 10, [inhale], "Creepus", "Assets/battlers/wip", [0, 15], "")
+Noseclops = Char("Noseclops", [water, fire, acid], 400, 25, 15, 15, 10, 5, 7, 10, [basicAtk, sneeze, induceDisgust, stare, inhale, observeDefend], "Creepus", "Assets/battlers/wip.png", [1, 15], "")
+Mouthstash = Char("Mouthstash", [earth, air, poison], 400, 25, 10, 20, 10, 5, 2, 10, [inhale], "Creepus", "Assets/battlers/wip.png", [0, 15], "")
 #def __init__(self, name, types, hp, str, int, con, mag, agil, crit, dodgeChance, skills, ability, image, cords, menuImg):
 
 Protagonist = Char("Protagonist", [normal], 750, 25, 15, 20, 10, 2, 6, 5, [basicAtk, powerStrike, eggon, mend, instantkill], "Frenzy", "Assets/battlers/wip.png", [1,1], "")
@@ -1242,7 +1242,7 @@ goldShroom = Char("Gold Shroom", [poison], 500, 10, 20, 10, 15, 3, 3, 10, [spore
 seeGull = Char("Seegull", [water, air], 300, 15, 20, 6, 10, 7, 4, 15, [airBlast, stare, diveBomb], "", "Assets/battlers/seeGull.png", [15, 15], "")
 crawFish = Char("Craw Fish", [water], 350, 20, 12, 20, 10, 4, 4, 10, [slash, defend], "", "Assets/battlers/crawFish.png", [16, 15], "")
 
-wisp = Char("Wisp", [fire, ghost], 200, 10, 25, 1, 25, 3, 4, 20, [fireball, wispFire], "", "Assets/battlers/wisp.png", [13, 2], "")
+wisp = Char("Wisp", [fire, ghost], 200, 10, 25, 1, 25, 3, 4, 20, [fireBall, wispFire], "", "Assets/battlers/wisp.png", [13, 2], "")
 
 #def __init__(self, name, types, hp, str, int, con, mag, agil, crit, dodgeChance, skills, ability, image, cords, menuImg):
 Worshipper = Char("Worshipper", [magic, chaos, minion], 300, 5, 15, 6, 10, 0, 0, 0, [basicAtk, fireBall, powerTransfer, lifeTransfer, meditate], "Frenzy", "Assets/battlers/wip.png", [2,0], "")
