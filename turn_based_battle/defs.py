@@ -311,6 +311,13 @@ class Effect(object):
 			target.effects.append(self.buildNew())
 			target.modHitChance -= 20
 			target.dodgeChance -= 5
+
+		if self.effect == "observing":
+                        printb(target.name+" is observing.")
+                        target.effects.append(self.buildNew())
+
+                if self.effect == "devidedefend":
+                        target.effects.append(self.buildNew())
 			
 	def end(self, target):
 		target.effects.remove(self)
@@ -382,8 +389,8 @@ class Effect(object):
 
 		if self.effect == "observing":
 			printb(target.name + " is no longer observing!")
-
-		
+			
+                        		
 	def update(self, target):
 		if self.effect == "magicMute":
 			target.power -= 1
@@ -546,6 +553,11 @@ class Effect(object):
 			if self.endeffect == 1:
 				self.end(target)
 			self.endeffect += 1
+			
+                if self.effect == "devidedefend":
+                        if self.endeffect == 1:
+                                self.end(target)
+                        self.endeffect += 1
 
 
 	def resetStats(self, target):
@@ -585,6 +597,7 @@ slowed = Effect("slowed")
 mindSpiked = Effect("mindSpiked")
 disgusted = Effect("disgusted")
 observing = Effect("observing")
+devidedefend = Effect("devidedefend")
 
 negeff = [burn, magicmute, bleed, poisoned, confusion, disgusted, mindSpiked, slowed, passedOut]
 poseff = [defense, forceshield, immortal, block, rebuff, meditatef, planAheadf, dodgeUp, earthStagef, otherStagef, moonStagef, observing]
@@ -835,6 +848,9 @@ class Skill(object):
 				if i == "mindSpike":
 					mindSpiked.apply(target)
 
+				if i == "obsBoost":
+                                        damage = math.floor(damage * (1.01 ** target.marks))
+
 			if user.ability == "Frenzy" and user.hp <= user.maxhp/5:
 				damage = math.floor(damage * 1.25)
 						
@@ -846,6 +862,8 @@ class Skill(object):
 					damage *= 2
 				if critical:
 					damage *= 2
+                                if devidedefend in target.effects:
+                                        damage -= math.floor(damage/20)
 				if damage < 0 or "nodam" in self.spec:
 					damage = 0
 
@@ -982,23 +1000,31 @@ recover = Skill("Recover", magic, False, 0, 0, 10, 0,100, 7, [], ["recover", "en
 recover.desc = "Recover lost energy, ending all negative effects and healing yourself."
 psionicRadiance = Skill("Psionic Radiance", physic, False, 47, 10, -2, 3,100, 3, [], [""])
 psionicRadiance.desc = "Use the power of physic energy to cause horrible headaches."
-#------------------------------------------------------------------------
+#--Creepus
 stare = Skill("Stare", physic, False, 30, 10, -2, 15,100, 5, [], [""])
 stare.desc = "Jiiiiiiiiiiiiiiiiii"
 blink = Skill("Blink", physic, True, 5, 5, 1, 0,100, 0, [], ["mark"])
 blink.desc = "Blink Blink"
 creepyAtk = Skill("Creep Attack", physic, False, 5, 5, 1, 0,90, 0, [], ["creepyAtk"])
 creepyAtk.desc = "Use all the knowledge you have about your enemy to find their weakest point."
-
-inhale = Skill("Inhale", air, False, 0, 0, 3, 0,100, 0, [], ["defend", "heal", "trueHit", "observe"])
+observeDefend = Skill("Observational Defence", fighting, True, 0, 0, 4, 3, 0, 1, [], ["observing", "observing", "nodam", "trueHit", "defend"])
+observeDefend.desc = "Defend with the intent of observation in mind."
+inhale = Skill("Inhale", air, False, 0, 0, 3, 0, 100, 2, [], ["defend", "heal", "trueHit", "observing", "removeEff"])
 inhale.desc = "Inhale to absorb some healthy particles, healing yourself and defending."
 observe = Skill("Observe", unknown, False, 0, 0, 3, 2, 100, 1, [], ["mark", "mark", "mark", "mark", "mark", "mark", "nodam", "trueHit"])
 observe.desc = "Watch your foe to learn about them."
 exhale = Skill("Exhale", air, False, 5, 10, 3, 0, 85, 0, [], ["mark", "hitAll"])
 exhale.desc = "Breath out to cause minor damage to all foes."
-#------------------------------------------------------------------------
-sneeze = Skill("Sneeze", acid, False, 14, 6, 6, 0,90, 1, [2, poison], [""])
+#--Other creepus
+induceDisgust = Skill("Induce Disgust", acid, False, 0, 2, 3, 3, 95, 2, [1, disgusted], ["nodam"])
+induceDisgust.desc = "Disgust your enemy so much they can't even look in your direction."
+sneezeFire = Skill("Sneeze Fire", fire, False, 18, 6, 3, 3, 110, 4, [1, burn], ["hitall"])
+sneezeFire.desc = "Sneeze a burst of flames to engulf all opponents."
+sneeze = Skill("Sneeze", acid, False, 14, 6, 6, 0, 90, 1, [2, poison], [""])
 sneeze.desc = "Sneeze to cause minor damage and chance of poison."
+loudspeaker = Skill("Loudspeaker", air, False, 2, 2, 5, 18, 92, 1, [], [""])
+loudspeaker.desc = "Blast your opponent with your Booming voice."
+
 
 eggon = Skill("Egg On", normal, True, 0, 0, 10, 10, 100, 2, [1, rebuff], ["trueHit", "nodam"])
 eggon.desc = "Cheer on yourself or your friends to increase damage and hit chance."
@@ -1054,7 +1080,7 @@ mindDisk.desc = "Thow a mind disk at a foe to slow them. Increases your dodge ch
 daggerStorm = Skill("Dagger Storm", light, True, 40, 50, 10, 7, 99, 3, [], ["hitAll"])
 daggerStorm.desc = "Summon a swarm of daggers to shred your foes."
 eldritchAppuratus = Skill("Eldritch Appuratus", tech, False, 0, 0, 3, 2, 100, 3, [], ["powerUp", "recover"])
-windSlash = Skill("Wind Slash", air, False, 20, 10, 5, 3, 90, 1, [], [])
+windSlash = Skill("Wind Slash", air, False, 20, 10, 5, 3, 90, 1, [], [""])
 windSlash.desc = "Slash so fast, your opponents will not even know what hit them."
 rejuvinate = Skill("rejuvinate", magic, False, 0,0, 5, 3, 100, 4, [], ["recover", "recover"])
 rejuvinate.desc = "Heal yourself alot."
@@ -1063,26 +1089,23 @@ mindSpike.desc = "Make them pay for hurting you or your friends."
 #--Forest--
 leafStorm = Skill("Leaf Storm", grass, False, 20, 15, 8, 4, 90, 1, [],["hitAll"])
 leafStorm.desc = "Send a swarm of leafs through your foe"
-spores = Skill("Spores", poison, False, 5, 5, 2, 3, 90, 1, [1,poisoned], [])
+spores = Skill("Spores", poison, False, 5, 5, 2, 3, 90, 1, [1,poisoned], [""])
 spores.desc = "Use deadly spores to poison your foe."
 absorb = Skill("Absorb", grass, False, 20, 20, 5, 3, 90, 1, [], ["vampire"])
 absorb.desc = "Absorb some your foe's life force."
-
+#--Type basics
 sandStorm = Skill("Sandstorm", earth, False, 10, 20, 5, 3, 90, 1, [], ["hitAll"])
 absorb.desc = "Send out a sandstorm to blind your foes."
-
-iceShard = Skill("Ice Shard", ice, False, 15, 15, 5, 6, 90, 1, [2, slowed], [])
+iceShard = Skill("Ice Shard", ice, False, 15, 15, 5, 6, 90, 1, [2, slowed], [""])
 absorb.desc = "Shoot a shard of ice to impale your foe. May cause slowness"
+basicEarth = Skill("Earthy attack", earth, True, 5, 5, 1, 0, 90, 0, [], [""])
 
-
-induceDisgust = Skill("Induce Disgust", acid, False, 0, 2, 3, 3, 95, 2, [1, disgusted], ["nodam"])
-observeDefend = Skill("Observational Defence", fighting, True, 0, 0, 4, 3, 0, 1, [], ["observing", "nodam", "trueHit", "defend"])
-
-diveBomb = Skill("Dive Bomb", air, True, 30, 5, 7, 4, 87, 2, [], [])
+diveBomb = Skill("Dive Bomb", air, True, 30, 5, 7, 4, 87, 2, [], [""])
 diveBomb.desc = "Leap into the air and ram into your opponent."
 
-wispFire = Skill("Fire of the Wisp", fire, False, 30, 7, 6, 4, 99, 1 [2, burn], [])
+wispFire = Skill("Fire of the Wisp", fire, False, 30, 7, 6, 4, 99, 1 [2, burn], [""])
 
+gristlyDefend = Skill("devidedefend")
 
 #Skill("", normal, True, 0, 0, 0, 0, 100, 0, [], [""])
 #def __init__(self, name, type, phys, atk, var, spd, crit, hitChance, cost, effects, spec):
@@ -1224,8 +1247,8 @@ Cubes = Char("Cubes", [tech], 400, 25, 35, 60, 30, 4, 5, 30, [zap, energiBeam, w
 Creep = Char("Creepy Bald Guy", [physic, unknown], 750, 10, 10, 15, 50, 0, 0, 0, [creepyAtk, blink, stare, inhale, exhale, observe], "Creepus", "Assets/battlers/Creepy_Bald_Guy.png", [3, 15], "")
 KnowingEye = Char("Knowing Eye", [physic, unknown, astral], 750, 0, 75, 0, 75, 5, 6, 5, [creepyAtk, observe, meditate, magicMute, forceShield, create], "Creepus", "Assets/battlers/knowingeye.png", [4, 15], "")
 NotScaryGhost = Char("Not Scary Ghost", [ghost], 1000, 0, 0, 50, 75, 2, 0, 10, [basicAtk, sneeze, forceShield, recover, takeBlow], "tank", "Assets/battlers/Not_Scary_Ghost.png", [2, 15], "")
-Noseclops = Char("Noseclops", [water, fire, acid], 400, 25, 15, 15, 10, 5, 7, 10, [basicAtk, sneeze, induceDisgust, stare, inhale, observeDefend], "Creepus", "Assets/battlers/wip", [1, 15], "")
-Mouthstash = Char("Mouthstash", [earth, air, poison], 400, 25, 10, 20, 10, 5, 2, 10, [inhale], "Creepus", "Assets/battlers/wip", [0, 15], "")
+Noseclops = Char("Noseclops", [water, fire, acid], 400, 25, 15, 15, 10, 5, 7, 10, [basicAtk, sneeze, induceDisgust, stare, inhale, sneezeFire, observeDefend], "Creepus", "Assets/battlers/wip", [1, 15], "")
+Mouthstash = Char("Mouthstash", [earth, air, poison], 400, 25, 10, 20, 10, 5, 2, 10, [basicEarth, inhale], "Creepus", "Assets/battlers/wip", [0, 15], "")
 #def __init__(self, name, types, hp, str, int, con, mag, agil, crit, dodgeChance, skills, ability, image, cords, menuImg):
 
 Protagonist = Char("Protagonist", [normal], 750, 25, 15, 20, 10, 2, 6, 5, [basicAtk, powerStrike, eggon, mend, instantkill], "Frenzy", "Assets/battlers/wip.png", [1,1], "")
