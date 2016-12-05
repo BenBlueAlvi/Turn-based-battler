@@ -323,6 +323,52 @@ class Effect(object):
 			target.effects.append(self.buildNew())
 			printb(target.name+" is vulnerable!")
 
+		if self.effect == "earthStage":
+			target.effects.append(self.buildNew())
+			target.con += 50
+			target.mag += 50
+			target.int -= 20
+			target.str -= 20
+			try:
+				moonStagef.end(target)
+			except:
+				pass
+			try:
+				otherStagef.end(target)
+			except:
+				pass
+				
+		if self.effect == "moonStage":
+			target.effects.append(self.buildNew())
+			target.mag += 50
+			target.int += 50
+			target.str -= 25
+			target.con -= 25
+			try:
+				earthStagef.end(target)
+			except:
+				pass
+			try:
+				otherStagef.end(target)
+			except:
+				pass
+			
+		if self.effect == "otherStage":
+			target.effects.append(self.buildNew())
+			target.int += 75
+			target.crit += 10
+			target.dodgeChance += 20
+			target.con -= 50
+			target.mag -= 50
+			try:
+				moonStagef.end(target)
+			except:
+				pass
+			try:
+				earthStagef.end(target)
+			except:
+				pass
+
 			
 	def end(self, target):
 		target.effects.remove(self)
@@ -397,6 +443,32 @@ class Effect(object):
 			
 		if self.effect == "vulnerable":
 			printb(target.name + " has overcome their vulnerability!")
+
+		if self.effect == "earthStage":
+		
+			target.con -= 50
+			target.mag -= 50
+			target.int += 20
+			target.str += 20
+			
+				
+		if self.effect == "moonStage":
+		
+			target.mag -= 50
+			target.int -= 50
+			target.str += 25
+			target.con += 25
+			
+			
+		if self.effect == "otherStage":
+			
+			target.int -= 75
+			target.crit -= 10
+			target.dodgeChance -= 20
+			target.con += 50
+			target.mag += 50
+		
+	
 		
 	def update(self, target):
 		if self.effect == "magicMute":
@@ -473,52 +545,7 @@ class Effect(object):
 				self.end(target)
 			self.endeffect += 1
 			
-		if self.effect == "earthStage":
-			self.resetStats(target)
-			target.con += 50
-			target.mag += 50
-			target.int -= 20
-			target.str -= 20
-			try:
-				moonStagef.end(target)
-			except:
-				pass
-			try:
-				otherStagef.end(target)
-			except:
-				pass
-				
-		if self.effect == "moonStage":
-			self.resetStats(target)
-			target.mag += 50
-			target.int += 50
-			target.str -= 25
-			target.con -= 25
-			try:
-				earthStagef.end(target)
-			except:
-				pass
-			try:
-				otherStagef.end(target)
-			except:
-				pass
-			
-		if self.effect == "otherStage":
-			self.resetStats(target)
-			
-			target.int += 75
-			target.crit += 10
-			target.dodgeChance += 20
-			target.con -= 50
-			target.mag -= 50
-			try:
-				moonStagef.end(target)
-			except:
-				pass
-			try:
-				earthStagef.end(target)
-			except:
-				pass
+		
 				
 		if self.effect == "guarded":
 			printb(target.name + " is being guarded by " + target.guarder.name + "!")
@@ -886,10 +913,11 @@ class Skill(object):
 						damage += math.ceil(damage/10)
 				if damage < 0 or "nodam" in self.spec:
 					damage = 0
-					printb(user.name + " deals no damage to " + target.name + " using " + self.name + message)
+					message = user.name + " deals no damage to " + target.name + " using " + self.name + message
 				else:
-					printb(user.name + " uses " + self.name + " and deals " + str(damage) + " damage to " + target.name + message)
-				
+					message = user.name + " uses " + self.name + " and deals " + str(damage) + " damage to " + target.name + message
+				print message
+				printb(message)
 				
 				
 				if mindSpiked in user.effects:
@@ -1683,9 +1711,11 @@ class Battle(object):
 						if agillist[j].agil + agillist[j].equipAgil + agillist[j].goskill.spd  < agillist[j+1].agil + agillist[j + 1].equipAgil + agillist[j+1].goskill.spd:
 							agillist[j], agillist[j+1] = agillist[j+1], agillist[j] 
 				
-				for p in agillist:
+				x = 0
+				while x < len(agillist):
+					p = agillist[x]
 					#print "thebattler:", thebattler
-					
+										
 					if len(p.target) > 1:
 						
 						p.goskill.use(p,p.target[mincrement], self.battlers1, self.battlers2, thesebattlers)
@@ -1701,13 +1731,9 @@ class Battle(object):
 					
 					if len(p.target) > 1:
 						mincrement+=1
+						x -= 1
 						if mincrement > 2:
 							mincrement = 0
-						increment += 1
-					else:
-						increment += 1
-					if increment > len(thesebattlers) - 1:
-						increment = 0
 					
 					for i in thesebattlers:
 						if i.hp <= 0:
@@ -1716,7 +1742,7 @@ class Battle(object):
 								self.battlers1.remove(i)
 							if i in self.battlers2:
 								self.battlers2.remove(i)
-							
+					x += 1
 				for i in thesebattlers:
 					i.updated = False
 
