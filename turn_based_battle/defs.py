@@ -1711,35 +1711,61 @@ class Battle(object):
 				timer = 90
 				for item in messages:
 					print item
+				currentBattler = 0
 				while printing and not quitting:
+					aniBattler = thesebattlers[currentBattler]
+					gScreen.blit(self.arena.img, [0,0])
+					
+					
+					for i in thesebattlers:	
+						if i.hp > 0:
+							gScreen.blit(i.image,[i.x,i.y])
+
+					
+						
+					if len(aniBattler.target) > 1:
+						pass
+					else:
+						if aniBattler in self.battlers1:
+						
+							vel = convertVel(math.atan((aniBattler.target[0].basey - aniBattler.basey)/(aniBattler.target[0].basex - aniBattler.basex)))
+							print vel
+							if aniBattler.x < 625:
+								aniBattler.x += vel[0] * 3
+								aniBattler.y += vel[1] * 3
+							else:
+								#ANIMATION HERE
+								loop += 1
+								currentBattler += 1
+								aniBattler.x = aniBattler.basex
+								aniBattler.y = aniBattler.basey
+						else:
+							vel = convertVel(math.atan((aniBattler.target[0].basey - aniBattler.basey)/(aniBattler.target[0].basex - aniBattler.basex)))
+							print vel
+							if aniBattler.x > 625:
+								aniBattler.x -= vel[0] * 3
+								aniBattler.y -= vel[1] * 3
+								
+							else:
+								#ANIMATION HERE
+								loop += 1
+								currentBattler += 1
+								aniBattler.x = aniBattler.basex
+								aniBattler.y = aniBattler.basey
+							
+					if loop >= len(messages) - 1 or currentBattler > len(thesebattlers) - 1:
+						printing = False
+						
+					
+					gScreen.blit(font.render(messages[loop], True, WHITE), [10, size[1] - 140])
 					
 					pygame.draw.rect(gScreen, BLACK, [0,size[1] - 150,size[0],150])
 					#gScreen.blit(disptext, [10, 320 + size[1] - 500])
 					gScreen.blit(font.render(messages[loop], True, WHITE), [10, size[1] - 140])
-					
-					timer -= 1
-					if timer <= 0:
-						loop += 1
-						timer = 90
-					
-					
-					if loop > len(messages) - 1:
-						printing = False
 						
+					
 					pygame.display.flip()	
 					clock.tick(60)
-					
-				for p in agillist:
-					
-					if len(p.target) > 1:
-						pass
-					else:
-						#p.target[0].battlerpos
-						pass
-					
-						
-					
-					
 					
 							
 				for i in thesebattlers:
