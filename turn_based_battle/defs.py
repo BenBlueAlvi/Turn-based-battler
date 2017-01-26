@@ -62,6 +62,14 @@ aitest = False
 def hitDetect(p1, p2, p3, p4):
 	if p2[0] > p3[0] and p1[0] < p4[0] and p2[1] > p3[1] and p1[1] < p4[1]:
 		return True
+		
+def convertVel(input):
+	
+	radians = math.radians(input)
+	x_vel = math.cos(radians)
+	y_vel = -math.sin(radians)
+	velocity = (x_vel, y_vel)
+	return velocity
 
 log =[]				
 timer = 0
@@ -1395,10 +1403,7 @@ class Battle(object):
 			self.battlers2[2].vital = False
 		
 		thesebattlers += self.battlers1 + self.battlers2
-		for i in self.battlers1:
-			print i.name
-		for i in self.battlers2:
-			print i.name
+		
 		
 		x = 0
 		y = 0
@@ -1410,7 +1415,7 @@ class Battle(object):
 			i.basey = y * 75 + 325
 			y += 1
 		for i in range(len(thesebattlers)):
-			thesebattlers[i-1].battlerpos = i-1
+			thesebattlers[i-1].battlerpos = i
 			
 		for i in self.battlers1:
 			if i.name == "???" or i == 	NO or i == 	NOT:
@@ -1723,6 +1728,19 @@ class Battle(object):
 						
 					pygame.display.flip()	
 					clock.tick(60)
+					
+				for p in agillist:
+					
+					if len(p.target) > 1:
+						pass
+					else:
+						#p.target[0].battlerpos
+						pass
+					
+						
+					
+					
+					
 							
 				for i in thesebattlers:
 					i.updated = False
@@ -1839,10 +1857,8 @@ class Stage(object):
 				i.battlers1 = [NO, i.battlers1[0], NO]
 			if len(i.battlers1) == 2:
 				i.battlers1 = [i.battlers1[0], NO, i.battlers1[1]]
-			for b in i.battlers1:
-				print "Battlers1:", b.name
-			for b in i.battlers2:
-				print "Battlers2:", b.name
+		
+				
 				
 			
 			i.battle()
@@ -2054,8 +2070,7 @@ def CharSelect(aitest, mult):
 	thesebattlers = []
 	thisplayer = player1
 	thisplayer.reBuild()
-	for i in thisplayer.battlers:
-		print i.name
+
 	mouse_down = False
 	while not done:
 		for event in pygame.event.get():
@@ -2186,8 +2201,7 @@ def CharSelect(aitest, mult):
 					player1.reBuild()
 					player2.reBuild()
 					thisplayer = player1
-					for i in thisplayer.battlers:
-						print i.name
+					
 					mouse_down = False
 							
 			if mouse_down:
