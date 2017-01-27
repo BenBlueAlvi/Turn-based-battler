@@ -147,6 +147,7 @@ ghost = Type("Ghost", ["Physic", "Magic"], ["Fighting", "Normal"])
 magic = Type("Magic", ["Fighting", "Astral"], ["Chaos"])
 astral = Type("Astral", ["Chaos"], ["Ghost", "Tech"])
 
+
 physic = Type("Physic",["Normal", "astral"], ["Fighting"])
 tech = Type("Tech", ["Electric", "Acid", "Astral"], ["Earth", "Chaos"])
 unknown = Type("Unknown", ["none"], ["none"])
@@ -1124,13 +1125,18 @@ absorb = Skill("Absorb", grass, False, 20, 20, 5, 3, 90, 1, [], ["vampire"])
 absorb.desc = "Absorb some your foe's life force."
 #--Type basics
 sandStorm = Skill("Sandstorm", earth, False, 10, 20, 5, 3, 90, 1, [], ["hitAll"])
-absorb.desc = "Send out a sandstorm to blind your foes."
+sandStorm.desc = "Send out a sandstorm to blind your foes."
 iceShard = Skill("Ice Shard", ice, False, 15, 15, 5, 6, 90, 1, [2, slowed], [""])
-absorb.desc = "Shoot a shard of ice to impale your foe. May cause slowness"
+iceShard.desc = "Shoot a shard of ice to impale your foe. May cause slowness"
 basicEarth = Skill("Earthy attack", earth, True, 5, 5, 1, 0, 90, 0, [], [""])
 
 diveBomb = Skill("Dive Bomb", air, True, 30, 5, 7, 4, 87, 2, [], [""])
 diveBomb.desc = "Leap into the air and ram into your opponent."
+#def __init__(self, name, type, phys, atk, var, spd, crit, hitChance, cost, effects, spec):
+soulDraw = Skill("Soul Beam", ghost, False, 30, 10, 4, 5, 100, 1, [],["soulDraw"])
+soulConsume = Skill("Soul Consume", ghost, False, 0, 0, 10, 5, 100, 1, [],["soulConsume", "nodam"])
+soulRage = skill("Soul Rage", ghost, False, 10, 10, 1, 0, 100, 4, [], ["soulRage"])
+
 
 
 wispFire = Skill("Fire of the Wisp", fire, False, 30, 7, 6, 4, 99, 1, [2, burn], [""])
@@ -1283,6 +1289,15 @@ Noseclops = Char("Noseclops", [water, fire, acid], 400, 25, 15, 15, 10, 5, 7, 10
 Mouthstash = Char("Mouthstash", [earth, air, poison], 400, 25, 10, 20, 10, 5, 2, 10, [basicEarth, loudspeaker, onionBreath, mustacheMuscles, gristlyDefend, growBeard, extendWhiskers, inhale], "Creepus", "Assets/battlers/wip.png", [0, 15], "")
 
 #def __init__(self, name, types, hp, str, int, con, mag, agil, crit, dodgeChance, skills, ability, image, cords, menuImg):
+hZarol = Char("Zarol", [magic, chaos], 900, 15, 25, 20, 30, 6, 3, 10, [], "", "Assets/battlers/hZarol.png", [20,20], "")
+shyron = Char("Shyron", [ghost], 1200, 25, 50, 20, 45, 14, 6, 25, [soulConsume, soulDraw, soulRage], "Soul Eater", "Assets/battlers/shyron.png", [21,20], "")
+
+theCoosome = Char("Thee Coosome", [tech], 750, 30, 20, 30, 25, 4, 4, 10, [], "", "Assets/battlers/theCoosome2.png", [22,20], "")
+
+John = Char("Regalious John", [fighting], 750, 35, 25, 20, 34, 5, 5, 10, [], "", "Assets/battlers/john.png", [23, 20], "")
+
+Xsion = Char("Xsion", [dark, blood, magic], 500, 40, 40, 25, 25, 8, 7, 50, [], "", "Assets/battlers/xsion1.png", [24, 20], [])
+Xsion2 = Char("Xsion", [dark, blood, magic], 500, 50, 50, 20, 20, 8, 9, 50, [], "", "Assets/battlers/xsion2.png", [25, 20], [])
 
 Protagonist = Char("Protagonist", [normal], 750, 25, 15, 20, 10, 2, 6, 5, [basicAtk, powerStrike, eggon, mend, instantkill], "Frenzy", "Assets/battlers/wip.png", [1,1], "")
 
