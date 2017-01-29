@@ -57,6 +57,7 @@ selector3 = pygame.image.load("assets/ui/selector3.png")
 mouse_pointer = pygame.image.load('Assets/mouse.png')
 mouse_pointer2 = pygame.image.load('Assets/mouse2.png')
 health_border = pygame.image.load('Assets/health_border.png')
+coupback = pygame.image.load('Assets/moveboxes/coupback.png')
 aitest = False
 				
 def hitDetect(p1, p2, p3, p4):
@@ -628,6 +629,7 @@ class Skill(object):
 		self.effects = effects
 		self.text = font.render(name, True, WHITE)
 		self.desc = ""
+		self.uses = 1
 		
 		
 	def use(self, user, target, battlers1, battlers2, thesebattlers):
@@ -686,6 +688,8 @@ class Skill(object):
 					user.marks += 1
 			
 			for i in self.spec:
+				if i == "coup":
+					self.uses = 0
 				if i == "vampire":
 					user.hp += damage
 					if critical:
@@ -1135,13 +1139,13 @@ diveBomb.desc = "Leap into the air and ram into your opponent."
 #def __init__(self, name, type, phys, atk, var, spd, crit, hitChance, cost, effects, spec):
 soulDraw = Skill("Soul Beam", ghost, False, 30, 10, 4, 5, 100, 1, [],["soulDraw"])
 soulConsume = Skill("Soul Consume", ghost, False, 0, 0, 10, 5, 100, 1, [],["soulConsume", "nodam"])
-soulRage = skill("Soul Rage", ghost, False, 10, 10, 1, 0, 100, 4, [], ["soulRage"])
+soulRage = Skill("Soul Rage", ghost, False, 10, 10, 1, 0, 100, 4, [], ["soulRage"])
 
 
 
 wispFire = Skill("Fire of the Wisp", fire, False, 30, 7, 6, 4, 99, 1, [2, burn], [""])
 
-
+testcoup = Skill("test coup", ice, False, 10, 10, 10, 10, 99, 1, [], ["coup"])
 
 
 #Skill("", normal, True, 0, 0, 0, 0, 100, 0, [], [""])
@@ -1212,6 +1216,7 @@ class Char(object):
 		self.equipDodgeChance = 0
 		self.ableSkills = []
 		self.battlerpos = 0
+		self.coups = []
 
 	def updateEquips(self):
 		self.equipStr = self.equips["Head"].str + self.equips["Chest"].str + self.equips["Legs"].str + self.equips["Feet"].str + self.equips["Weapon"].str
@@ -1227,12 +1232,14 @@ class Char(object):
 		newchar.img = pygame.image.load(self.image)
 		newchar.ableSkills = self.ableSkills
 		newchar.target = [NOT]
+		newchar.coups = self.coups
 		return newchar
 		
 	def reBuild(self):
 		newchar = Char(self.name, self.types, self.hp, self.str, self.int, self.con, self.mag, self.agil, self.crit, self.dodgeChance, self.skills, self.ability, self.image, self.cords, self.menuImg)
 		newchar.img = self.image
 		newchar.ableSkills = self.ableSkills
+		newchar.coups = self.coups
 		return newchar
 	
 	
@@ -1255,6 +1262,7 @@ Epic.ableSkills = []
 
 Scarlet = Char("Scarlet", [dark, blood], 100, 20, 20, 5, 20, 6, 0, 10, [basicAtk, scar, vampire, destroy, lifePact, defend], "", "Assets/battlers/vamp.png", [1,0], "")
 Scarlet.ableSkills = [scar, vampire, destroy, lifePact, consumeFlesh]
+Scarlet.coups = [testcoup, testcoup, testcoup]
 
 Flan = Char("Flan", [dark,blood], 200, 35, 30, 10, 20, 7, 10, 20, [slash, rip, scar, vampire, destroy, lifePact, setFire, lifeTransfer], "watch them burn", "Assets/battlers/flandre.png", [5,7], "")
 Nue = Char("Nue", [astral, dark], 300, 25, 40, 10, 50, 4, 15, 10, [basicAtk, meteorStorm, powerTransfer, forceShield, powerDrain, stab, meditate, defend], "Unidentifiable", "Assets/battlers/nue.png", [4,7], "")
@@ -1293,6 +1301,8 @@ hZarol = Char("Zarol", [magic, chaos], 900, 15, 25, 20, 30, 6, 3, 10, [], "", "A
 shyron = Char("Shyron", [ghost], 1200, 25, 50, 20, 45, 14, 6, 25, [soulConsume, soulDraw, soulRage], "Soul Eater", "Assets/battlers/shyron.png", [21,20], "")
 
 theCoosome = Char("Thee Coosome", [tech], 750, 30, 20, 30, 25, 4, 4, 10, [], "", "Assets/battlers/theCoosome2.png", [22,20], "")
+
+
 
 John = Char("Regalious John", [fighting], 750, 35, 25, 20, 34, 5, 5, 10, [], "", "Assets/battlers/john.png", [23, 20], "")
 
@@ -1387,6 +1397,8 @@ class Battle(object):
 		
 	def battle(self):
 		global size
+		global coupback
+		global lockedskill
 		thebattler = 0
 		powergiven = False
 		pickenm = False
@@ -1505,7 +1517,22 @@ class Battle(object):
 						
 						
 						#displaying and picking skills
-						if p.hp > 0 and not 	passedOut in p.effects:
+						if p.hp > 0 and not passedOut in p.effects:
+							x = 0
+							selected = False
+							for i in p.coups:
+								thisxcord = 700 + 180*x
+								thisycord = size[1] - 35
+								if hitDetect(mouse_pos, mouse_pos, [thisxcord, thisycord], [thisxcord + 169, thisycord + 29]):
+								
+									dispskill = p.coups[x]
+									if mouse_down and p.coups[x].uses == 1:
+										mouse_down = False
+										p.goskill = p.coups[x]
+										selected = True
+									
+										
+								x += 1
 							for i in p.skills:
 							
 								if x > 1:
@@ -1515,76 +1542,29 @@ class Battle(object):
 								thisxcord = 330 + x*175
 								thisycord = y*30 + 370 + size[1] - 500
 								if hitDetect(mouse_pos, mouse_pos,[thisxcord, thisycord], [thisxcord + 165, thisycord + 25]):
+									dispskill = p.skills[x + y*2]
 									
-									if x == 0 and y ==0:
-										dispskill = p.skills[0]
-										
-									elif x == 1 and y == 0:
-										dispskill = p.skills[1]
-											
-									elif x == 0 and y == 1:
-										dispskill = p.skills[2]
-									elif x == 1 and y == 1:
-										dispskill = p.skills[3]
-									elif x == 0 and y == 2:
-										dispskill = p.skills[4]
-									elif x == 1 and y == 2:
-										dispskill = p.skills[5]
-									elif x == 0 and y == 3:
-										dispskill = p.skills[6]
-									elif x == 1 and y == 3:
-										dispskill = p.skills[7]
-									else:
-										dispskill = 	nothing
 									
 									if mouse_down:
 										mouse_down = False
-										if True:
-											selected = False
-											if x == 0 and y ==0:
-												if p.skills[0].cost <= p.power:
-													p.goskill = p.skills[0]
-													selected = True
-												
-											if x == 1 and y == 0:
-												if p.skills[1].cost <= p.power:
-													p.goskill = p.skills[1]
-													selected = True
+										
+											
+										if p.skills[x + y*2].cost <= p.power:
+											p.goskill = p.skills[x + y*2]
+											selected = True
+											
 													
-											if x == 0 and y == 1:
-												if p.skills[2].cost <= p.power:
-													p.goskill = p.skills[2]
-													selected = True
-											if x == 1 and y == 1:
-												if p.skills[3].cost <= p.power:
-													p.goskill = p.skills[3]
-													selected = True
-											if x == 0 and y == 2:
-												if p.skills[4].cost <= p.power:
-													p.goskill = p.skills[4]
-													selected = True
-											if x == 1 and y == 2:
-												if p.skills[5].cost <= p.power:
-													p.goskill = p.skills[5]
-													selected = True
-											if x == 0 and y == 3:
-												if p.skills[6].cost <= p.power:
-													p.goskill = p.skills[6]
-													selected = True
-											if x == 1 and y == 3:
-												if p.skills[7].cost <= p.power:
-													p.goskill = p.skills[7]
-													selected = True
-													
-											if selected:
-												mouse_down = False
-												print "skill picked:", p.goskill.name
-												pickenm = True
-								
-								
-								
-								
 								x += 1
+													
+							if selected:
+								mouse_down = False
+								print "skill picked:", p.goskill.name
+								pickenm = True
+								
+								
+								
+								
+							
 							
 										
 							if pickenm:	
@@ -1652,7 +1632,21 @@ class Battle(object):
 					
 						gScreen.blit(health_border, [10, 360 + size[0] - 500])
 						pygame.draw.rect(gScreen, GREY, [320, size[1] - 140, 370, 130])
+						x = 0
 						
+						for pos in p.coups:
+							pygame.draw.rect(gScreen, GREY, [700 + 180*x, size[1] - 35, 169, 28])
+							gScreen.blit(coupback, [700 + 180*x, size[1] - 35])
+							gScreen.blit(font.render(dispskill.name + "   Cost: " + str(dispskill.cost), True, WHITE), [700, size[1] - 140])
+							if pos.uses == 1:
+								gScreen.blit(pos.type.img, [702 + 180*x, size[1] - 33])
+								gScreen.blit(font.render(pos.name, True, WHITE), [709 + 180*x, size[1] - 28])
+								
+							else:
+								gScreen.blit(lockedskill, [702 + 180*x, size[1] - 33])
+								
+							x += 1
+							
 						gScreen.blit(font.render(dispskill.name + "   Cost: " + str(dispskill.cost), True, WHITE), [700, size[1] - 140])
 						gScreen.blit(font.render(dispskill.desc, True, WHITE), [700, size[1] - 125])
 					
@@ -1744,7 +1738,7 @@ class Battle(object):
 						if aniBattler in self.battlers1:
 						
 							vel = convertVel(math.atan((aniBattler.target[0].basey - aniBattler.basey)/(aniBattler.target[0].basex - aniBattler.basex)))
-							print vel
+							
 							if aniBattler.x < 625:
 								aniBattler.x += vel[0] * 3
 								aniBattler.y += vel[1] * 3
