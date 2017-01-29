@@ -39,6 +39,7 @@ class Music(object):
 		
 cattheme = Music("Raxxo_Patchy_Aid")
 cootheme = Music("Raxxo_Stand_Your_Ground")
+theeCoosomeTheme = Music("brilliant_scientist-technological_defect")
 maicetheme = Music("A_Tiny_Tiny_Clever_Commander")
 sivtheme = Music("WaterflameFinalBattle")
 noutheme = Music("supierior_nouledge")
@@ -639,6 +640,8 @@ class Skill(object):
 		targetmultiplier = 1 + ((target.lvl - 1) / 10)
 		usermultiplier = 1 + ((user.lvl - 1) / 10)
 		message = ""
+		
+			
 		hit = (self.hitChance + user.modHitChance) - ((target.dodgeChance + target.equipDodgeChance) * targetmultiplier)
 		
 		if guarded in target.effects:
@@ -834,6 +837,10 @@ class Skill(object):
 						spawned = Worshipper.buildNew()
 					if "Cubes" in i:
 						spawned = Cubes.buildNew()
+					if "Bdrone" in i:
+						spawned = battleDrone.buildNew()
+					if "Sdrone" in i:
+						spawned = shieldDrone.buildNew()
 					#Be sure spawned is valid!
 					if spawned != "":
 						if user.isAi:
@@ -869,6 +876,15 @@ class Skill(object):
 
 				if i == "vulnerable":
 					vulnerable.apply(user)
+				if i == "charge":
+					defending.apply(user)
+					user.power += 3
+				if i == "conPierce":
+					damage += target.con
+				if i == "magPierce":
+					damage += target.mag
+				if i == "lockOn":
+					user.misc = ["lockedOn", target]
 
 			if user.ability == "Frenzy" and user.hp <= user.maxhp/5:
 				damage = math.floor(damage * 1.25)
@@ -1002,6 +1018,10 @@ create2 = Skill("Create", unknown, False, 0, 0, -10, 0,100, 0, [], ["createWorsh
 create2.desc = "Create a worshiper to worship you, giving you power."
 create3 = Skill("Create", unknown, False, 0, 0, -10, 0,100, 0, [], ["createCubes", "trueHit"])
 create3.desc = "Clone more CUBES!"
+createBdrone = Skill("Create", unknown, False, 0, 0, -10, 0,100, 5, [], ["createBdrone", "trueHit"])
+createBdrone.desc = "Clone more Battle Drones!"
+createSdrone = Skill("Create", unknown, False, 0, 0, -10, 0,100, 5, [], ["createSdrone", "trueHit"])
+createSdrone.desc = "Clone more Shield Drones!"
 mend = Skill("Mend", magic, False, 0,0, 1, 0,100, 3, [], ["heal", "trueHit"])
 mend.desc = "Heal yourself or an ally."
 #------------------------------------------------------------------
@@ -1141,7 +1161,10 @@ soulDraw = Skill("Soul Beam", ghost, False, 30, 10, 4, 5, 100, 1, [],["soulDraw"
 soulConsume = Skill("Soul Consume", ghost, False, 0, 0, 10, 5, 100, 1, [],["soulConsume", "nodam"])
 soulRage = Skill("Soul Rage", ghost, False, 10, 10, 1, 0, 100, 4, [], ["soulRage"])
 
-
+charge = Skill("Charge", tech, False, 0, 0, 10, 2, 100, 2, [], ["charge", "nodam", "trueHit"])
+powerShot = Skill("Power Shot", tech, True, 15, 15, 2, 7, 80, 3, [], ["conPierce"])
+rapidSpray = Skill("Rapid Spray", tech, False, 5, 5, 4, 1, 120, 1, [], ["hitAll"])
+lockOn = Skill("Lock On", tech, False, 0, 0, 4, 0, 120, 2, [], ["lockOn"])
 
 wispFire = Skill("Fire of the Wisp", fire, False, 30, 7, 6, 4, 99, 1, [2, burn], [""])
 
@@ -1300,8 +1323,9 @@ Mouthstash = Char("Mouthstash", [earth, air, poison], 400, 25, 10, 20, 10, 5, 2,
 hZarol = Char("Zarol", [magic, chaos], 900, 15, 25, 20, 30, 6, 3, 10, [], "", "Assets/battlers/hZarol.png", [20,20], "")
 shyron = Char("Shyron", [ghost], 1200, 25, 50, 20, 45, 14, 6, 25, [soulConsume, soulDraw, soulRage], "Soul Eater", "Assets/battlers/shyron.png", [21,20], "")
 
-theCoosome = Char("Thee Coosome", [tech], 750, 30, 20, 30, 25, 4, 4, 10, [], "", "Assets/battlers/theCoosome2.png", [22,20], "")
-
+theeCoosome = Char("Thee Coosome", [tech], 750, 30, 20, 30, 25, 4, 4, 10, [basicAtk, createBdrone, createSdrone], "", "Assets/battlers/theCoosome2.png", [22,20], "")
+battleDrone = Char("Battle Drone", [tech, minion], 500, 10, 10, 10, 10, 7, 4, 20, [basicAtk, energiBeam, dodge, takeBlow, charge, rapidSpray, lockOn, powerShot], "", "Assets/battlers/battleDrone.png", [23, 20], "")
+shieldDrone = Char("Battle Drone", [tech, minion], 500, 10, 10, 10, 10, 7, 4, 20, [basicAtk, energiBeam, dodge, takeBlow, rapidSpray, lockOn, powerShot], "", "Assets/battlers/battleDrone.png", [24, 20], "")
 
 
 John = Char("Regalious John", [fighting], 750, 35, 25, 20, 34, 5, 5, 10, [], "", "Assets/battlers/john.png", [23, 20], "")
@@ -1331,7 +1355,7 @@ miniCreep = Char("Creepy Bald Guy", [physic, unknown, minion], 300, 6, 6, 8, 10,
 
 NO = NOT.buildNew()	
 
-unlockedchars = [Koishi.buildNew(), Lapis.buildNew(), Flan.buildNew(), Okuu.buildNew(), Nue.buildNew(), Scarlet.buildNew(), Mage.buildNew(), Mouther.buildNew(), Nic.buildNew(), Siv.buildNew(), Coo33.buildNew(), CoosomeJoe.buildNew(), Epic.buildNew(), Alpha.buildNew(), Durric.buildNew(), Creep.buildNew(), Catsome.buildNew(), KnowingEye.buildNew(), Protagonist.buildNew(), Worshipper.buildNew(), miniCreep.buildNew(), Axeurlegs.buildNew(), Dandylion.buildNew(), Cubes.buildNew(), Shroom.buildNew(), frostShroom.buildNew(), caveShroom.buildNew(), sandShroom.buildNew(), goldShroom.buildNew(), NotScaryGhost.buildNew(), seeGull.buildNew(), crawFish.buildNew(), Noseclops.buildNew(), Mouthstash.buildNew()]
+unlockedchars = [Koishi.buildNew(), Lapis.buildNew(), Flan.buildNew(), Okuu.buildNew(), Nue.buildNew(), Scarlet.buildNew(), Mage.buildNew(), Mouther.buildNew(), Nic.buildNew(), Siv.buildNew(), Coo33.buildNew(), CoosomeJoe.buildNew(), Epic.buildNew(), Alpha.buildNew(), Durric.buildNew(), Creep.buildNew(), Catsome.buildNew(), KnowingEye.buildNew(), Protagonist.buildNew(), Worshipper.buildNew(), miniCreep.buildNew(), Axeurlegs.buildNew(), Dandylion.buildNew(), Cubes.buildNew(), Shroom.buildNew(), frostShroom.buildNew(), caveShroom.buildNew(), sandShroom.buildNew(), goldShroom.buildNew(), NotScaryGhost.buildNew(), seeGull.buildNew(), crawFish.buildNew(), Noseclops.buildNew(), Mouthstash.buildNew(), theeCoosome.buildNew(), battleDrone.buildNew(), shieldDrone.buildNew()]
 
 equipment = []
 
@@ -1866,6 +1890,7 @@ KnowingEyeFight = Battle("knowingeye fight", [], [NO, KnowingEye.buildNew(), NO]
 NouDial = Dialoge([[3, "!"], [2, "Hello?"], [3, "Hiya!"], [1, "Finally, a person in this strange place.", "We have-"], [3, "Oh yes I know, I know everything.", "Except for what my master Knows!", "She truely knows everything"], [0, "Even more than-"], [3, "Yes, even more than that, abomination.", "I must say that you and you're group seem very excited to get you're hands on this knowledge", "Unforunatly, I cannot allwow that"]], [[0, "Ugg"]], [[0, "Ugg"]])
 NouFight = Battle("Nou Fight", [], [NO, Nou.buildNew(), NO], rift, NouDial, False, 	noutheme, "")
 
+theeCoosomeFight = Battle("theeCoosome Fight", [], [battleDrone.buildNew(), theeCoosome.buildNew(), shieldDrone.buildNew()], defultarena, CooDial, False, theeCoosomeTheme, "") 
 
 class Stage(object):
 	def __init__(self, name, playerbattlers, battles, cords, nextstages):
@@ -1906,7 +1931,7 @@ st7 = Stage("", "", [], [523,431], [st8])
 st6 = Stage("", "", [], [720,360], [st7])
 st5 = Stage("", "", [], [675,240], [st6])
 st4 = Stage("", "", [KnowingEyeFight], [540,313], [st5])
-st3 = Stage("", "", [NouFight], [393,292], [st4])
+st3 = Stage("", "", [theeCoosomeFight], [393,292], [st4])
 st2 = Stage("", "", [ForFight1], [280, 221], [st3])
 st1 = Stage("", "", [MousFight, CatsomeFight, MiecFight], [317,48], [st2])
 		
