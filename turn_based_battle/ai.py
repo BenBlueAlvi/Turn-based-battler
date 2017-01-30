@@ -82,6 +82,8 @@ def runAI(player, battlersL, battlersR):
 #LESSER DUDES
 	if player.name == "???":
 		player.goskill, player.target = player.skills[0], [player]
+	if player.name == "Punching Bag":
+		player.goskill, player.target = player.skills[0], [battlersL[0]]
 		
 	if player.name == "Seegull":
 		if player.savingfor == "none":

@@ -320,6 +320,14 @@ class Effect(object):
 		if self.effect == "vulnerable":
 			target.effects.append(self.buildNew())
 			messages.append(target.name+" is vulnerable!")
+			
+		if self.effect == "spurred":
+			target.effects.append(self.buildNew())
+			messages.append(target.name+" is onto something!")
+			target.str *= 2
+			target.int *= 2
+			target.crit *= 2
+			target.modHitChance += 10
 
 			
 	def end(self, target):
@@ -395,6 +403,13 @@ class Effect(object):
 			
 		if self.effect == "vulnerable":
 			messages.append(target.name + " has overcome their vulnerability!")
+			
+		if self.effect == "spurred":
+			messages.append(target.name+" has lost the glint in their eye.")
+			target.str /= 2
+			target.int /= 2
+			target.crit /= 2
+			target.modHitChance -= 10
 		
 	def update(self, target):
 		if self.effect == "magicMute":
@@ -568,6 +583,11 @@ class Effect(object):
 			self.endeffect = random.randint(1, 5)
 			if self.endeffect <= 4:
 				self.end(target)
+				
+		if self.effect == "spurred":
+			if self.endeffect == 1:
+				self.end(target)
+			self.endeffect += 1
 
 
 	def resetStats(self, target):
@@ -609,9 +629,10 @@ disgusted = Effect("disgusted")
 observing = Effect("observing")
 devidedefend = Effect("devidedefend")
 vulnerable = Effect("vulnerable")
+spurred = Effect("spurred")
 
-negeff = [burn, magicmute, bleed, poisoned, confusion, disgusted, mindSpiked, slowed, passedOut]
-poseff = [defense, forceshield, immortal, block, rebuff, meditatef, planAheadf, dodgeUp, earthStagef, otherStagef, moonStagef, observing]
+negeff = [burn, magicmute, bleed, poisoned, confusion, disgusted, mindSpiked, slowed, passedOut, vulnerable]
+poseff = [defense, forceshield, immortal, block, rebuff, meditatef, planAheadf, dodgeUp, earthStagef, otherStagef, moonStagef, observing, devidedefend, spurred]
 
 
 class Skill(object):
@@ -655,6 +676,12 @@ class Skill(object):
 			hit += 2
 		if observing in target.effects:
 			user.marks += 1
+		if user.name in ["Battle Drone"]:
+			if user.misc != 0:
+				if user.misc == target:
+					hit *= 2
+				else:
+					hit *= 0.6
 
 		if random.randint(1,100) < hit or "trueHit" in self.spec:
 			critical, effective = False, False
@@ -673,6 +700,14 @@ class Skill(object):
 					damage /= 2
 					message = " It's not very effective!"
 					effective = False
+			
+			#apply lock-on boost
+			if user.name in ["Battle Drone"]:
+				if user.misc != 0:
+					if user.misc == target:
+						user.crit *= 2
+					else:
+						user.crit *= 0.6
 					
 			if random.randint(1,30) + (user.crit * usermultiplier) + user.equipCrit > 30:
 				if effective:
@@ -682,8 +717,14 @@ class Skill(object):
 				critical = True
 				if not len(self.effects) == 0:
 					self.effects[1].apply(target)
-					
 			
+			#remove lock-on boost
+			if user.name in ["Battle Drone"]:
+				if user.misc != 0:
+					if user.misc == target:
+						user.crit /= 2
+					else:
+						user.crit /= 0.6
 					
 			if target.ability == "Creepus":
 				user.marks += 1
@@ -837,10 +878,8 @@ class Skill(object):
 						spawned = Worshipper.buildNew()
 					if "Cubes" in i:
 						spawned = Cubes.buildNew()
-					if "Bdrone" in i:
+					if "drone" in i:
 						spawned = battleDrone.buildNew()
-					if "Sdrone" in i:
-						spawned = shieldDrone.buildNew()
 					#Be sure spawned is valid!
 					if spawned != "":
 						if user.isAi:
@@ -884,7 +923,9 @@ class Skill(object):
 				if i == "magPierce":
 					damage += target.mag
 				if i == "lockOn":
-					user.misc = ["lockedOn", target]
+					user.misc = target
+				if i == "spur":
+					spurred.apply(user)
 
 			if user.ability == "Frenzy" and user.hp <= user.maxhp/5:
 				damage = math.floor(damage * 1.25)
@@ -1018,10 +1059,8 @@ create2 = Skill("Create", unknown, False, 0, 0, -10, 0,100, 0, [], ["createWorsh
 create2.desc = "Create a worshiper to worship you, giving you power."
 create3 = Skill("Create", unknown, False, 0, 0, -10, 0,100, 0, [], ["createCubes", "trueHit"])
 create3.desc = "Clone more CUBES!"
-createBdrone = Skill("Create", unknown, False, 0, 0, -10, 0,100, 5, [], ["createBdrone", "trueHit"])
-createBdrone.desc = "Clone more Battle Drones!"
-createSdrone = Skill("Create", unknown, False, 0, 0, -10, 0,100, 5, [], ["createSdrone", "trueHit"])
-createSdrone.desc = "Clone more Shield Drones!"
+createdrone = Skill("Create", unknown, False, 0, 0, -10, 0,100, 5, [], ["createdrone", "trueHit"])
+createdrone.desc = "Clone more Battle Drones!"
 mend = Skill("Mend", magic, False, 0,0, 1, 0,100, 3, [], ["heal", "trueHit"])
 mend.desc = "Heal yourself or an ally."
 #------------------------------------------------------------------
@@ -1162,14 +1201,28 @@ soulConsume = Skill("Soul Consume", ghost, False, 0, 0, 10, 5, 100, 1, [],["soul
 soulRage = Skill("Soul Rage", ghost, False, 10, 10, 1, 0, 100, 4, [], ["soulRage"])
 
 charge = Skill("Charge", tech, False, 0, 0, 10, 2, 100, 2, [], ["charge", "nodam", "trueHit"])
+charge.desc = "Defend yourself as you gain slight a power bonus"
 powerShot = Skill("Power Shot", tech, True, 15, 15, 2, 7, 80, 3, [], ["conPierce"])
+powerShot.desc = "Discharge a powerful shot to pierce through defences"
 rapidSpray = Skill("Rapid Spray", tech, False, 5, 5, 4, 1, 120, 1, [], ["hitAll"])
-lockOn = Skill("Lock On", tech, False, 0, 0, 4, 0, 120, 2, [], ["lockOn"])
+rapidSpray.desc = "Fire off hundreds of ronuds in quick succession on all your opponenets"
+lockOn = Skill("Lock On", tech, False, 0, 0, 4, 0, 120, 2, [], ["lockOn", "nodam"])
+lockOn.desc = "Increase fighting capabilities on one target, lowering vs. others"
+
+FireIce = Skill("Firey Ice", fire, False, 3, 0, 3, 2, 95, 1, [1, slowed], [""])
+FireIce.desc = "Ice, but hot as fire."
+IceFire = Skill("Icy Fire", ice, False, 5, 1, 2, 1, 110, 1, [3, burn], [""])
+IceFire.desc = "Fire, but cold as ice."
+spurofmoment = Skill("Spur of the Moment", fighting, False, 0, 0, 0, 5, 100, 5, [], ["trueHit", "nodam", "vulnerable", "spur"])
+spurofmoment.desc = "Come up with a crazy plan that just might work. Boosts next attack greatly."
 
 wispFire = Skill("Fire of the Wisp", fire, False, 30, 7, 6, 4, 99, 1, [2, burn], [""])
 
 testcoup = Skill("test coup", ice, False, 10, 10, 10, 10, 99, 1, [], ["coup"])
-
+vampcoup = Skill("Blood Hunt", blood, True, 32, 6, 1, 5, 100, 1, [], ["vampire", "vampire", "vampire", "trueHit", "conPierce"])
+vampcoup.desc = "Consume their flesh, without fail. Nothing can stop your bite."
+catcoup = Skill("Stunning Display", light, False, -1, 1, 10, 1, 100, 0, [1, passedOut], ["trueHit", "hitall", "catcoup"])
+catcoup.desc = "Provide a stunning display to distract your opponents. None can resist the sight."
 
 #Skill("", normal, True, 0, 0, 0, 0, 100, 0, [], [""])
 #def __init__(self, name, type, phys, atk, var, spd, crit, hitChance, cost, effects, spec):
@@ -1265,6 +1318,7 @@ class Char(object):
 		newchar.coups = self.coups
 		return newchar
 	
+punchingBag = Char("Punching Bag", [unknown], 1000, 0, 0, 0, 0, 0, 0, 0, [nothing], "Regen", "Assets/battlers/locked.png", [47, 23], "")
 	
 NOT = Char("???", [unknown], 0, 0, 0, 0, 0, 0, 0, 0, [nothing], "", "Assets/battlers/locked.png", [-1,0], "")
 NOT.ableSkills = [nothing]
@@ -1323,10 +1377,8 @@ Mouthstash = Char("Mouthstash", [earth, air, poison], 400, 25, 10, 20, 10, 5, 2,
 hZarol = Char("Zarol", [magic, chaos], 900, 15, 25, 20, 30, 6, 3, 10, [], "", "Assets/battlers/hZarol.png", [20,20], "")
 shyron = Char("Shyron", [ghost], 1200, 25, 50, 20, 45, 14, 6, 25, [soulConsume, soulDraw, soulRage], "Soul Eater", "Assets/battlers/shyron.png", [21,20], "")
 
-theeCoosome = Char("Thee Coosome", [tech], 750, 30, 20, 30, 25, 4, 4, 10, [basicAtk, createBdrone, createSdrone], "", "Assets/battlers/theCoosome2.png", [22,20], "")
-battleDrone = Char("Battle Drone", [tech, minion], 500, 10, 10, 10, 10, 7, 4, 20, [basicAtk, energiBeam, dodge, takeBlow, charge, rapidSpray, lockOn, powerShot], "", "Assets/battlers/battleDrone.png", [23, 20], "")
-shieldDrone = Char("Battle Drone", [tech, minion], 500, 10, 10, 10, 10, 7, 4, 20, [basicAtk, energiBeam, dodge, takeBlow, rapidSpray, lockOn, powerShot], "", "Assets/battlers/battleDrone.png", [24, 20], "")
-
+theeCoosome = Char("Thee Coosome", [tech], 750, 30, 20, 30, 25, 4, 4, 10, [basicAtk, createdrone], "", "Assets/battlers/theCoosome2.png", [22,20], "")
+battleDrone = Char("Battle Drone", [tech, minion], 500, 10, 10, 10, 10, 7, 4, 20, [basicAtk, rapidSpray, powerShot, energiBeam, lockOn, dodge, charge, takeBlow], "Regen", "Assets/battlers/battleDrone.png", [23, 20], "")
 
 John = Char("Regalious John", [fighting], 750, 35, 25, 20, 34, 5, 5, 10, [], "", "Assets/battlers/john.png", [23, 20], "")
 
@@ -1355,7 +1407,7 @@ miniCreep = Char("Creepy Bald Guy", [physic, unknown, minion], 300, 6, 6, 8, 10,
 
 NO = NOT.buildNew()	
 
-unlockedchars = [Koishi.buildNew(), Lapis.buildNew(), Flan.buildNew(), Okuu.buildNew(), Nue.buildNew(), Scarlet.buildNew(), Mage.buildNew(), Mouther.buildNew(), Nic.buildNew(), Siv.buildNew(), Coo33.buildNew(), CoosomeJoe.buildNew(), Epic.buildNew(), Alpha.buildNew(), Durric.buildNew(), Creep.buildNew(), Catsome.buildNew(), KnowingEye.buildNew(), Protagonist.buildNew(), Worshipper.buildNew(), miniCreep.buildNew(), Axeurlegs.buildNew(), Dandylion.buildNew(), Cubes.buildNew(), Shroom.buildNew(), frostShroom.buildNew(), caveShroom.buildNew(), sandShroom.buildNew(), goldShroom.buildNew(), NotScaryGhost.buildNew(), seeGull.buildNew(), crawFish.buildNew(), Noseclops.buildNew(), Mouthstash.buildNew(), theeCoosome.buildNew(), battleDrone.buildNew(), shieldDrone.buildNew()]
+unlockedchars = [Koishi.buildNew(), Lapis.buildNew(), Flan.buildNew(), Okuu.buildNew(), Nue.buildNew(), Scarlet.buildNew(), Mage.buildNew(), Mouther.buildNew(), Nic.buildNew(), Siv.buildNew(), Coo33.buildNew(), CoosomeJoe.buildNew(), Epic.buildNew(), Alpha.buildNew(), Durric.buildNew(), Creep.buildNew(), Catsome.buildNew(), KnowingEye.buildNew(), Protagonist.buildNew(), Worshipper.buildNew(), miniCreep.buildNew(), Axeurlegs.buildNew(), Dandylion.buildNew(), Cubes.buildNew(), Shroom.buildNew(), frostShroom.buildNew(), caveShroom.buildNew(), sandShroom.buildNew(), goldShroom.buildNew(), NotScaryGhost.buildNew(), seeGull.buildNew(), crawFish.buildNew(), Noseclops.buildNew(), Mouthstash.buildNew(), theeCoosome.buildNew(), battleDrone.buildNew(), punchingBag.buildNew()]
 
 equipment = []
 
@@ -1774,7 +1826,7 @@ class Battle(object):
 								aniBattler.y = aniBattler.basey
 						else:
 							vel = convertVel(math.atan((aniBattler.target[0].basey - aniBattler.basey)/(aniBattler.target[0].basex - aniBattler.basex)))
-							print vel
+							#print vel
 							if aniBattler.x > 625:
 								aniBattler.x -= vel[0] * 3
 								aniBattler.y -= vel[1] * 3
@@ -1890,7 +1942,7 @@ KnowingEyeFight = Battle("knowingeye fight", [], [NO, KnowingEye.buildNew(), NO]
 NouDial = Dialoge([[3, "!"], [2, "Hello?"], [3, "Hiya!"], [1, "Finally, a person in this strange place.", "We have-"], [3, "Oh yes I know, I know everything.", "Except for what my master Knows!", "She truely knows everything"], [0, "Even more than-"], [3, "Yes, even more than that, abomination.", "I must say that you and you're group seem very excited to get you're hands on this knowledge", "Unforunatly, I cannot allwow that"]], [[0, "Ugg"]], [[0, "Ugg"]])
 NouFight = Battle("Nou Fight", [], [NO, Nou.buildNew(), NO], rift, NouDial, False, 	noutheme, "")
 
-theeCoosomeFight = Battle("theeCoosome Fight", [], [battleDrone.buildNew(), theeCoosome.buildNew(), shieldDrone.buildNew()], defultarena, CooDial, False, theeCoosomeTheme, "") 
+theeCoosomeFight = Battle("theeCoosome Fight", [], [battleDrone.buildNew(), theeCoosome.buildNew(), battleDrone.buildNew()], defultarena, CooDial, False, theeCoosomeTheme, "") 
 
 class Stage(object):
 	def __init__(self, name, playerbattlers, battles, cords, nextstages):
