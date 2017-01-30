@@ -1803,8 +1803,13 @@ class Battle(object):
 
 					try:
 						if not setVel:
-							hypot = math.hypot(aniBattler.target[0].basex - aniBattler.basex, aniBattler.target[0].basey - aniBattler.basey)
-							vel = [(aniBattler.target[0].basex - aniBattler.basex)/hypot, (aniBattler.target[0].basey - aniBattler.basey)/hypot]
+							yDiff = aniBattler.target[0].basey - aniBattler.basey
+							if aniBattler in self.battlers1:
+								xDiff = (aniBattler.target[0].basex - aniBattler.basex) - 128
+							else:
+								xDiff = (aniBattler.target[0].basex - aniBattler.basex) + 128
+							hypot = math.hypot(xDiff, yDiff)
+							vel = [xDiff/hypot, yDiff/hypot]
 							print vel
 							setVel = True
 							
@@ -1880,7 +1885,7 @@ class Battle(object):
 						loop += 1
 						currentBattler += 1
 						timer = -1
-					if loop >= len(messages) - 1 or currentBattler > len(thesebattlers) - 1:
+					if loop >= len(messages) - 1 or currentBattler > len(thesebattlers):
 						skillPrinting = False
 						effectPrinting = True
 						loop = 0
