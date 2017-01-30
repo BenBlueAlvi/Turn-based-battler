@@ -73,7 +73,7 @@ def convertVel(input):
 	
 	radians = math.radians(input)
 	x_vel = math.cos(radians)
-	y_vel = -math.sin(radians)
+	y_vel = math.sin(radians)
 	velocity = (x_vel, y_vel)
 	return velocity
 
@@ -1640,7 +1640,6 @@ class Battle(object):
 										if p.skills[x + y*2].cost <= p.power:
 											p.goskill = p.skills[x + y*2]
 											selected = True
-											
 													
 								x += 1
 													
@@ -1648,13 +1647,7 @@ class Battle(object):
 								mouse_down = False
 								print "skill picked:", p.goskill.name
 								pickenm = True
-								
-								
-								
-								
-							
-							
-										
+		
 							if pickenm:	
 								p.target = ["nul"]
 								for i in thesebattlers:
@@ -1798,6 +1791,7 @@ class Battle(object):
 					print item
 				currentBattler = 0
 				currentTarget = 0
+				setVel = False
 				while skillPrinting and not quitting:
 					aniBattler = thesebattlers[currentBattler]
 					gScreen.blit(self.arena.img, [0,0])
@@ -1807,9 +1801,14 @@ class Battle(object):
 						if i.hp > 0:
 							gScreen.blit(i.image,[i.x,i.y])
 
-					if not aniBattler.target[0] == aniBattler:
-						vel = convertVel(math.atan((aniBattler.target[0].basey - aniBattler.basey)/(aniBattler.target[0].basex - aniBattler.basex)))
-					else:
+					try:
+						if not setVel:
+							hypot = math.hypot(aniBattler.target[0].basex - aniBattler.basex, aniBattler.target[0].basey - aniBattler.basey)
+							vel = [(aniBattler.target[0].basex - aniBattler.basex)/hypot, (aniBattler.target[0].basey - aniBattler.basey)/hypot]
+							print vel
+							setVel = True
+							
+					except:
 						vel = [0,0]
 						if timer == -1:
 							timer = 90
@@ -1858,12 +1857,13 @@ class Battle(object):
 								currentBattler += 1
 								aniBattler.x = aniBattler.basex
 								aniBattler.y = aniBattler.basey
+								setVel = False
 						else:
 							
 							#print vel
 							if aniBattler.x > 625:
-								aniBattler.x -= vel[0] * 3
-								aniBattler.y -= vel[1] * 3
+								aniBattler.x += vel[0] * 3
+								aniBattler.y += vel[1] * 3
 								
 							else:
 								#ANIMATION HERE
@@ -1871,7 +1871,7 @@ class Battle(object):
 								currentBattler += 1
 								aniBattler.x = aniBattler.basex
 								aniBattler.y = aniBattler.basey
-								
+								setVel = False
 				
 					if timer > 0:
 						
