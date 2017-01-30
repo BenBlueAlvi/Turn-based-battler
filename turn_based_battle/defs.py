@@ -59,6 +59,8 @@ mouse_pointer = pygame.image.load('Assets/mouse.png')
 mouse_pointer2 = pygame.image.load('Assets/mouse2.png')
 health_border = pygame.image.load('Assets/health_border.png')
 coupback = pygame.image.load('Assets/moveboxes/coupback.png')
+battleSelector = pygame.image.load('Assets/ui/battleSelector.png')
+targetSelector = pygame.image.load('Assets/ui/targetSelector.png')
 aitest = False
 				
 def hitDetect(p1, p2, p3, p4):
@@ -1659,7 +1661,7 @@ class Battle(object):
 									
 										
 									if hitDetect(mouse_pos, mouse_pos, (i.basex, i.basey), (i.basex + 50,i.basey + 50)):
-									
+										gScreen.blit(targetSelector, [i.basex - 2, i.basey - 2])
 										if mouse_down:
 											p.target[0] = i
 											ready = True
@@ -1680,21 +1682,7 @@ class Battle(object):
 									
 
 							#----------------
-							if p in self.battlers1:
-								p.x += 50
-								if not p.x == p.basex + 50:
-									p.x = p.basex + 50
-							else: 
-								p.x -= 50
-								if not p.x == p.basex - 50:
-									p.x = p.basex - 50
-							
-							
-							p.y += p.ym
-							if p.y >= p.basey + 5 or p.y <= p.basey - 5:
-								p.ym *= -1
-							
-							gScreen.blit(p.image, [p.x, p.y])
+						
 						else:
 							p.goskill = 	nothing
 							p.target = [p]
@@ -1702,9 +1690,9 @@ class Battle(object):
 
 						for i in thesebattlers:	
 							if i.hp > 0:
-								if not i == p:
-									gScreen.blit(i.image,[i.basex,i.basey])
-
+							
+								gScreen.blit(i.image,[i.basex,i.basey])
+								gScreen.blit(battleSelector, [p.basex - 2, p.basey - 2])
 								pygame.draw.rect(gScreen, RED, [i.basex, i.basey - 10,int(i.hp) / 20,5])
 								 
 								for f in range(len(i.effects)):
@@ -1718,6 +1706,7 @@ class Battle(object):
 					
 						gScreen.blit(health_border, [10, 360 + size[0] - 500])
 						pygame.draw.rect(gScreen, GREY, [320, size[1] - 140, 370, 130])
+						gScreen.blit(battleSelector, [p.basex - 2, p.basey - 2])
 						x = 0
 						
 						for pos in p.coups:
