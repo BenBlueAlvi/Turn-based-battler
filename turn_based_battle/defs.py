@@ -64,6 +64,8 @@ aitest = False
 def hitDetect(p1, p2, p3, p4):
 	if p2[0] > p3[0] and p1[0] < p4[0] and p2[1] > p3[1] and p1[1] < p4[1]:
 		return True
+	else:
+		return False
 		
 def convertVel(input):
 	
@@ -79,7 +81,9 @@ printing = False
 
 		
 messages = []
+effectMessages = []
 theMessage = ""
+theEffectMessage = ""
 
 def printc(text, battler, thesebattlers):
 	global disptextc
@@ -215,48 +219,48 @@ class Effect(object):
 		self.damage = 0
 		
 	def apply(self, target):
-		global messages
-		global theMessage
+		global effectMessages
+		global theEffectMessage
 		if self.effect == "burn":
-			messages.append(target.name + " is on fire!")
+			effectMessages.append(target.name + " is on fire!")
 			target.effects.append(self.buildNew())
 			
 		if self.effect == "bleed":
-			messages.append(target.name + " is bleeding out!")
+			effectMessages.append(target.name + " is bleeding out!")
 			target.effects.append(self.buildNew())
 		
 		if self.effect == "poison":
-			messages.append(target.name + " is poisoned!")
+			effectMessages.append(target.name + " is poisoned!")
 			target.effects.append(self.buildNew())
 			
 		if self.effect == "defend":
 			target.con += target.basecon * target.basecon
-			messages.append(target.name + " is defending!")
+			effectMessages.append(target.name + " is defending!")
 			target.effects.append(self.buildNew())
 			
 		if self.effect == "forceshield":
 			target.con += target.basecon * 3
 			target.mag += target.basemag * 3
-			messages.append(target.name + " has a shield up!")
+			effectMessages.append(target.name + " has a shield up!")
 			target.effects.append(self.buildNew())
 			
 		if self.effect == "confusion":
 			target.con -= target.basecon / 2
 			target.mag -= target.basemag / 2
-			messages.append(target.name + " is confused!")
+			effectMessages.append(target.name + " is confused!")
 			target.effects.append(self.buildNew())
 			
 		if self.effect == "rebuff":
 			target.str += target.basestr * 1.4
 			target.int += target.baseint * 1.4
-			messages.append(target.name + " is encouraged!")
+			effectMessages.append(target.name + " is encouraged!")
 			target.effects.append(self.buildNew())
 			
 		if self.effect == "meditate":
 			target.power += 1
 			target.con -= 10
 			target.mag += 5
-			messages.append(target.name + " is meditating!")
+			effectMessages.append(target.name + " is meditating!")
 			target.effects.append(self.buildNew())
 			
 		if self.effect == "planAhead":
@@ -266,9 +270,9 @@ class Effect(object):
 					i.endeffect, planned = 0, True
 			if not planned:
 				target.effects.append(self.buildNew())
-				messages.append(target.name + " is scheming!")
+				effectMessages.append(target.name + " is scheming!")
 			else:
-				messages.append(target.name+" is perfecting their plans!")
+				effectMessages.append(target.name+" is perfecting their plans!")
 			target.misc += 1
 			print "planned: ", target.misc
 			target.crit += 2
@@ -278,40 +282,40 @@ class Effect(object):
 			
 		if self.effect == "dodgeUp":
 			target.dodgeChance += 25
-			messages.append(target.name + " is prepared!")
+			effectMessages.append(target.name + " is prepared!")
 			target.effects.append(self.buildNew())
 			
 		if self.effect == "neverThere":
 			target.dodgeChance += 100
-			messages.append(target.name + " dissapeared")
+			effectMessages.append(target.name + " dissapeared")
 			target.effects.append(self.buildNew())
 			
 		if self.effect == "slowed":
 			target.agil -= 5
 			target.dodgeChance -= 10
-			messages.append(target.name + " is slowed!")
+			effectMessages.append(target.name + " is slowed!")
 			target.effects.append(self.buildNew())
 			
 		if self.effect == "magicMute":
-			messages.append(target.name+" is Muted!")
+			effectMessages.append(target.name+" is Muted!")
 			target.effects.append(self.buildNew())
 
 		if self.effect == "passedOut":
-			messages.append(target.name+" passed out!")
+			effectMessages.append(target.name+" passed out!")
 			target.effects.append(self.buildNew())
 
 		if self.effect == "mindSpiked":
-			messages.append(target.name+" has been mind spiked!")
+			effectMessages.append(target.name+" has been mind spiked!")
 			target.effects.append(self.buildNew())
 
 		if self.effect == "disgusted":
-			messages.append(target.name+" is DISGUSTED")
+			effectMessages.append(target.name+" is DISGUSTED")
 			target.effects.append(self.buildNew())
 			target.modHitChance -= 20
 			target.dodgeChance -= 5
 
 		if self.effect == "observing":
-			messages.append(target.name+" is observing.")
+			effectMessages.append(target.name+" is observing.")
 			target.effects.append(self.buildNew())
 
 		if self.effect == "devidedefend":
@@ -319,11 +323,11 @@ class Effect(object):
 
 		if self.effect == "vulnerable":
 			target.effects.append(self.buildNew())
-			messages.append(target.name+" is vulnerable!")
+			effectMessages.append(target.name+" is vulnerable!")
 			
 		if self.effect == "spurred":
 			target.effects.append(self.buildNew())
-			messages.append(target.name+" is onto something!")
+			effectMessages.append(target.name+" is onto something!")
 			target.str *= 2
 			target.int *= 2
 			target.crit *= 2
@@ -333,37 +337,37 @@ class Effect(object):
 	def end(self, target):
 		target.effects.remove(self)
 		if self.effect == "poison":
-			messages.append(target.name + " is no longer poisoned!")
+			effectMessages.append(target.name + " is no longer poisoned!")
 			
 		if self.effect == "bleed":
-			messages.append(target.name + " is no longer bleeding!")
+			effectMessages.append(target.name + " is no longer bleeding!")
 		
 		if self.effect == "burn":
-			messages.append(target.name + " is no longer on fire!")
+			effectMessages.append(target.name + " is no longer on fire!")
 		
 		if self.effect == "defend":
-			messages.append(target.name + " is no longer defending!")
+			effectMessages.append(target.name + " is no longer defending!")
 			target.con -= target.basecon * target.basecon
 			
 		if self.effect == "forceshield":
 			target.con -= target.basecon * 3
 			target.mag -= target.basemag * 3
-			messages.append(target.name + " no longer has a shield up!")
+			effectMessages.append(target.name + " no longer has a shield up!")
 		
 		if self.effect == "confusion":
 			target.con += target.basecon / 2
 			target.mag += target.basemag / 2
-			messages.append(target.name + " is no longer confused!")
+			effectMessages.append(target.name + " is no longer confused!")
 		
 		if self.effect == "rebuff":
 			target.str -= target.basestr * 1.4
 			target.int -= target.baseint * 1.4
-			messages.append(target.name + " is no longer encouraged. :(")
+			effectMessages.append(target.name + " is no longer encouraged. :(")
 		
 		if self.effect == "meditate":
 			target.con += 10
 			target.mag -= 5
-			messages.append(target.name + " is no longer meditating!")
+			effectMessages.append(target.name + " is no longer meditating!")
 		
 		if self.effect == "planAhead":
 			for i in range(target.misc):
@@ -372,40 +376,40 @@ class Effect(object):
 				target.int = target.int - (target.int / 5)
 				target.str = target.str - (target.str / 5)
 			target.misc = 0
-			messages.append(target.name + " is no longer scheming!")
+			effectMessages.append(target.name + " is no longer scheming!")
 		
 		if self.effect == "dodgeUp":
 			target.dodgeChance -= 25
-			messages.append(target.name + " is no longer prepared!")
+			effectMessages.append(target.name + " is no longer prepared!")
 		
 		if self.effect == "neverThere":
 			target.dodgeChance -= 100
-			messages.append(target.name + " reapeared!")
+			effectMessages.append(target.name + " reapeared!")
 			
 		if self.effect == "slowed":
 			target.agil -= 5
 			target.dodgeChance -= 10
-			messages.append(target.name + " is no longer slowed!")
+			effectMessages.append(target.name + " is no longer slowed!")
 
 		if self.effect == "passedOut":
-			messages.append(target.name + " is no longer passed out!")
+			effectMessages.append(target.name + " is no longer passed out!")
 
 		if self.effect == "mindSpiked":
-			messages.append(target.name + " is no longer mind spiked!")
+			effectMessages.append(target.name + " is no longer mind spiked!")
 
 		if self.effect == "disgusted":
-			messages.append(target.name+" has overcome their disgust!")
+			effectMessages.append(target.name+" has overcome their disgust!")
 			target.modHitChance += 20
 			target.dodgeChance += 5
 
 		if self.effect == "observing":
-			messages.append(target.name + " is no longer observing!")
+			effectMessages.append(target.name + " is no longer observing!")
 			
 		if self.effect == "vulnerable":
-			messages.append(target.name + " has overcome their vulnerability!")
+			effectMessages.append(target.name + " has overcome their vulnerability!")
 			
 		if self.effect == "spurred":
-			messages.append(target.name+" has lost the glint in their eye.")
+			effectMessages.append(target.name+" has lost the glint in their eye.")
 			target.str /= 2
 			target.int /= 2
 			target.crit /= 2
@@ -414,7 +418,7 @@ class Effect(object):
 	def update(self, target):
 		if self.effect == "magicMute":
 			target.power -= 1
-			messages.append(target.name+"'s power was Muted!")
+			effectMessages.append(target.name+"'s power was Muted!")
 			if self.endeffect == 1:
 				self.end(target)
 			self.endeffect += 1
@@ -423,18 +427,18 @@ class Effect(object):
 			self.damage = 25 + random.randint(1, 25)
 			self.endeffect = random.randint(1,3)
 			target.hp -= self.damage
-			messages.append(target.name + " is on fire!   " + target.name + " takes " + str(self.damage) + " damage")
+			effectMessages.append(target.name + " is on fire!   " + target.name + " takes " + str(self.damage) + " damage")
 			if self.endeffect == 2 and self.canend:
-				messages.append(target.name + " put out the fire!")
+				effectMessages.append(target.name + " put out the fire!")
 				self.end(target)
 				
 		if self.effect == "bleed":
 			damage = target.hp / 4
 			target.hp -= damage
-			messages.append(target.name + " is on bleeding out!   " + target.name + " takes " + str(damage) + " damage")
+			effectMessages.append(target.name + " is on bleeding out!   " + target.name + " takes " + str(damage) + " damage")
 			self.endeffect = random.randint(1,3)
 			if self.endeffect == 2:
-				messages.append(target.name + " is no longer bleeding")
+				effectMessages.append(target.name + " is no longer bleeding")
 				self.end(target)
 
 		if self.effect == "defend":
@@ -455,7 +459,7 @@ class Effect(object):
 		if self.effect == "poison":
 			damage = target.hp / 10
 			target.hp -= damage
-			messages.append(target.name + " is poisoned!   " + target.name + " takes " + str(damage) + " damage")
+			effectMessages.append(target.name + " is poisoned!   " + target.name + " takes " + str(damage) + " damage")
 			self.endeffect = random.randint(1,4)
 			if self.endeffect == 2:
 				self.end(target)
@@ -467,9 +471,9 @@ class Effect(object):
 			
 		if self.effect == "meditate":
 			if magicMute in target.effects:
-				messages.append(target.name + "'s Meditate was Muted!")
+				effectMessages.append(target.name + "'s Meditate was Muted!")
 			else:
-				messages.append(target.name + " is Meditating.")
+				effectMessages.append(target.name + " is Meditating.")
 				target.power += 1
 			if self.endeffect == 3:
 				self.end(target)
@@ -534,9 +538,9 @@ class Effect(object):
 				pass
 				
 		if self.effect == "guarded":
-			theMessage += target.name + " is being guarded by " + target.guarder.name + "!"
+			effectMessages.append(target.name + " is being guarded by " + target.guarder.name + "!")
 			if self.endeffect == 1:
-				messages.append(target.name + " is no longer being guarded by " + target.guarder.name + "!")
+				effectMessages.append(target.name + " is no longer being guarded by " + target.guarder.name + "!")
 				target.guarder = "nul"
 				self.end(target)
 			self.endeffect += 1	
@@ -1217,16 +1221,17 @@ spurofmoment = Skill("Spur of the Moment", fighting, False, 0, 0, 0, 5, 100, 5, 
 spurofmoment.desc = "Come up with a crazy plan that just might work. Boosts next attack greatly."
 
 wispFire = Skill("Fire of the Wisp", fire, False, 30, 7, 6, 4, 99, 1, [2, burn], [""])
-
+#------------- COUP DE GRACE------------------
 testcoup = Skill("test coup", ice, False, 10, 10, 10, 10, 99, 1, [], ["coup"])
-vampcoup = Skill("Blood Hunt", blood, True, 32, 6, 1, 5, 100, 1, [], ["vampire", "vampire", "vampire", "trueHit", "conPierce"])
-vampcoup.desc = "Consume their flesh, without fail. Nothing can stop your bite."
-catcoup = Skill("Stunning Display", light, False, -1, 1, 10, 1, 100, 0, [1, passedOut], ["trueHit", "hitall", "catcoup"])
-catcoup.desc = "Provide a stunning display to distract your opponents. None can resist the sight."
+bloodHunt = Skill("Blood Hunt", blood, True, 32, 6, 1, 5, 100, 1, [], ["vampire", "vampire", "vampire", "trueHit", "conPierce", "coup"])
+bloodHunt.desc = "Consume their flesh, without fail. Nothing can stop your bite."
+stunningDisplay = Skill("Stunning Display", light, False, -1, 1, 10, 1, 100, 0, [1, passedOut], ["trueHit", "hitall", "coup"])
+stunningDisplay.desc = "Provide a stunning display to distract your opponents. None can resist the sight."
 
 #Skill("", normal, True, 0, 0, 0, 0, 100, 0, [], [""])
 #def __init__(self, name, type, phys, atk, var, spd, crit, hitChance, cost, effects, spec):
 
+#----------skills for testing--------
 
 instantkill = Skill("Insta kill", unknown, False, 99999, 9999, 99, 15, 100, 0, [], ["trueHit"])
 instantkill.desc = "BAM! You dead now."
@@ -1360,10 +1365,12 @@ Durric.ableSkills = [forceShield, cleave, obsidianBlast, recover, psionicRadianc
 
 Coo33 = Char("Coo33", [dark, blood], 250, 50, 0, 30, 0, 10, 10, 10,[basicAtk, slash, bite, kick, dodge, rip, consumeFlesh, defend], "Blood hunt", "Assets/battlers/Coo33.png", [3,3], "")
 Coo33.ableSkills = []
+Coo33.coups = [bloodHunt]
 CoosomeJoe = Char("Coosome Joe", [light, tech], 500, 25, 25, 25, 25, 5, 2, 10, [basicAtk, bludgeon, erase, create2, confuse, planAhead, mend, defend], "Frenzy", "Assets/battlers/Coosome.png",  [3, 4], "")
 CoosomeJoe.ableSkills = []
 Catsome = Char("Catsome", [light, physic], 1000, 10, 35, 10, 15, 5, 5, 10, [slash, bite, eggon, rebuke, mend, recover], "Cuteness", "Assets/battlers/catsome.png",[6,9], "")
 Catsome.ableSkills = []
+Catsome.coups = [stunningDisplay]
 Cubes = Char("Cubes", [tech], 400, 25, 35, 60, 30, 4, 5, 30, [zap, energiBeam, wellspring, planAhead, create3], "", "Assets/battlers/wip.png", [0,13], "")
 
 Creep = Char("Creepy Bald Guy", [physic, unknown], 750, 10, 10, 15, 50, 0, 0, 0, [creepyAtk, blink, stare, inhale, exhale, observe], "Creepus", "Assets/battlers/Creepy_Bald_Guy.png", [3, 15], "")
@@ -1609,6 +1616,9 @@ class Battle(object):
 									
 										
 								x += 1
+								
+							x = 0
+							y = 0
 							for i in p.skills:
 							
 								if x > 1:
@@ -1791,13 +1801,15 @@ class Battle(object):
 								self.battlers1.remove(i)
 							if i in self.battlers2:
 								self.battlers2.remove(i)
-				printing = True
+				skillPrinting = True
+				effectPrinting = False
 				loop = 0
 				timer = 90
 				for item in messages:
 					print item
 				currentBattler = 0
-				while printing and not quitting:
+				currentTarget = 0
+				while skillPrinting and not quitting:
 					aniBattler = thesebattlers[currentBattler]
 					gScreen.blit(self.arena.img, [0,0])
 					
@@ -1809,7 +1821,35 @@ class Battle(object):
 					
 						
 					if len(aniBattler.target) > 1:
-						pass
+						
+						if aniBattler in self.battlers1:
+						
+							vel = convertVel(math.atan((aniBattler.target[0].basey - aniBattler.basey)/(aniBattler.target[0].basex - aniBattler.basex)))
+							
+							if aniBattler.x < 625:
+								aniBattler.x += vel[0] * 3
+								aniBattler.y += vel[1] * 3
+							else:
+								loop += 1
+								currentTarget += 1
+								
+						else:
+						
+							vel = convertVel(math.atan((aniBattler.target[0].basey - aniBattler.basey)/(aniBattler.target[0].basex - aniBattler.basex)))
+							
+							if aniBattler.x < 625:
+								aniBattler.x += vel[0] * 3
+								aniBattler.y += vel[1] * 3
+							else:
+								loop += 1
+								currentTarget += 1
+								
+						if currentTarget >= len(aniBattler.target):
+							currentBattler += 1
+							currentTarget = 0
+							aniBattler.x = aniBattler.basex
+							aniBattler.y = aniBattler.basey
+								
 					else:
 						if aniBattler in self.battlers1:
 						
@@ -1839,10 +1879,17 @@ class Battle(object):
 								aniBattler.y = aniBattler.basey
 							
 					if loop >= len(messages) - 1 or currentBattler > len(thesebattlers) - 1:
-						printing = False
+						skillPrinting = False
+						effectPrinting = True
+						loop = 0
+						timer = 240
+						
+			
+					
+					
 						
 					
-					gScreen.blit(font.render(messages[loop], True, WHITE), [10, size[1] - 140])
+					
 					
 					pygame.draw.rect(gScreen, BLACK, [0,size[1] - 150,size[0],150])
 					#gScreen.blit(disptext, [10, 320 + size[1] - 500])
@@ -1852,6 +1899,30 @@ class Battle(object):
 					pygame.display.flip()	
 					clock.tick(60)
 					
+				while effectPrinting and not quitting:
+					gScreen.blit(self.arena.img, [0,0])
+					for i in thesebattlers:	
+						if i.hp > 0:
+							gScreen.blit(i.image,[i.x,i.y])
+							
+					if timer >= 1:
+						timer -= 1
+							
+					if timer <= 0:
+						timer = 240
+						loop += 1
+						
+					if loop >= len(effectMessages) - 1:
+						effectPrinting = False
+					
+					pygame.draw.rect(gScreen, BLACK, [0,size[1] - 150,size[0],150])
+					#gScreen.blit(disptext, [10, 320 + size[1] - 500])
+					gScreen.blit(font.render(effectMessages[loop], True, WHITE), [10, size[1] - 140])
+						
+					
+					pygame.display.flip()	
+					clock.tick(60)
+				#------End animations and printing-----
 							
 				for i in thesebattlers:
 					i.updated = False
