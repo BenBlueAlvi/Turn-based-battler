@@ -305,6 +305,7 @@ class Effect(object):
 		if self.effect == "passedOut":
 			effectMessages.append(target.name+" passed out!")
 			target.effects.append(self.buildNew())
+			target.actions -= 5
 
 		if self.effect == "mindSpiked":
 			effectMessages.append(target.name+" has been mind spiked!")
@@ -334,6 +335,11 @@ class Effect(object):
 			target.int *= 2
 			target.crit *= 2
 			target.modHitChance += 10
+
+		if self.effect == "stunned":
+			effectMessages.append(target.name+" is Stunned!")
+			target.effects.append(self.buildNew())
+			target.actions -= 2
 
 		if self.effect == "earthStage":
 			target.effects.append(self.buildNew())
@@ -441,6 +447,7 @@ class Effect(object):
 
 		if self.effect == "passedOut":
 			effectMessages.append(target.name + " is no longer passed out!")
+			target.actions += 5
 
 		if self.effect == "mindSpiked":
 			effectMessages.append(target.name + " is no longer mind spiked!")
@@ -462,6 +469,9 @@ class Effect(object):
 			target.int /= 2
 			target.crit /= 2
 			target.modHitChance -= 10
+
+		if self.effect == "stunned":
+			effectMessages.append(target.name+" is no longer stunned.")
 		
 	def update(self, target):
 		if self.effect == "magicMute":
@@ -596,6 +606,11 @@ class Effect(object):
 				self.end(target)
 			self.endeffect += 1
 
+		if self.effect == "stunned":
+			target.actions += 1
+			if self.endeffect == 1:
+				self.end(target)
+			self.endeffect += 1
 
 	def resetStats(self, target):
 		target.con = target.basecon
@@ -637,6 +652,7 @@ observing = Effect("observing")
 devidedefend = Effect("devidedefend")
 vulnerable = Effect("vulnerable")
 spurred = Effect("spurred")
+stunned = Effect("stunned")
 
 negeff = [burn, magicmute, bleed, poisoned, confusion, disgusted, mindSpiked, slowed, passedOut, vulnerable]
 poseff = [defense, forceshield, immortal, block, rebuff, meditatef, planAheadf, dodgeUp, earthStagef, otherStagef, moonStagef, observing, devidedefend, spurred]
@@ -933,6 +949,8 @@ class Skill(object):
 					user.misc = target
 				if i == "spur":
 					spurred.apply(user)
+				if i == "overclock":
+					target.actions += 1
 
 			if user.ability == "Frenzy" and user.hp <= user.maxhp/5:
 				damage = math.floor(damage * 1.25)
@@ -1223,12 +1241,14 @@ spurofmoment = Skill("Spur of the Moment", fighting, False, 0, 0, 0, 5, 100, 5, 
 spurofmoment.desc = "Come up with a crazy plan that just might work. Boosts next attack greatly."
 
 wispFire = Skill("Fire of the Wisp", fire, False, 30, 7, 6, 4, 99, 1, [2, burn], [""])
+
 #------------- COUP DE GRACE------------------
 testcoup = Skill("test coup", ice, False, 10, 10, 10, 10, 99, 1, [], ["coup"])
 bloodHunt = Skill("Blood Hunt", blood, True, 32, 6, 1, 5, 100, 1, [], ["vampire", "vampire", "vampire", "trueHit", "conPierce", "coup"])
 bloodHunt.desc = "Consume their flesh, without fail. Nothing can stop your bite."
-stunningDisplay = Skill("Stunning Display", light, False, -1, 1, 10, 1, 100, 0, [1, passedOut], ["trueHit", "hitall", "coup"])
+stunningDisplay = Skill("Stunning Display", light, False, -1, 1, 10, 1, 100, 0, [1, stunned], ["trueHit", "hitall", "coup"])
 stunningDisplay.desc = "Provide a stunning display to distract your opponents. None can resist the sight."
+overcoup = Skill("Overclock", tech, True, 0, 0, 5, 1, 100, 0, [], ["trueHit", "nodam", "overclock"])
 
 #Skill("", normal, True, 0, 0, 0, 0, 100, 0, [], [""])
 #def __init__(self, name, type, phys, atk, var, spd, crit, hitChance, cost, effects, spec):
@@ -1285,6 +1305,7 @@ class Char(object):
 		self.guarder = "hi"
 		self.misc = 0
 		self.vital = True
+		self.actions = 1
 		#AI stuff
 		self.savingfor = "none"
 		self.aimisc = 0
@@ -1560,7 +1581,6 @@ class Battle(object):
 					for i in p.effects:
 						for k in thesebattlers:
 							if k.ability == "watch them burn" and i == 	burn:
-							
 								i.canend = False
 								i.damage *= 2
 						i.update(p)
@@ -1581,174 +1601,173 @@ class Battle(object):
 					p.updateEquips()
 					p.x = p.basex
 					p.y = p.basey
-					ready, selected = False, False
-					
-					
 
-					while not ready and not p.isAi:
-						gScreen.fill(WHITE)
-						gScreen.blit(self.arena.img, [0,0])
-						for event in pygame.event.get(): 
-							if event.type == pygame.QUIT: 
-								ready = True							
-								battling = False
-								done, running, quitting = True, False, True
-								break
-							elif event.type == pygame.MOUSEBUTTONDOWN:
-								mouse_down = True
-							
-							elif event.type == pygame.MOUSEBUTTONUP:
-								mouse_down = False
+					for action in p.actions:
+						ready, selected = False, False
+						while not ready and not p.isAi:
+							gScreen.fill(WHITE)
+							gScreen.blit(self.arena.img, [0,0])
+							for event in pygame.event.get(): 
+								if event.type == pygame.QUIT: 
+									ready = True							
+									battling = False
+									done, running, quitting = True, False, True
+									break
+								elif event.type == pygame.MOUSEBUTTONDOWN:
+									mouse_down = True
 								
-						mouse_pos = pygame.mouse.get_pos()
-						
-						
-						#displaying and picking skills
-						if p.hp > 0 and not passedOut in p.effects:
-							x = 0
-							selected = False
-							for i in p.coups:
-								thisxcord = 700 + 180*x
-								thisycord = size[1] - 35
-								if hitDetect(mouse_pos, mouse_pos, [thisxcord, thisycord], [thisxcord + 169, thisycord + 29]):
-								
-									dispskill = p.coups[x]
-									if mouse_down and p.coups[x].uses == 1:
-										mouse_down = False
-										p.goskill = p.coups[x]
-										selected = True
+								elif event.type == pygame.MOUSEBUTTONUP:
+									mouse_down = False
 									
+							mouse_pos = pygame.mouse.get_pos()
+							
+							
+							#displaying and picking skills
+							if p.hp > 0 and not passedOut in p.effects:
+								x = 0
+								selected = False
+								for i in p.coups:
+									thisxcord = 700 + 180*x
+									thisycord = size[1] - 35
+									if hitDetect(mouse_pos, mouse_pos, [thisxcord, thisycord], [thisxcord + 169, thisycord + 29]):
+									
+										dispskill = p.coups[x]
+										if mouse_down and p.coups[x].uses == 1:
+											mouse_down = False
+											p.goskill = p.coups[x]
+											selected = True
 										
+											
+									x += 1
+									
+								x = 0
+								y = 0
+								for i in p.skills:
+								
+									if x > 1:
+										x = 0
+										y += 1
+									
+									thisxcord = 330 + x*175
+									thisycord = y*30 + 370 + size[1] - 500
+									if hitDetect(mouse_pos, mouse_pos,[thisxcord, thisycord], [thisxcord + 165, thisycord + 25]):
+										dispskill = p.skills[x + y*2]
+										
+										
+										if mouse_down:
+											mouse_down = False
+											
+												
+											if p.skills[x + y*2].cost <= p.power:
+												p.goskill = p.skills[x + y*2]
+												selected = True
+														
+									x += 1
+														
+								if selected:
+									mouse_down = False
+									print "skill picked:", p.goskill.name
+									pickenm = True
+			
+								if pickenm:	
+									p.target = ["nul"]
+									for i in thesebattlers:
+										
+											
+										if hitDetect(mouse_pos, mouse_pos, (i.basex, i.basey), (i.basex + 50,i.basey + 50)):
+											gScreen.blit(targetSelector, [i.basex - 2, i.basey - 2])
+											if mouse_down:
+												p.target[0] = i
+												ready = True
+												
+											mouse_down = False
+										
+										if ready:
+											print p.target[0].name
+											
+											if "hitAll" in  p.goskill.spec:
+												p.target = []
+												if p in self.battlers1:
+													p.target = self.battlers2
+												elif p in self.battlers2:
+													p.target = self.battlers1
+											
+											pickenm = False
+										
+
+								#----------------
+							
+							else:
+								p.goskill = 	nothing
+								p.target = [p]
+								ready = True
+
+							for i in thesebattlers:	
+								if i.hp > 0:
+								
+									gScreen.blit(i.image,[i.basex,i.basey])
+									gScreen.blit(battleSelector, [p.basex - 2, p.basey - 2])
+									pygame.draw.rect(gScreen, RED, [i.basex, i.basey - 10,int(i.hp) / 20,5])
+									 
+									for f in range(len(i.effects)):
+										gScreen.blit(i.effects[f].img, [i.basex - f * 10, i.basey])
+									
+									
+								y += 1
+							#ANIMATIONS!
+							
+							pygame.draw.rect(gScreen, BLACK, [0,size[1] - 150,size[0],150])
+						
+							gScreen.blit(health_border, [10, 360 + size[0] - 500])
+							pygame.draw.rect(gScreen, GREY, [320, size[1] - 140, 370, 130])
+							gScreen.blit(battleSelector, [p.basex - 2, p.basey - 2])
+							x = 0
+							
+							for pos in p.coups:
+								pygame.draw.rect(gScreen, GREY, [700 + 180*x, size[1] - 35, 169, 28])
+								gScreen.blit(coupback, [700 + 180*x, size[1] - 35])
+								gScreen.blit(font.render(dispskill.name + "   Cost: " + str(dispskill.cost), True, WHITE), [700, size[1] - 140])
+								if pos.uses == 1:
+									gScreen.blit(pos.type.img, [702 + 180*x, size[1] - 33])
+									gScreen.blit(font.render(pos.name, True, WHITE), [709 + 180*x, size[1] - 28])
+									
+								else:
+									gScreen.blit(lockedskill, [702 + 180*x, size[1] - 33])
+									
 								x += 1
 								
+							gScreen.blit(font.render(dispskill.name + "   Cost: " + str(dispskill.cost), True, WHITE), [700, size[1] - 140])
+							gScreen.blit(font.render(dispskill.desc, True, WHITE), [700, size[1] - 125])
+						
 							x = 0
 							y = 0
-							for i in p.skills:
-							
-								if x > 1:
-									x = 0
-									y += 1
-								
-								thisxcord = 330 + x*175
-								thisycord = y*30 + 370 + size[1] - 500
-								if hitDetect(mouse_pos, mouse_pos,[thisxcord, thisycord], [thisxcord + 165, thisycord + 25]):
-									dispskill = p.skills[x + y*2]
-									
-									
-									if mouse_down:
-										mouse_down = False
-										
-											
-										if p.skills[x + y*2].cost <= p.power:
-											p.goskill = p.skills[x + y*2]
-											selected = True
-													
-								x += 1
-													
-							if selected:
-								mouse_down = False
-								print "skill picked:", p.goskill.name
-								pickenm = True
-		
-							if pickenm:	
-								p.target = ["nul"]
-								for i in thesebattlers:
-									
-										
-									if hitDetect(mouse_pos, mouse_pos, (i.basex, i.basey), (i.basex + 50,i.basey + 50)):
-										gScreen.blit(targetSelector, [i.basex - 2, i.basey - 2])
-										if mouse_down:
-											p.target[0] = i
-											ready = True
-											
-										mouse_down = False
-									
-									if ready:
-										print p.target[0].name
-										
-										if "hitAll" in  p.goskill.spec:
-											p.target = []
-											if p in self.battlers1:
-												p.target = self.battlers2
-											elif p in self.battlers2:
-												p.target = self.battlers1
-										
-										pickenm = False
-									
 
-							#----------------
-						
-						else:
-							p.goskill = 	nothing
-							p.target = [p]
-							ready = True
-
-						for i in thesebattlers:	
-							if i.hp > 0:
+							if p.hp > 0:
+								dispSkills(p)
+							#------
 							
-								gScreen.blit(i.image,[i.basex,i.basey])
-								gScreen.blit(battleSelector, [p.basex - 2, p.basey - 2])
-								pygame.draw.rect(gScreen, RED, [i.basex, i.basey - 10,int(i.hp) / 20,5])
-								 
-								for f in range(len(i.effects)):
-									gScreen.blit(i.effects[f].img, [i.basex - f * 10, i.basey])
-								
-								
-							y += 1
-						#ANIMATIONS!
-						
-						pygame.draw.rect(gScreen, BLACK, [0,size[1] - 150,size[0],150])
-					
-						gScreen.blit(health_border, [10, 360 + size[0] - 500])
-						pygame.draw.rect(gScreen, GREY, [320, size[1] - 140, 370, 130])
-						gScreen.blit(battleSelector, [p.basex - 2, p.basey - 2])
-						x = 0
-						
-						for pos in p.coups:
-							pygame.draw.rect(gScreen, GREY, [700 + 180*x, size[1] - 35, 169, 28])
-							gScreen.blit(coupback, [700 + 180*x, size[1] - 35])
-							gScreen.blit(font.render(dispskill.name + "   Cost: " + str(dispskill.cost), True, WHITE), [700, size[1] - 140])
-							if pos.uses == 1:
-								gScreen.blit(pos.type.img, [702 + 180*x, size[1] - 33])
-								gScreen.blit(font.render(pos.name, True, WHITE), [709 + 180*x, size[1] - 28])
-								
+							if mouse_down:
+								gScreen.blit(mouse_pointer2,mouse_pos)
 							else:
-								gScreen.blit(lockedskill, [702 + 180*x, size[1] - 33])
-								
-							x += 1
+								gScreen.blit(mouse_pointer,mouse_pos)
+							for i in thesebattlers:
+								if i.hp <= 0:
+									i.effects.append(death)
+									
+							if thebattler == len(thesebattlers):
+								pygame.draw.rect(gScreen, BLACK, [0,size[1] - 150,size[0],150])
+
+
+							pygame.display.flip()
+					 
+							# --- Limit to 60 frames per second
+							clock.tick(60)
 							
-						gScreen.blit(font.render(dispskill.name + "   Cost: " + str(dispskill.cost), True, WHITE), [700, size[1] - 140])
-						gScreen.blit(font.render(dispskill.desc, True, WHITE), [700, size[1] - 125])
-					
-						x = 0
-						y = 0
-
-						if p.hp > 0:
-							dispSkills(p)
-						#------
-						
-						if mouse_down:
-							gScreen.blit(mouse_pointer2,mouse_pos)
-						else:
-							gScreen.blit(mouse_pointer,mouse_pos)
-						for i in thesebattlers:
-							if i.hp <= 0:
-								i.effects.append(death)
-								
-						if thebattler == len(thesebattlers):
-							pygame.draw.rect(gScreen, BLACK, [0,size[1] - 150,size[0],150])
-
-
-						pygame.display.flip()
-				 
-						# --- Limit to 60 frames per second
-						clock.tick(60)
-						
-					if p.isAi:
-						p = ai.runAI(p, self.battlers1, self.battlers2)
-						print p.name + " has "+str(p.power)+" power, saving for: "+ p.savingfor + ". Using: " + p.goskill.name + " on " + p.target[0].name
+						if p.isAi:
+							p = ai.runAI(p, self.battlers1, self.battlers2)
+							print p.name + " has "+str(p.power)+" power, saving for: "+ p.savingfor + ". Using: " + p.goskill.name + " on " + p.target[0].name
 						agillist.append([p, p.goskill, p.target])
-			
+
 			if not quitting:
 				for i in range(len(agillist)):
 					for j in range(len(agillist)-1-i):
@@ -1760,20 +1779,19 @@ class Battle(object):
 				while x < len(agillist):
 					p = agillist[x][0]
 					skill = agillist[x][1]
-					target = agillist[x][2]
+					targets = agillist[x][2]
 					#print "thebattler:", thebattler
 										
 					if len(p.target) > 1:
-						for t in p.target:
-							p.goskill.use(p, t, self.battlers1, self.battlers2, thesebattlers)
+						for t in targets:
+							skill.use(p, t, self.battlers1, self.battlers2, thesebattlers)
 						
 					
-						p.power -= p.goskill.cost
+						p.power -= skill.cost
 						
 					else:
-						
-						p.goskill.use(p,p.target[0], self.battlers1, self.battlers2, thesebattlers)
-						p.power -= p.goskill.cost
+						skill.use(p, targets[0], self.battlers1, self.battlers2, thesebattlers)
+						p.power -= skill.cost
 				
 					for i in thesebattlers:
 						if i.hp <= 0:
