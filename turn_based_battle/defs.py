@@ -39,6 +39,7 @@ class Music(object):
 		
 cattheme = Music("Raxxo_Patchy_Aid")
 cootheme = Music("Raxxo_Stand_Your_Ground")
+theeCoosomeTheme = Music("brilliant_scientist-technological_defect")
 maicetheme = Music("A_Tiny_Tiny_Clever_Commander")
 sivtheme = Music("WaterflameFinalBattle")
 noutheme = Music("supierior_nouledge")
@@ -57,34 +58,34 @@ selector3 = pygame.image.load("assets/ui/selector3.png")
 mouse_pointer = pygame.image.load('Assets/mouse.png')
 mouse_pointer2 = pygame.image.load('Assets/mouse2.png')
 health_border = pygame.image.load('Assets/health_border.png')
+coupback = pygame.image.load('Assets/moveboxes/coupback.png')
+battleSelector = pygame.image.load('Assets/ui/battleSelector.png')
+targetSelector = pygame.image.load('Assets/ui/targetSelector.png')
 aitest = False
 				
 def hitDetect(p1, p2, p3, p4):
 	if p2[0] > p3[0] and p1[0] < p4[0] and p2[1] > p3[1] and p1[1] < p4[1]:
 		return True
+	else:
+		return False
+		
+def convertVel(input):
+	
+	radians = math.radians(input)
+	x_vel = math.cos(radians)
+	y_vel = -math.sin(radians)
+	velocity = (x_vel, y_vel)
+	return velocity
 
 log =[]				
 timer = 0
 printing = False			
-def printb(text):
-	global disptext
-	global printing
-	global log
-	global timer
 
-	newtext = font.render(text,True,WHITE)
-	log.append(text)
-
-	disptext = newtext
-	timer = 90
-	for i in range(timer):
-		pygame.draw.rect(gScreen, BLACK, [0,size[1] - 150,size[0],150])
-		#gScreen.blit(disptext, [10, 320 + size[1] - 500])
-		gScreen.blit(disptext, [10, size[1] - 140])
-		printing = True
-			
-		pygame.display.flip()	
-		clock.tick(60)
+		
+messages = []
+effectMessages = []
+theMessage = ""
+theEffectMessage = ""
 
 def printc(text, battler, thesebattlers):
 	global disptextc
@@ -154,6 +155,7 @@ ghost = Type("Ghost", ["Physic", "Magic"], ["Fighting", "Normal"])
 magic = Type("Magic", ["Fighting", "Astral"], ["Chaos"])
 astral = Type("Astral", ["Chaos"], ["Ghost", "Tech"])
 
+
 physic = Type("Physic",["Normal", "astral"], ["Fighting"])
 tech = Type("Tech", ["Electric", "Acid", "Astral"], ["Earth", "Chaos"])
 unknown = Type("Unknown", ["none"], ["none"])
@@ -219,46 +221,48 @@ class Effect(object):
 		self.damage = 0
 		
 	def apply(self, target):
+		global effectMessages
+		global theEffectMessage
 		if self.effect == "burn":
-			printb(target.name + " is on fire!")
+			effectMessages.append(target.name + " is on fire!")
 			target.effects.append(self.buildNew())
 			
 		if self.effect == "bleed":
-			printb(target.name + " is bleeding out!")
+			effectMessages.append(target.name + " is bleeding out!")
 			target.effects.append(self.buildNew())
 		
 		if self.effect == "poison":
-			printb(target.name + " is poisoned!")
+			effectMessages.append(target.name + " is poisoned!")
 			target.effects.append(self.buildNew())
 			
 		if self.effect == "defend":
 			target.con += target.basecon * target.basecon
-			printb(target.name + " is defending!")
+			effectMessages.append(target.name + " is defending!")
 			target.effects.append(self.buildNew())
 			
 		if self.effect == "forceshield":
 			target.con += target.basecon * 3
 			target.mag += target.basemag * 3
-			printb(target.name + " has a shield up!")
+			effectMessages.append(target.name + " has a shield up!")
 			target.effects.append(self.buildNew())
 			
 		if self.effect == "confusion":
 			target.con -= target.basecon / 2
 			target.mag -= target.basemag / 2
-			printb(target.name + " is confused!")
+			effectMessages.append(target.name + " is confused!")
 			target.effects.append(self.buildNew())
 			
 		if self.effect == "rebuff":
 			target.str += target.basestr * 1.4
 			target.int += target.baseint * 1.4
-			printb(target.name + " is encouraged!")
+			effectMessages.append(target.name + " is encouraged!")
 			target.effects.append(self.buildNew())
 			
 		if self.effect == "meditate":
 			target.power += 1
 			target.con -= 10
 			target.mag += 5
-			printb(target.name + " is meditating!")
+			effectMessages.append(target.name + " is meditating!")
 			target.effects.append(self.buildNew())
 			
 		if self.effect == "planAhead":
@@ -268,9 +272,9 @@ class Effect(object):
 					i.endeffect, planned = 0, True
 			if not planned:
 				target.effects.append(self.buildNew())
-				printb(target.name + " is scheming!")
+				effectMessages.append(target.name + " is scheming!")
 			else:
-				printb(target.name+" is perfecting their plans!")
+				effectMessages.append(target.name+" is perfecting their plans!")
 			target.misc += 1
 			print "planned: ", target.misc
 			target.crit += 2
@@ -280,40 +284,40 @@ class Effect(object):
 			
 		if self.effect == "dodgeUp":
 			target.dodgeChance += 25
-			printb(target.name + " is prepared!")
+			effectMessages.append(target.name + " is prepared!")
 			target.effects.append(self.buildNew())
 			
 		if self.effect == "neverThere":
 			target.dodgeChance += 100
-			printb(target.name + " dissapeared")
+			effectMessages.append(target.name + " dissapeared")
 			target.effects.append(self.buildNew())
 			
 		if self.effect == "slowed":
 			target.agil -= 5
 			target.dodgeChance -= 10
-			printb(target.name + " is slowed!")
+			effectMessages.append(target.name + " is slowed!")
 			target.effects.append(self.buildNew())
 			
 		if self.effect == "magicMute":
-			printb(target.name+" is Muted!")
+			effectMessages.append(target.name+" is Muted!")
 			target.effects.append(self.buildNew())
 
 		if self.effect == "passedOut":
-			printb(target.name+" passed out!")
+			effectMessages.append(target.name+" passed out!")
 			target.effects.append(self.buildNew())
 
 		if self.effect == "mindSpiked":
-			printb(target.name+" has been mind spiked!")
+			effectMessages.append(target.name+" has been mind spiked!")
 			target.effects.append(self.buildNew())
 
 		if self.effect == "disgusted":
-			printb(target.name+" is DISGUSTED")
+			effectMessages.append(target.name+" is DISGUSTED")
 			target.effects.append(self.buildNew())
 			target.modHitChance -= 20
 			target.dodgeChance -= 5
 
 		if self.effect == "observing":
-			printb(target.name+" is observing.")
+			effectMessages.append(target.name+" is observing.")
 			target.effects.append(self.buildNew())
 
 		if self.effect == "devidedefend":
@@ -321,7 +325,15 @@ class Effect(object):
 
 		if self.effect == "vulnerable":
 			target.effects.append(self.buildNew())
-			printb(target.name+" is vulnerable!")
+			effectMessages.append(target.name+" is vulnerable!")
+			
+		if self.effect == "spurred":
+			target.effects.append(self.buildNew())
+			effectMessages.append(target.name+" is onto something!")
+			target.str *= 2
+			target.int *= 2
+			target.crit *= 2
+			target.modHitChance += 10
 
 		if self.effect == "earthStage":
 			target.effects.append(self.buildNew())
@@ -373,37 +385,37 @@ class Effect(object):
 	def end(self, target):
 		target.effects.remove(self)
 		if self.effect == "poison":
-			printb(target.name + " is no longer poisoned!")
+			effectMessages.append(target.name + " is no longer poisoned!")
 			
 		if self.effect == "bleed":
-			printb(target.name + " is no longer bleeding!")
+			effectMessages.append(target.name + " is no longer bleeding!")
 		
 		if self.effect == "burn":
-			printb(target.name + " is no longer on fire!")
+			effectMessages.append(target.name + " is no longer on fire!")
 		
 		if self.effect == "defend":
-			printb(target.name + " is no longer defending!")
+			effectMessages.append(target.name + " is no longer defending!")
 			target.con -= target.basecon * target.basecon
 			
 		if self.effect == "forceshield":
 			target.con -= target.basecon * 3
 			target.mag -= target.basemag * 3
-			printb(target.name + " no longer has a shield up!")
+			effectMessages.append(target.name + " no longer has a shield up!")
 		
 		if self.effect == "confusion":
 			target.con += target.basecon / 2
 			target.mag += target.basemag / 2
-			printb(target.name + " is no longer confused!")
+			effectMessages.append(target.name + " is no longer confused!")
 		
 		if self.effect == "rebuff":
 			target.str -= target.basestr * 1.4
 			target.int -= target.baseint * 1.4
-			printb(target.name + " is no longer encouraged. :(")
+			effectMessages.append(target.name + " is no longer encouraged. :(")
 		
 		if self.effect == "meditate":
 			target.con += 10
 			target.mag -= 5
-			printb(target.name + " is no longer meditating!")
+			effectMessages.append(target.name + " is no longer meditating!")
 		
 		if self.effect == "planAhead":
 			for i in range(target.misc):
@@ -412,68 +424,49 @@ class Effect(object):
 				target.int = target.int - (target.int / 5)
 				target.str = target.str - (target.str / 5)
 			target.misc = 0
-			printb(target.name + " is no longer scheming!")
+			effectMessages.append(target.name + " is no longer scheming!")
 		
 		if self.effect == "dodgeUp":
 			target.dodgeChance -= 25
-			printb(target.name + " is no longer prepared!")
+			effectMessages.append(target.name + " is no longer prepared!")
 		
 		if self.effect == "neverThere":
 			target.dodgeChance -= 100
-			printb(target.name + " reapeared!")
+			effectMessages.append(target.name + " reapeared!")
 			
 		if self.effect == "slowed":
 			target.agil -= 5
 			target.dodgeChance -= 10
-			printb(target.name + " is no longer slowed!")
+			effectMessages.append(target.name + " is no longer slowed!")
 
 		if self.effect == "passedOut":
-			printb(target.name + " is no longer passed out!")
+			effectMessages.append(target.name + " is no longer passed out!")
 
 		if self.effect == "mindSpiked":
-			printb(target.name + " is no longer mind spiked!")
+			effectMessages.append(target.name + " is no longer mind spiked!")
 
 		if self.effect == "disgusted":
-			printb(target.name+" has overcome their disgust!")
+			effectMessages.append(target.name+" has overcome their disgust!")
 			target.modHitChance += 20
 			target.dodgeChance += 5
 
 		if self.effect == "observing":
-			printb(target.name + " is no longer observing!")
+			effectMessages.append(target.name + " is no longer observing!")
 			
 		if self.effect == "vulnerable":
-			printb(target.name + " has overcome their vulnerability!")
-
-		if self.effect == "earthStage":
-		
-			target.con -= 50
-			target.mag -= 50
-			target.int += 20
-			target.str += 20
+			effectMessages.append(target.name + " has overcome their vulnerability!")
 			
-				
-		if self.effect == "moonStage":
-		
-			target.mag -= 50
-			target.int -= 50
-			target.str += 25
-			target.con += 25
-			
-			
-		if self.effect == "otherStage":
-			
-			target.int -= 75
-			target.crit -= 10
-			target.dodgeChance -= 20
-			target.con += 50
-			target.mag += 50
-		
-	
+		if self.effect == "spurred":
+			effectMessages.append(target.name+" has lost the glint in their eye.")
+			target.str /= 2
+			target.int /= 2
+			target.crit /= 2
+			target.modHitChance -= 10
 		
 	def update(self, target):
 		if self.effect == "magicMute":
 			target.power -= 1
-			printb(target.name+"'s power was Muted!")
+			effectMessages.append(target.name+"'s power was Muted!")
 			if self.endeffect == 1:
 				self.end(target)
 			self.endeffect += 1
@@ -482,18 +475,18 @@ class Effect(object):
 			self.damage = 25 + random.randint(1, 25)
 			self.endeffect = random.randint(1,3)
 			target.hp -= self.damage
-			printb(target.name + " is on fire!   " + target.name + " takes " + str(self.damage) + " damage")
+			effectMessages.append(target.name + " is on fire!   " + target.name + " takes " + str(self.damage) + " damage")
 			if self.endeffect == 2 and self.canend:
-				printb(target.name + " put out the fire!")
+				effectMessages.append(target.name + " put out the fire!")
 				self.end(target)
 				
 		if self.effect == "bleed":
 			damage = target.hp / 4
 			target.hp -= damage
-			printb(target.name + " is on bleeding out!   " + target.name + " takes " + str(damage) + " damage")
+			effectMessages.append(target.name + " is on bleeding out!   " + target.name + " takes " + str(damage) + " damage")
 			self.endeffect = random.randint(1,3)
 			if self.endeffect == 2:
-				printb(target.name + " is no longer bleeding")
+				effectMessages.append(target.name + " is no longer bleeding")
 				self.end(target)
 
 		if self.effect == "defend":
@@ -514,7 +507,7 @@ class Effect(object):
 		if self.effect == "poison":
 			damage = target.hp / 10
 			target.hp -= damage
-			printb(target.name + " is poisoned!   " + target.name + " takes " + str(damage) + " damage")
+			effectMessages.append(target.name + " is poisoned!   " + target.name + " takes " + str(damage) + " damage")
 			self.endeffect = random.randint(1,4)
 			if self.endeffect == 2:
 				self.end(target)
@@ -526,9 +519,9 @@ class Effect(object):
 			
 		if self.effect == "meditate":
 			if magicMute in target.effects:
-				printb(target.name + "'s Meditate was Muted!")
+				effectMessages.append(target.name + "'s Meditate was Muted!")
 			else:
-				printb(target.name + " is Meditating.")
+				effectMessages.append(target.name + " is Meditating.")
 				target.power += 1
 			if self.endeffect == 3:
 				self.end(target)
@@ -548,9 +541,9 @@ class Effect(object):
 		
 				
 		if self.effect == "guarded":
-			printb(target.name + " is being guarded by " + target.guarder.name + "!")
+			effectMessages.append(target.name + " is being guarded by " + target.guarder.name + "!")
 			if self.endeffect == 1:
-				printb(target.name + " is no longer being guarded by " + target.guarder.name + "!")
+				effectMessages.append(target.name + " is no longer being guarded by " + target.guarder.name + "!")
 				target.guarder = "nul"
 				self.end(target)
 			self.endeffect += 1	
@@ -597,6 +590,11 @@ class Effect(object):
 			self.endeffect = random.randint(1, 5)
 			if self.endeffect <= 4:
 				self.end(target)
+				
+		if self.effect == "spurred":
+			if self.endeffect == 1:
+				self.end(target)
+			self.endeffect += 1
 
 
 	def resetStats(self, target):
@@ -638,9 +636,10 @@ disgusted = Effect("disgusted")
 observing = Effect("observing")
 devidedefend = Effect("devidedefend")
 vulnerable = Effect("vulnerable")
+spurred = Effect("spurred")
 
-negeff = [burn, magicmute, bleed, poisoned, confusion, disgusted, mindSpiked, slowed, passedOut]
-poseff = [defense, forceshield, immortal, block, rebuff, meditatef, planAheadf, dodgeUp, earthStagef, otherStagef, moonStagef, observing]
+negeff = [burn, magicmute, bleed, poisoned, confusion, disgusted, mindSpiked, slowed, passedOut, vulnerable]
+poseff = [defense, forceshield, immortal, block, rebuff, meditatef, planAheadf, dodgeUp, earthStagef, otherStagef, moonStagef, observing, devidedefend, spurred]
 
 
 class Skill(object):
@@ -659,12 +658,18 @@ class Skill(object):
 		self.effects = effects
 		self.text = font.render(name, True, WHITE)
 		self.desc = ""
+		self.uses = 1
 		
 		
 	def use(self, user, target, battlers1, battlers2, thesebattlers):
+		global theMessage
+		global messages
+		theMessage = ""
 		targetmultiplier = 1 + ((target.lvl - 1) / 10)
 		usermultiplier = 1 + ((user.lvl - 1) / 10)
 		message = ""
+		
+			
 		hit = (self.hitChance + user.modHitChance) - ((target.dodgeChance + target.equipDodgeChance) * targetmultiplier)
 		
 		if guarded in target.effects:
@@ -678,6 +683,12 @@ class Skill(object):
 			hit += 2
 		if observing in target.effects:
 			user.marks += 1
+		if user.name in ["Battle Drone"]:
+			if user.misc != 0:
+				if user.misc == target:
+					hit *= 2
+				else:
+					hit *= 0.6
 
 		if random.randint(1,100) < hit or "trueHit" in self.spec:
 			critical, effective = False, False
@@ -696,6 +707,14 @@ class Skill(object):
 					damage /= 2
 					message = " It's not very effective!"
 					effective = False
+			
+			#apply lock-on boost
+			if user.name in ["Battle Drone"]:
+				if user.misc != 0:
+					if user.misc == target:
+						user.crit *= 2
+					else:
+						user.crit *= 0.6
 					
 			if random.randint(1,30) + (user.crit * usermultiplier) + user.equipCrit > 30:
 				if effective:
@@ -705,8 +724,14 @@ class Skill(object):
 				critical = True
 				if not len(self.effects) == 0:
 					self.effects[1].apply(target)
-					
 			
+			#remove lock-on boost
+			if user.name in ["Battle Drone"]:
+				if user.misc != 0:
+					if user.misc == target:
+						user.crit /= 2
+					else:
+						user.crit /= 0.6
 					
 			if target.ability == "Creepus":
 				user.marks += 1
@@ -714,6 +739,8 @@ class Skill(object):
 					user.marks += 1
 			
 			for i in self.spec:
+				if i == "coup":
+					self.uses = 0
 				if i == "vampire":
 					user.hp += damage
 					if critical:
@@ -724,7 +751,7 @@ class Skill(object):
 				if i == "powerUp":
 					damage = 0
 					if magicMute in user.effects:
-						printb(user.name+"'s power was Muted!")
+						theMessage += user.name+"'s power was Muted!"
 					else:
 						user.power += 2
 				if i == "lifepact":
@@ -760,7 +787,7 @@ class Skill(object):
 				if i == "powerdrain":
 					damage = 0
 					if magicMute in user.effects:
-						printb(user.name+"'s Power drain was Muted!")
+						theMessage += user.name+"'s Power drain was Muted!"
 						user.power += math.floor(target.power/5)
 					else:
 						user.power += target.power
@@ -811,11 +838,11 @@ class Skill(object):
 					if critical:
 						transfered += 1
 					if magicMute in target.effects:
-						printb(user.name+"'s Transfer was Muted!")
+						theMessage += user.name+"'s Transfer was Muted!"
 						transfered = math.floor(transfered/5)
 					target.power += transfered
 					user.power -= user.power
-					printb(user.name + " transfered "+str(transfered)+" power to "+target.name)
+					theMessage += user.name + " transfered "+str(transfered)+" power to "+target.name
 				if i == "meditate":
 					meditatef.apply(user)
 				if i == "dodgeUp":
@@ -858,6 +885,8 @@ class Skill(object):
 						spawned = Worshipper.buildNew()
 					if "Cubes" in i:
 						spawned = Cubes.buildNew()
+					if "drone" in i:
+						spawned = battleDrone.buildNew()
 					#Be sure spawned is valid!
 					if spawned != "":
 						if user.isAi:
@@ -893,6 +922,17 @@ class Skill(object):
 
 				if i == "vulnerable":
 					vulnerable.apply(user)
+				if i == "charge":
+					defense.apply(user)
+					user.power += 3
+				if i == "conPierce":
+					damage += target.con
+				if i == "magPierce":
+					damage += target.mag
+				if i == "lockOn":
+					user.misc = target
+				if i == "spur":
+					spurred.apply(user)
 
 			if user.ability == "Frenzy" and user.hp <= user.maxhp/5:
 				damage = math.floor(damage * 1.25)
@@ -913,16 +953,14 @@ class Skill(object):
 						damage += math.ceil(damage/10)
 				if damage < 0 or "nodam" in self.spec:
 					damage = 0
-					message = user.name + " deals no damage to " + target.name + " using " + self.name + message
+
+					theMessage += user.name + " deals no damage to " + target.name + " using " + self.name + message 
 				else:
-					message = user.name + " uses " + self.name + " and deals " + str(damage) + " damage to " + target.name + message
-				print message
-				printb(message)
-				
-				
+					theMessage += user.name + " uses " + self.name + " and deals " + str(damage) + " damage to " + target.name + message
+
 				if mindSpiked in user.effects:
-					printb(user.name + " is mind spiked!")
-					printb("The mind spike dealt " + str(damage) + " back to " + user.name)
+					theMessage += user.name + " is mind spiked!"
+					theMessage += "The mind spike dealt " + str(damage) + " back to " + user.name
 					user.hp = user.hp * usermultiplier - damage
 					
 				if not len(self.effects) == 0:
@@ -933,7 +971,8 @@ class Skill(object):
 				
 		else:
 			damage = 0
-			printb(user.name + " missed!")
+			theMessage += user.name + " missed!"
+		messages.append(theMessage)
 				
 #Skill("", normal, True, 0, 0, 0, 0, 100, 0, [], [""])
 #def __init__(self, name, type, phys, atk, var, spd, crit, hitChance, cost, effects, spec):
@@ -1026,6 +1065,8 @@ create2 = Skill("Create", unknown, False, 0, 0, -10, 0,100, 0, [], ["createWorsh
 create2.desc = "Create a worshiper to worship you, giving you power."
 create3 = Skill("Create", unknown, False, 0, 0, -10, 0,100, 0, [], ["createCubes", "trueHit"])
 create3.desc = "Clone more CUBES!"
+createdrone = Skill("Create", unknown, False, 0, 0, -10, 0,100, 5, [], ["createdrone", "trueHit"])
+createdrone.desc = "Clone more Battle Drones!"
 mend = Skill("Mend", magic, False, 0,0, 1, 0,100, 3, [], ["heal", "trueHit"])
 mend.desc = "Heal yourself or an ally."
 #------------------------------------------------------------------
@@ -1153,23 +1194,46 @@ absorb = Skill("Absorb", grass, False, 20, 20, 5, 3, 90, 1, [], ["vampire"])
 absorb.desc = "Absorb some your foe's life force."
 #--Type basics
 sandStorm = Skill("Sandstorm", earth, False, 10, 20, 5, 3, 90, 1, [], ["hitAll"])
-absorb.desc = "Send out a sandstorm to blind your foes."
+sandStorm.desc = "Send out a sandstorm to blind your foes."
 iceShard = Skill("Ice Shard", ice, False, 15, 15, 5, 6, 90, 1, [2, slowed], [""])
-absorb.desc = "Shoot a shard of ice to impale your foe. May cause slowness"
+iceShard.desc = "Shoot a shard of ice to impale your foe. May cause slowness"
 basicEarth = Skill("Earthy attack", earth, True, 5, 5, 1, 0, 90, 0, [], [""])
 
 diveBomb = Skill("Dive Bomb", air, True, 30, 5, 7, 4, 87, 2, [], [""])
 diveBomb.desc = "Leap into the air and ram into your opponent."
+#def __init__(self, name, type, phys, atk, var, spd, crit, hitChance, cost, effects, spec):
+soulDraw = Skill("Soul Beam", ghost, False, 30, 10, 4, 5, 100, 1, [],["soulDraw"])
+soulConsume = Skill("Soul Consume", ghost, False, 0, 0, 10, 5, 100, 1, [],["soulConsume", "nodam"])
+soulRage = Skill("Soul Rage", ghost, False, 10, 10, 1, 0, 100, 4, [], ["soulRage"])
 
+charge = Skill("Charge", tech, False, 0, 0, 10, 2, 100, 2, [], ["charge", "nodam", "trueHit"])
+charge.desc = "Defend yourself as you gain slight a power bonus"
+powerShot = Skill("Power Shot", tech, True, 15, 15, 2, 7, 80, 3, [], ["conPierce"])
+powerShot.desc = "Discharge a powerful shot to pierce through defences"
+rapidSpray = Skill("Rapid Spray", tech, False, 5, 5, 4, 1, 120, 1, [], ["hitAll"])
+rapidSpray.desc = "Fire off hundreds of ronuds in quick succession on all your opponenets"
+lockOn = Skill("Lock On", tech, False, 0, 0, 4, 0, 120, 2, [], ["lockOn", "nodam"])
+lockOn.desc = "Increase fighting capabilities on one target, lowering vs. others"
+
+FireIce = Skill("Firey Ice", fire, False, 3, 0, 0, 2, 95, 1, [1, slowed], [""])
+FireIce.desc = "Ice, but hot as fire."
+IceFire = Skill("Icy Fire", ice, False, 5, 1, 4, 1, 110, 1, [3, burn], [""])
+IceFire.desc = "Fire, but cold as ice."
+spurofmoment = Skill("Spur of the Moment", fighting, False, 0, 0, 0, 5, 100, 5, [], ["trueHit", "nodam", "vulnerable", "spur"])
+spurofmoment.desc = "Come up with a crazy plan that just might work. Boosts next attack greatly."
 
 wispFire = Skill("Fire of the Wisp", fire, False, 30, 7, 6, 4, 99, 1, [2, burn], [""])
-
-
-
+#------------- COUP DE GRACE------------------
+testcoup = Skill("test coup", ice, False, 10, 10, 10, 10, 99, 1, [], ["coup"])
+bloodHunt = Skill("Blood Hunt", blood, True, 32, 6, 1, 5, 100, 1, [], ["vampire", "vampire", "vampire", "trueHit", "conPierce", "coup"])
+bloodHunt.desc = "Consume their flesh, without fail. Nothing can stop your bite."
+stunningDisplay = Skill("Stunning Display", light, False, -1, 1, 10, 1, 100, 0, [1, passedOut], ["trueHit", "hitall", "coup"])
+stunningDisplay.desc = "Provide a stunning display to distract your opponents. None can resist the sight."
 
 #Skill("", normal, True, 0, 0, 0, 0, 100, 0, [], [""])
 #def __init__(self, name, type, phys, atk, var, spd, crit, hitChance, cost, effects, spec):
 
+#----------skills for testing--------
 
 instantkill = Skill("Insta kill", unknown, False, 99999, 9999, 99, 15, 100, 0, [], ["trueHit"])
 instantkill.desc = "BAM! You dead now."
@@ -1235,6 +1299,7 @@ class Char(object):
 		self.equipDodgeChance = 0
 		self.ableSkills = []
 		self.battlerpos = 0
+		self.coups = []
 
 	def updateEquips(self):
 		self.equipStr = self.equips["Head"].str + self.equips["Chest"].str + self.equips["Legs"].str + self.equips["Feet"].str + self.equips["Weapon"].str
@@ -1250,14 +1315,17 @@ class Char(object):
 		newchar.img = pygame.image.load(self.image)
 		newchar.ableSkills = self.ableSkills
 		newchar.target = [NOT]
+		newchar.coups = self.coups
 		return newchar
 		
 	def reBuild(self):
 		newchar = Char(self.name, self.types, self.hp, self.str, self.int, self.con, self.mag, self.agil, self.crit, self.dodgeChance, self.skills, self.ability, self.image, self.cords, self.menuImg)
 		newchar.img = self.image
 		newchar.ableSkills = self.ableSkills
+		newchar.coups = self.coups
 		return newchar
 	
+punchingBag = Char("Punching Bag", [unknown], 1000, 0, 0, 0, 0, 0, 0, 0, [nothing], "Regen", "Assets/battlers/locked.png", [47, 23], "")
 	
 NOT = Char("???", [unknown], 0, 0, 0, 0, 0, 0, 0, 0, [nothing], "", "Assets/battlers/locked.png", [-1,0], "")
 NOT.ableSkills = [nothing]
@@ -1278,6 +1346,7 @@ Epic.ableSkills = []
 
 Scarlet = Char("Scarlet", [dark, blood], 100, 20, 20, 5, 20, 6, 0, 10, [basicAtk, scar, vampire, destroy, lifePact, defend], "", "Assets/battlers/vamp.png", [1,0], "")
 Scarlet.ableSkills = [scar, vampire, destroy, lifePact, consumeFlesh]
+Scarlet.coups = [testcoup, testcoup, testcoup]
 
 Flan = Char("Flan", [dark,blood], 200, 35, 30, 10, 20, 7, 10, 20, [slash, rip, scar, vampire, destroy, lifePact, setFire, lifeTransfer], "watch them burn", "Assets/battlers/flandre.png", [5,7], "")
 Nue = Char("Nue", [astral, dark], 300, 25, 40, 10, 50, 4, 15, 10, [basicAtk, meteorStorm, powerTransfer, forceShield, powerDrain, stab, meditate, defend], "Unidentifiable", "Assets/battlers/nue.png", [4,7], "")
@@ -1298,10 +1367,12 @@ Durric.ableSkills = [forceShield, cleave, obsidianBlast, recover, psionicRadianc
 
 Coo33 = Char("Coo33", [dark, blood], 250, 50, 0, 30, 0, 10, 10, 10,[basicAtk, slash, bite, kick, dodge, rip, consumeFlesh, defend], "Blood hunt", "Assets/battlers/Coo33.png", [3,3], "")
 Coo33.ableSkills = []
+Coo33.coups = [bloodHunt]
 CoosomeJoe = Char("Coosome Joe", [light, tech], 500, 25, 25, 25, 25, 5, 2, 10, [basicAtk, bludgeon, erase, create2, confuse, planAhead, mend, defend], "Frenzy", "Assets/battlers/Coosome.png",  [3, 4], "")
 CoosomeJoe.ableSkills = []
 Catsome = Char("Catsome", [light, physic], 1000, 10, 35, 10, 15, 5, 5, 10, [slash, bite, eggon, rebuke, mend, recover], "Cuteness", "Assets/battlers/catsome.png",[6,9], "")
 Catsome.ableSkills = []
+Catsome.coups = [stunningDisplay]
 Cubes = Char("Cubes", [tech], 400, 25, 35, 60, 30, 4, 5, 30, [zap, energiBeam, wellspring, planAhead, create3], "", "Assets/battlers/wip.png", [0,13], "")
 
 Creep = Char("Creepy Bald Guy", [physic, unknown], 750, 10, 10, 15, 50, 0, 0, 0, [creepyAtk, blink, stare, inhale, exhale, observe], "Creepus", "Assets/battlers/Creepy_Bald_Guy.png", [3, 15], "")
@@ -1312,6 +1383,16 @@ Noseclops = Char("Noseclops", [water, fire, acid], 400, 25, 15, 15, 10, 5, 7, 10
 Mouthstash = Char("Mouthstash", [earth, air, poison], 400, 25, 10, 20, 10, 5, 2, 10, [basicEarth, loudspeaker, onionBreath, mustacheMuscles, gristlyDefend, growBeard, extendWhiskers, inhale], "Creepus", "Assets/battlers/wip.png", [0, 15], "")
 
 #def __init__(self, name, types, hp, str, int, con, mag, agil, crit, dodgeChance, skills, ability, image, cords, menuImg):
+hZarol = Char("Zarol", [magic, chaos], 900, 15, 25, 20, 30, 6, 3, 10, [], "", "Assets/battlers/hZarol.png", [20,20], "")
+shyron = Char("Shyron", [ghost], 1200, 25, 50, 20, 45, 14, 6, 25, [soulConsume, soulDraw, soulRage], "Soul Eater", "Assets/battlers/shyron.png", [21,20], "")
+
+theeCoosome = Char("Thee Coosome", [tech], 750, 30, 20, 30, 25, 4, 4, 10, [basicAtk, createdrone], "", "Assets/battlers/theCoosome2.png", [22,20], "")
+battleDrone = Char("Battle Drone", [tech, minion], 500, 10, 10, 10, 10, 7, 4, 20, [basicAtk, rapidSpray, powerShot, energiBeam, lockOn, dodge, charge, takeBlow], "Regen", "Assets/battlers/battleDrone.png", [23, 20], "")
+
+John = Char("Regalious John", [fighting], 750, 35, 25, 20, 34, 5, 5, 10, [], "", "Assets/battlers/john.png", [23, 20], "")
+
+Xsion = Char("Xsion", [dark, blood, magic], 500, 40, 40, 25, 25, 8, 7, 50, [], "", "Assets/battlers/xsion1.png", [24, 20], [])
+Xsion2 = Char("Xsion", [dark, blood, magic], 500, 50, 50, 20, 20, 8, 9, 50, [], "", "Assets/battlers/xsion2.png", [25, 20], [])
 
 Protagonist = Char("Protagonist", [normal], 750, 25, 15, 20, 10, 2, 6, 5, [basicAtk, powerStrike, eggon, mend, instantkill], "Frenzy", "Assets/battlers/wip.png", [1,1], "")
 
@@ -1335,7 +1416,7 @@ miniCreep = Char("Creepy Bald Guy", [physic, unknown, minion], 300, 6, 6, 8, 10,
 
 NO = NOT.buildNew()	
 
-unlockedchars = [Koishi.buildNew(), Lapis.buildNew(), Flan.buildNew(), Okuu.buildNew(), Nue.buildNew(), Scarlet.buildNew(), Mage.buildNew(), Mouther.buildNew(), Nic.buildNew(), Siv.buildNew(), Coo33.buildNew(), CoosomeJoe.buildNew(), Epic.buildNew(), Alpha.buildNew(), Durric.buildNew(), Creep.buildNew(), Catsome.buildNew(), KnowingEye.buildNew(), Protagonist.buildNew(), Worshipper.buildNew(), miniCreep.buildNew(), Axeurlegs.buildNew(), Dandylion.buildNew(), Cubes.buildNew(), Shroom.buildNew(), frostShroom.buildNew(), caveShroom.buildNew(), sandShroom.buildNew(), goldShroom.buildNew(), NotScaryGhost.buildNew(), seeGull.buildNew(), crawFish.buildNew(), Noseclops.buildNew(), Mouthstash.buildNew()]
+unlockedchars = [Koishi.buildNew(), Lapis.buildNew(), Flan.buildNew(), Okuu.buildNew(), Nue.buildNew(), Scarlet.buildNew(), Mage.buildNew(), Mouther.buildNew(), Nic.buildNew(), Siv.buildNew(), Coo33.buildNew(), CoosomeJoe.buildNew(), Epic.buildNew(), Alpha.buildNew(), Durric.buildNew(), Creep.buildNew(), Catsome.buildNew(), KnowingEye.buildNew(), Protagonist.buildNew(), Worshipper.buildNew(), miniCreep.buildNew(), Axeurlegs.buildNew(), Dandylion.buildNew(), Cubes.buildNew(), Shroom.buildNew(), frostShroom.buildNew(), caveShroom.buildNew(), sandShroom.buildNew(), goldShroom.buildNew(), NotScaryGhost.buildNew(), seeGull.buildNew(), crawFish.buildNew(), Noseclops.buildNew(), Mouthstash.buildNew(), theeCoosome.buildNew(), battleDrone.buildNew(), punchingBag.buildNew()]
 
 equipment = []
 
@@ -1401,6 +1482,8 @@ class Battle(object):
 		
 	def battle(self):
 		global size
+		global coupback
+		global lockedskill
 		thebattler = 0
 		powergiven = False
 		pickenm = False
@@ -1432,10 +1515,7 @@ class Battle(object):
 			self.battlers2[2].vital = False
 		
 		thesebattlers += self.battlers1 + self.battlers2
-		for i in self.battlers1:
-			print i.name
-		for i in self.battlers2:
-			print i.name
+		
 		
 		x = 0
 		y = 0
@@ -1447,7 +1527,7 @@ class Battle(object):
 			i.basey = y * 75 + 325
 			y += 1
 		for i in range(len(thesebattlers)):
-			thesebattlers[i-1].battlerpos = i-1
+			thesebattlers[i-1].battlerpos = i
 			
 		for i in self.battlers1:
 			if i.name == "???" or i == 	NO or i == 	NOT:
@@ -1472,6 +1552,8 @@ class Battle(object):
 		quitting = False
 		while battling:
 			self.music.play()
+			agillist = []
+
 			for p in thesebattlers:
 				if not quitting:
 					#update effects and all that good stuff
@@ -1487,12 +1569,12 @@ class Battle(object):
 					if p.ability == "Radiation":
 						for l in thesebattlers:
 							l.hp -= 25
-							printb(p.name + "'s radiation hurt everyone!")
+							messages.append(p.name + "'s radiation hurt everyone!")
 						
 
 					if p.ability == "Regen":
 						p.hp += 25
-						printb(p.name + " is healing themself!")
+						messages.append(p.name + " is healing themself!")
 					
 						
 					p.power += 1
@@ -1522,7 +1604,25 @@ class Battle(object):
 						
 						
 						#displaying and picking skills
-						if p.hp > 0 and not 	passedOut in p.effects:
+						if p.hp > 0 and not passedOut in p.effects:
+							x = 0
+							selected = False
+							for i in p.coups:
+								thisxcord = 700 + 180*x
+								thisycord = size[1] - 35
+								if hitDetect(mouse_pos, mouse_pos, [thisxcord, thisycord], [thisxcord + 169, thisycord + 29]):
+								
+									dispskill = p.coups[x]
+									if mouse_down and p.coups[x].uses == 1:
+										mouse_down = False
+										p.goskill = p.coups[x]
+										selected = True
+									
+										
+								x += 1
+								
+							x = 0
+							y = 0
 							for i in p.skills:
 							
 								if x > 1:
@@ -1532,76 +1632,29 @@ class Battle(object):
 								thisxcord = 330 + x*175
 								thisycord = y*30 + 370 + size[1] - 500
 								if hitDetect(mouse_pos, mouse_pos,[thisxcord, thisycord], [thisxcord + 165, thisycord + 25]):
+									dispskill = p.skills[x + y*2]
 									
-									if x == 0 and y ==0:
-										dispskill = p.skills[0]
-										
-									elif x == 1 and y == 0:
-										dispskill = p.skills[1]
-											
-									elif x == 0 and y == 1:
-										dispskill = p.skills[2]
-									elif x == 1 and y == 1:
-										dispskill = p.skills[3]
-									elif x == 0 and y == 2:
-										dispskill = p.skills[4]
-									elif x == 1 and y == 2:
-										dispskill = p.skills[5]
-									elif x == 0 and y == 3:
-										dispskill = p.skills[6]
-									elif x == 1 and y == 3:
-										dispskill = p.skills[7]
-									else:
-										dispskill = 	nothing
 									
 									if mouse_down:
 										mouse_down = False
-										if True:
-											selected = False
-											if x == 0 and y ==0:
-												if p.skills[0].cost <= p.power:
-													p.goskill = p.skills[0]
-													selected = True
-												
-											if x == 1 and y == 0:
-												if p.skills[1].cost <= p.power:
-													p.goskill = p.skills[1]
-													selected = True
+										
+											
+										if p.skills[x + y*2].cost <= p.power:
+											p.goskill = p.skills[x + y*2]
+											selected = True
+											
 													
-											if x == 0 and y == 1:
-												if p.skills[2].cost <= p.power:
-													p.goskill = p.skills[2]
-													selected = True
-											if x == 1 and y == 1:
-												if p.skills[3].cost <= p.power:
-													p.goskill = p.skills[3]
-													selected = True
-											if x == 0 and y == 2:
-												if p.skills[4].cost <= p.power:
-													p.goskill = p.skills[4]
-													selected = True
-											if x == 1 and y == 2:
-												if p.skills[5].cost <= p.power:
-													p.goskill = p.skills[5]
-													selected = True
-											if x == 0 and y == 3:
-												if p.skills[6].cost <= p.power:
-													p.goskill = p.skills[6]
-													selected = True
-											if x == 1 and y == 3:
-												if p.skills[7].cost <= p.power:
-													p.goskill = p.skills[7]
-													selected = True
-													
-											if selected:
-												mouse_down = False
-												print "skill picked:", p.goskill.name
-												pickenm = True
-								
-								
-								
-								
 								x += 1
+													
+							if selected:
+								mouse_down = False
+								print "skill picked:", p.goskill.name
+								pickenm = True
+								
+								
+								
+								
+							
 							
 										
 							if pickenm:	
@@ -1610,7 +1663,7 @@ class Battle(object):
 									
 										
 									if hitDetect(mouse_pos, mouse_pos, (i.basex, i.basey), (i.basex + 50,i.basey + 50)):
-									
+										gScreen.blit(targetSelector, [i.basex - 2, i.basey - 2])
 										if mouse_down:
 											p.target[0] = i
 											ready = True
@@ -1631,21 +1684,7 @@ class Battle(object):
 									
 
 							#----------------
-							if p in self.battlers1:
-								p.x += 50
-								if not p.x == p.basex + 50:
-									p.x = p.basex + 50
-							else: 
-								p.x -= 50
-								if not p.x == p.basex - 50:
-									p.x = p.basex - 50
-							
-							
-							p.y += p.ym
-							if p.y >= p.basey + 5 or p.y <= p.basey - 5:
-								p.ym *= -1
-							
-							gScreen.blit(p.image, [p.x, p.y])
+						
 						else:
 							p.goskill = 	nothing
 							p.target = [p]
@@ -1653,9 +1692,9 @@ class Battle(object):
 
 						for i in thesebattlers:	
 							if i.hp > 0:
-								if not i == p:
-									gScreen.blit(i.image,[i.basex,i.basey])
-
+							
+								gScreen.blit(i.image,[i.basex,i.basey])
+								gScreen.blit(battleSelector, [p.basex - 2, p.basey - 2])
 								pygame.draw.rect(gScreen, RED, [i.basex, i.basey - 10,int(i.hp) / 20,5])
 								 
 								for f in range(len(i.effects)):
@@ -1669,7 +1708,22 @@ class Battle(object):
 					
 						gScreen.blit(health_border, [10, 360 + size[0] - 500])
 						pygame.draw.rect(gScreen, GREY, [320, size[1] - 140, 370, 130])
+						gScreen.blit(battleSelector, [p.basex - 2, p.basey - 2])
+						x = 0
 						
+						for pos in p.coups:
+							pygame.draw.rect(gScreen, GREY, [700 + 180*x, size[1] - 35, 169, 28])
+							gScreen.blit(coupback, [700 + 180*x, size[1] - 35])
+							gScreen.blit(font.render(dispskill.name + "   Cost: " + str(dispskill.cost), True, WHITE), [700, size[1] - 140])
+							if pos.uses == 1:
+								gScreen.blit(pos.type.img, [702 + 180*x, size[1] - 33])
+								gScreen.blit(font.render(pos.name, True, WHITE), [709 + 180*x, size[1] - 28])
+								
+							else:
+								gScreen.blit(lockedskill, [702 + 180*x, size[1] - 33])
+								
+							x += 1
+							
 						gScreen.blit(font.render(dispskill.name + "   Cost: " + str(dispskill.cost), True, WHITE), [700, size[1] - 140])
 						gScreen.blit(font.render(dispskill.desc, True, WHITE), [700, size[1] - 125])
 					
@@ -1700,41 +1754,34 @@ class Battle(object):
 					if p.isAi:
 						p = ai.runAI(p, self.battlers1, self.battlers2)
 						print p.name + " has "+str(p.power)+" power, saving for: "+ p.savingfor + ". Using: " + p.goskill.name + " on " + p.target[0].name
+						agillist.append([p, p.goskill, p.target])
 			
 			if not quitting:
-				agillist = []
-				for i in thesebattlers:
-					agillist.append(i)
 				for i in range(len(agillist)):
 					for j in range(len(agillist)-1-i):
 						
-						if agillist[j].agil + agillist[j].equipAgil + agillist[j].goskill.spd  < agillist[j+1].agil + agillist[j + 1].equipAgil + agillist[j+1].goskill.spd:
-							agillist[j], agillist[j+1] = agillist[j+1], agillist[j] 
+						if agillist[j][0].agil + agillist[j][0].equipAgil + agillist[j][1].spd  < agillist[j+1][0].agil + agillist[j + 1][0].equipAgil + agillist[j+1][1].spd:
+							agillist[j], agillist[j+1] = agillist[j+1], agillist[j]
 				
 				x = 0
 				while x < len(agillist):
-					p = agillist[x]
+					p = agillist[x][0]
+					skill = agillist[x][1]
+					target = agillist[x][2]
 					#print "thebattler:", thebattler
 										
 					if len(p.target) > 1:
+						for t in p.target:
+							p.goskill.use(p, t, self.battlers1, self.battlers2, thesebattlers)
 						
-						p.goskill.use(p,p.target[mincrement], self.battlers1, self.battlers2, thesebattlers)
-						
-						if mincrement > 2:
-							p.power -= p.goskill.cost
+					
+						p.power -= p.goskill.cost
 						
 					else:
 						
 						p.goskill.use(p,p.target[0], self.battlers1, self.battlers2, thesebattlers)
 						p.power -= p.goskill.cost
 				
-					
-					if len(p.target) > 1:
-						mincrement+=1
-						x -= 1
-						if mincrement > 2:
-							mincrement = 0
-					
 					for i in thesebattlers:
 						if i.hp <= 0:
 							#thesebattlers.remove(i)
@@ -1742,7 +1789,146 @@ class Battle(object):
 								self.battlers1.remove(i)
 							if i in self.battlers2:
 								self.battlers2.remove(i)
-					x += 1
+
+				skillPrinting = True
+				effectPrinting = False
+				loop = 0
+				timer = -1
+				for item in messages:
+					print item
+				currentBattler = 0
+				currentTarget = 0
+				while skillPrinting and not quitting:
+					aniBattler = thesebattlers[currentBattler]
+					gScreen.blit(self.arena.img, [0,0])
+					
+					
+					for i in thesebattlers:	
+						if i.hp > 0:
+							gScreen.blit(i.image,[i.x,i.y])
+
+					if not aniBattler.target[0] == aniBattler:
+						vel = convertVel(math.atan((aniBattler.target[0].basey - aniBattler.basey)/(aniBattler.target[0].basex - aniBattler.basex)))
+					else:
+						vel = [0,0]
+						if timer == -1:
+							timer = 90
+					
+					if len(aniBattler.target) > 1:
+						
+						if aniBattler in self.battlers1:
+						
+							
+							
+							if aniBattler.x < 625:
+								aniBattler.x += vel[0] * 3
+								aniBattler.y += vel[1] * 3
+							else:
+								loop += 1
+								currentTarget += 1
+								
+						else:
+						
+						
+							
+							if aniBattler.x < 625:
+								aniBattler.x += vel[0] * 3
+								aniBattler.y += vel[1] * 3
+							else:
+								loop += 1
+								currentTarget += 1
+								
+						if currentTarget >= len(aniBattler.target):
+							currentBattler += 1
+							currentTarget = 0
+							aniBattler.x = aniBattler.basex
+							aniBattler.y = aniBattler.basey
+								
+					else:
+						if aniBattler in self.battlers1:
+						
+							
+							
+							if aniBattler.x < 625:
+								aniBattler.x += vel[0] * 3
+								aniBattler.y += vel[1] * 3
+							else:
+								#ANIMATION HERE
+								loop += 1
+								currentBattler += 1
+								aniBattler.x = aniBattler.basex
+								aniBattler.y = aniBattler.basey
+						else:
+							
+							#print vel
+							if aniBattler.x > 625:
+								aniBattler.x -= vel[0] * 3
+								aniBattler.y -= vel[1] * 3
+								
+							else:
+								#ANIMATION HERE
+								loop += 1
+								currentBattler += 1
+								aniBattler.x = aniBattler.basex
+								aniBattler.y = aniBattler.basey
+								
+				
+					if timer > 0:
+						
+						timer -= 1
+					if timer <= 0 and not timer == -1:
+						loop += 1
+						currentBattler += 1
+						timer = -1
+					if loop >= len(messages) - 1 or currentBattler > len(thesebattlers) - 1:
+						skillPrinting = False
+						effectPrinting = True
+						loop = 0
+						timer = 240
+						
+			
+					
+					
+						
+					
+					
+					
+					pygame.draw.rect(gScreen, BLACK, [0,size[1] - 150,size[0],150])
+					#gScreen.blit(disptext, [10, 320 + size[1] - 500])
+					gScreen.blit(font.render(messages[loop], True, WHITE), [10, size[1] - 140])
+						
+					
+					pygame.display.flip()	
+					clock.tick(60)
+					
+				while effectPrinting and not quitting:
+					gScreen.blit(self.arena.img, [0,0])
+					for i in thesebattlers:	
+						if i.hp > 0:
+							gScreen.blit(i.image,[i.x,i.y])
+							
+					if timer >= 1:
+						timer -= 1
+							
+					if timer <= 0:
+						timer = 240
+						loop += 1
+					print "loop:", loop
+					print "len message", len(effectMessages)
+					if loop >= len(effectMessages):
+						effectPrinting = False
+					
+					pygame.draw.rect(gScreen, BLACK, [0,size[1] - 150,size[0],150])
+					#gScreen.blit(disptext, [10, 320 + size[1] - 500])
+					if len(effectMessages) > 0:
+						gScreen.blit(font.render(effectMessages[loop], True, WHITE), [10, size[1] - 140])
+					else:
+						effectPrinting = False
+						
+					
+					pygame.display.flip()	
+					clock.tick(60)
+				#------End animations and printing-----
 				for i in thesebattlers:
 					i.updated = False
 
@@ -1827,9 +2013,12 @@ CoosomeFight = Battle("Coosome Fight", [], [Catsome.buildNew(), NO, CoosomeJoe.b
 C33Dial = Dialoge([[5, "Ah, Coosome! it's been a while!"], [4, "Indeed it has, Cat."], [1, "You know him?"], [5, "Of course! We are all over each other!"], [4, "What Cat means to say, is that we are one and the same."], [5, "We stick together! so Lets have a FOURSOME!"], [1, "But who else is joining me?"], [2, "I'll stand in for Catsome. Lets do this."]], [[4, "You fought well.", "But not well enough."], [5, "Is that really all? I'm not satisfied yet."]], [[4, "Nice one, you fought well there."], [5, "Is it done already? I'm not quite satisfied yet..."]])
 Coo33Fight = Battle("Coo33 fight", [], [CoosomeJoe.buildNew(), Coo33.buildNew(), Catsome.buildNew()], defultarena, C33Dial, False, cootheme, "Coos")
 
+KnowingEyeFight = Battle("knowingeye fight", [], [NO, KnowingEye.buildNew(), NO], defultarena, C33Dial, False, defulttheme, "knowingeye")
+
 NouDial = Dialoge([[3, "!"], [2, "Hello?"], [3, "Hiya!"], [1, "Finally, a person in this strange place.", "We have-"], [3, "Oh yes I know, I know everything.", "Except for what my master Knows!", "She truely knows everything"], [0, "Even more than-"], [3, "Yes, even more than that, abomination.", "I must say that you and you're group seem very excited to get you're hands on this knowledge", "Unforunatly, I cannot allwow that"]], [[0, "Ugg"]], [[0, "Ugg"]])
 NouFight = Battle("Nou Fight", [], [NO, Nou.buildNew(), NO], rift, NouDial, False, 	noutheme, "")
 
+theeCoosomeFight = Battle("theeCoosome Fight", [], [battleDrone.buildNew(), theeCoosome.buildNew(), battleDrone.buildNew()], defultarena, CooDial, False, theeCoosomeTheme, "") 
 
 class Stage(object):
 	def __init__(self, name, playerbattlers, battles, cords, nextstages):
@@ -1856,10 +2045,8 @@ class Stage(object):
 				i.battlers1 = [NO, i.battlers1[0], NO]
 			if len(i.battlers1) == 2:
 				i.battlers1 = [i.battlers1[0], NO, i.battlers1[1]]
-			for b in i.battlers1:
-				print "Battlers1:", b.name
-			for b in i.battlers2:
-				print "Battlers2:", b.name
+		
+				
 				
 			
 			i.battle()
@@ -1871,13 +2058,14 @@ st8 = Stage("", "", [], [359,516], [])
 st7 = Stage("", "", [], [523,431], [st8])
 st6 = Stage("", "", [], [720,360], [st7])
 st5 = Stage("", "", [], [675,240], [st6])
-st4 = Stage("", "", [], [540,313], [st5])
-st3 = Stage("", "", [NouFight], [393,292], [st4])
+st4 = Stage("", "", [KnowingEyeFight], [540,313], [st5])
+st3 = Stage("", "", [theeCoosomeFight], [393,292], [st4])
 st2 = Stage("", "", [ForFight1], [280, 221], [st3])
 st1 = Stage("", "", [MousFight, CatsomeFight, MiecFight], [317,48], [st2])
 		
 st1.locked = False
 st3.locked = False
+st4.locked = False
 
 
 class World(object):
@@ -1965,7 +2153,7 @@ class World(object):
 			clock.tick(60)
 		
 
-theWorld = World([st1, st2, st3])
+theWorld = World([st1, st2, st3, st4, st5, st6, st7, st8])
 
 class SkillScroll(object):
 	def __init__(self, skill):
@@ -2070,8 +2258,7 @@ def CharSelect(aitest, mult):
 	thesebattlers = []
 	thisplayer = player1
 	thisplayer.reBuild()
-	for i in thisplayer.battlers:
-		print i.name
+
 	mouse_down = False
 	while not done:
 		for event in pygame.event.get():
@@ -2202,8 +2389,7 @@ def CharSelect(aitest, mult):
 					player1.reBuild()
 					player2.reBuild()
 					thisplayer = player1
-					for i in thisplayer.battlers:
-						print i.name
+					
 					mouse_down = False
 							
 			if mouse_down:

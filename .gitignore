@@ -48,3 +48,4 @@ Temporary Items
 turn_based_battle/dialog.pyc
 *.pyc
 *.pyc
+turn_based_battle/defs.pyc
