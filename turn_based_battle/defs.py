@@ -1804,7 +1804,7 @@ class Battle(object):
 				skillPrinting = True
 				effectPrinting = False
 				loop = 0
-				timer = 90
+				timer = -1
 				for item in messages:
 					print item
 				currentBattler = 0
@@ -1818,13 +1818,18 @@ class Battle(object):
 						if i.hp > 0:
 							gScreen.blit(i.image,[i.x,i.y])
 
+					if not aniBattler.target[0] == aniBattler:
+						vel = convertVel(math.atan((aniBattler.target[0].basey - aniBattler.basey)/(aniBattler.target[0].basex - aniBattler.basex)))
+					else:
+						vel = [0,0]
+						if timer == -1:
+							timer = 90
 					
-						
 					if len(aniBattler.target) > 1:
 						
 						if aniBattler in self.battlers1:
 						
-							vel = convertVel(math.atan((aniBattler.target[0].basey - aniBattler.basey)/(aniBattler.target[0].basex - aniBattler.basex)))
+							
 							
 							if aniBattler.x < 625:
 								aniBattler.x += vel[0] * 3
@@ -1835,7 +1840,7 @@ class Battle(object):
 								
 						else:
 						
-							vel = convertVel(math.atan((aniBattler.target[0].basey - aniBattler.basey)/(aniBattler.target[0].basex - aniBattler.basex)))
+						
 							
 							if aniBattler.x < 625:
 								aniBattler.x += vel[0] * 3
@@ -1853,7 +1858,7 @@ class Battle(object):
 					else:
 						if aniBattler in self.battlers1:
 						
-							vel = convertVel(math.atan((aniBattler.target[0].basey - aniBattler.basey)/(aniBattler.target[0].basex - aniBattler.basex)))
+							
 							
 							if aniBattler.x < 625:
 								aniBattler.x += vel[0] * 3
@@ -1865,7 +1870,7 @@ class Battle(object):
 								aniBattler.x = aniBattler.basex
 								aniBattler.y = aniBattler.basey
 						else:
-							vel = convertVel(math.atan((aniBattler.target[0].basey - aniBattler.basey)/(aniBattler.target[0].basex - aniBattler.basex)))
+							
 							#print vel
 							if aniBattler.x > 625:
 								aniBattler.x -= vel[0] * 3
@@ -1877,7 +1882,15 @@ class Battle(object):
 								currentBattler += 1
 								aniBattler.x = aniBattler.basex
 								aniBattler.y = aniBattler.basey
-							
+								
+				
+					if timer > 0:
+						
+						timer -= 1
+					if timer <= 0 and not timer == -1:
+						loop += 1
+						currentBattler += 1
+						timer = -1
 					if loop >= len(messages) - 1 or currentBattler > len(thesebattlers) - 1:
 						skillPrinting = False
 						effectPrinting = True
@@ -1911,13 +1924,17 @@ class Battle(object):
 					if timer <= 0:
 						timer = 240
 						loop += 1
-						
-					if loop >= len(effectMessages) - 1:
+					print "loop:", loop
+					print "len message", len(effectMessages)
+					if loop >= len(effectMessages):
 						effectPrinting = False
 					
 					pygame.draw.rect(gScreen, BLACK, [0,size[1] - 150,size[0],150])
 					#gScreen.blit(disptext, [10, 320 + size[1] - 500])
-					gScreen.blit(font.render(effectMessages[loop], True, WHITE), [10, size[1] - 140])
+					if len(effectMessages) > 0:
+						gScreen.blit(font.render(effectMessages[loop], True, WHITE), [10, size[1] - 140])
+					else:
+						effectPrinting = False
 						
 					
 					pygame.display.flip()	
