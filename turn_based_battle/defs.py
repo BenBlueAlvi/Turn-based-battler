@@ -1248,7 +1248,8 @@ bloodHunt = Skill("Blood Hunt", blood, True, 32, 6, 1, 5, 100, 1, [], ["vampire"
 bloodHunt.desc = "Consume their flesh, without fail. Nothing can stop your bite."
 stunningDisplay = Skill("Stunning Display", light, False, -1, 1, 10, 1, 100, 0, [1, stunned], ["trueHit", "hitall", "coup"])
 stunningDisplay.desc = "Provide a stunning display to distract your opponents. None can resist the sight."
-overcoup = Skill("Overclock", tech, True, 0, 0, 5, 1, 100, 0, [], ["trueHit", "nodam", "overclock"])
+overcoup = Skill("Overclock", tech, True, 0, 0, 5, 1, 100, 0, [], ["trueHit", "nodam", "overclock", "coup"])
+overcoup.desc = "Overclock your target to enable more actions per turn!"
 
 #Skill("", normal, True, 0, 0, 0, 0, 100, 0, [], [""])
 #def __init__(self, name, type, phys, atk, var, spd, crit, hitChance, cost, effects, spec):
@@ -1408,6 +1409,7 @@ hZarol = Char("Zarol", [magic, chaos], 900, 15, 25, 20, 30, 6, 3, 10, [], "", "A
 shyron = Char("Shyron", [ghost], 1200, 25, 50, 20, 45, 14, 6, 25, [soulConsume, soulDraw, soulRage], "Soul Eater", "Assets/battlers/shyron.png", [21,20], "")
 
 theeCoosome = Char("Thee Coosome", [tech], 750, 30, 20, 30, 25, 4, 4, 10, [basicAtk, createdrone], "", "Assets/battlers/theCoosome2.png", [22,20], "")
+theeCoosome.coups = [overcoup, overcoup, overcoup]
 battleDrone = Char("Battle Drone", [tech, minion], 500, 10, 10, 10, 10, 7, 4, 20, [basicAtk, rapidSpray, powerShot, energiBeam, lockOn, dodge, charge, takeBlow], "Regen", "Assets/battlers/battleDrone.png", [23, 20], "")
 
 John = Char("Regalious John", [fighting], 750, 35, 25, 20, 34, 5, 5, 10, [], "", "Assets/battlers/john.png", [23, 20], "")
@@ -1522,6 +1524,7 @@ class Battle(object):
 		dispskill = nothing
 		global done
 		global running
+		global messages
 			
 		if self.mult == False:
 			limit = 6
@@ -1557,7 +1560,7 @@ class Battle(object):
 			if i.name == "???" or i == 	NO or i == 	NOT:
 				self.battlers2.remove(i)
 		thesebattlers = self.battlers1 + self.battlers2
-			
+
 		for i in thesebattlers:
 			if i.name == "???" or i == 	NO or i == 	NOT:
 				thesebattlers.remove(i)
@@ -1602,7 +1605,7 @@ class Battle(object):
 					p.x = p.basex
 					p.y = p.basey
 
-					for action in p.actions:
+					for action in range(p.actions):
 						ready, selected = False, False
 						while not ready and not p.isAi:
 							gScreen.fill(WHITE)
@@ -1683,7 +1686,7 @@ class Battle(object):
 											mouse_down = False
 										
 										if ready:
-											print p.target[0].name
+											#print p.target[0].name
 											
 											if "hitAll" in  p.goskill.spec:
 												p.target = []
@@ -1698,7 +1701,7 @@ class Battle(object):
 								#----------------
 							
 							else:
-								p.goskill = 	nothing
+								p.goskill = nothing
 								p.target = [p]
 								ready = True
 
@@ -1766,15 +1769,17 @@ class Battle(object):
 						if p.isAi:
 							p = ai.runAI(p, self.battlers1, self.battlers2)
 							print p.name + " has "+str(p.power)+" power, saving for: "+ p.savingfor + ". Using: " + p.goskill.name + " on " + p.target[0].name
+						print "appending to agillist"
 						agillist.append([p, p.goskill, p.target])
 
 			if not quitting:
+				print "sorting agillist"
 				for i in range(len(agillist)):
 					for j in range(len(agillist)-1-i):
-						
 						if agillist[j][0].agil + agillist[j][0].equipAgil + agillist[j][1].spd  < agillist[j+1][0].agil + agillist[j + 1][0].equipAgil + agillist[j+1][1].spd:
 							agillist[j], agillist[j+1] = agillist[j+1], agillist[j]
 				
+				print "taking actions"
 				x = 0
 				while x < len(agillist):
 					p = agillist[x][0]
@@ -1800,16 +1805,20 @@ class Battle(object):
 								self.battlers1.remove(i)
 							if i in self.battlers2:
 								self.battlers2.remove(i)
+					x += 1
 
 				skillPrinting = True
 				effectPrinting = False
 				loop = 0
 				timer = -1
+				print "----------"
 				for item in messages:
 					print item
+				print "----------"
 				currentBattler = 0
 				currentTarget = 0
 				setVel = False
+				print "displaying skills"
 				while skillPrinting and not quitting:
 					aniBattler = thesebattlers[currentBattler]
 					gScreen.blit(self.arena.img, [0,0])
@@ -1828,6 +1837,7 @@ class Battle(object):
 								xDiff = (aniBattler.target[0].basex - aniBattler.basex) + 128
 							hypot = math.hypot(xDiff, yDiff)
 							vel = [xDiff/hypot, yDiff/hypot]
+							print "Length of battlers, messages: ", len(thesebattlers), len(messages)
 							print vel
 							setVel = True
 							
@@ -1839,24 +1849,20 @@ class Battle(object):
 					if len(aniBattler.target) > 1:
 						
 						if aniBattler in self.battlers1:
-						
-							
-							
 							if aniBattler.x < 625:
 								aniBattler.x += vel[0] * 3
 								aniBattler.y += vel[1] * 3
 							else:
+								print "incrmenting loop"
 								loop += 1
 								currentTarget += 1
 								
 						else:
-						
-						
-							
 							if aniBattler.x < 625:
 								aniBattler.x += vel[0] * 3
 								aniBattler.y += vel[1] * 3
 							else:
+								print "incrmenting loop"
 								loop += 1
 								currentTarget += 1
 								
@@ -1868,14 +1874,12 @@ class Battle(object):
 								
 					else:
 						if aniBattler in self.battlers1:
-						
-							
-							
 							if aniBattler.x < 625:
 								aniBattler.x += vel[0] * 3
 								aniBattler.y += vel[1] * 3
 							else:
 								#ANIMATION HERE
+								print "Exiting from battler loop"
 								loop += 1
 								currentBattler += 1
 								aniBattler.x = aniBattler.basex
@@ -1890,40 +1894,36 @@ class Battle(object):
 								
 							else:
 								#ANIMATION HERE
+								print "Exiting from battler loop"
 								loop += 1
 								currentBattler += 1
 								aniBattler.x = aniBattler.basex
 								aniBattler.y = aniBattler.basey
 								setVel = False
 				
+
+					gScreen.blit(font.render(messages[loop], True, WHITE), [10, size[1] - 140])
+
 					if timer > 0:
-						
 						timer -= 1
 					if timer <= 0 and not timer == -1:
 						loop += 1
 						currentBattler += 1
 						timer = -1
-					if loop >= len(messages) - 1 or currentBattler > len(thesebattlers):
+						print "incrementing loop"
+					if loop >= len(messages) or currentBattler > len(thesebattlers):
 						skillPrinting = False
 						effectPrinting = True
 						loop = 0
 						timer = 240
+						print "ending loop"
 						
-			
-					
-					
-						
-					
-					
-					
 					pygame.draw.rect(gScreen, BLACK, [0,size[1] - 150,size[0],150])
 					#gScreen.blit(disptext, [10, 320 + size[1] - 500])
-					gScreen.blit(font.render(messages[loop], True, WHITE), [10, size[1] - 140])
-						
-					
 					pygame.display.flip()	
 					clock.tick(60)
 					
+				print "printing effects"
 				while effectPrinting and not quitting:
 					gScreen.blit(self.arena.img, [0,0])
 					for i in thesebattlers:	
@@ -1952,6 +1952,7 @@ class Battle(object):
 					pygame.display.flip()	
 					clock.tick(60)
 				#------End animations and printing-----
+				print "prepping for next battle"
 				for i in thesebattlers:
 					i.updated = False
 
@@ -2274,7 +2275,7 @@ def CharSelect(aitest, mult):
 	global done
 	global unlockedchars
 	done = False
-	dispchar2 = 	NO		
+	dispchar2 = NO		
 	
 	battling = False
 
