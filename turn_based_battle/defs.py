@@ -92,21 +92,39 @@ class SpreetSheet(object):
 		image.blit(self.image, (0, 0), rect)
 		return image
 		
-critNums = SpreetSheet("Assets/ui/numbers/critNum.png", 1, 10)
+wekNums = SpreetSheet("Assets/ui/numbers/wekNum.png", 1, 10)
 normNums = SpreetSheet("Assets/ui/numbers/normNum.png", 1, 10)
 resistNums = SpreetSheet("Assets/ui/numbers/resistNum.png", 1, 10)
+critOverlay = SpreetSheet("Assets/ui/numbers/critNum.png", 1, 10)
 
-def getDamageImage(type, damage):
-	global critNums
+def getDamageImage(type, damage, crit):
+	global wekNums
 	global normNums
 	global resistNums
-	
+	damList = []
 	for i in str(damage):
 		damList.append(i)
 		
+	numbox = pygame.Surface([len(damList) * 12, 25], pygame.SRCALPHA, 32).convert_alpha()
+	if type == "wek":
+		for i in range(damList):
+			numbox.blit(wekNums.image_at([12 * int(damList[i-1]),0,12,25]), [damList.index(i) * 12, 0])
+		
+	elif type == "resist":
+		for i in damList:
+			numbox.blit(resistNums.image_at([12 * int(i),0,12,25]), [damList.index(i) * 12, 0])
+		
+	else:
+		for i in damList:
+			numbox.blit(normNums.image_at([12 * int(i),0,12,25]), [damList.index(i) * 12, 0])
+			
+			
+	if crit:
+		for i in damList:
+			numbox.blit(critOverlay.image_at([12 * int(i),0,12,25]), [damList.index(i) * 12, 0])
 	
-	
-	numbox = pygame.Surface([25, len(damList)])
+	return numbox
+		
 	
 
 
@@ -119,7 +137,10 @@ messages = []
 effectMessages = []
 theMessage = ""
 theEffectMessage = ""
-
+damageImg = "null"
+damage = 189
+critical = False
+damageImg = getDamageImage("norm", damage, critical)
 def printc(text, battler, thesebattlers):
 	global disptextc
 	global printingc
@@ -708,17 +729,23 @@ class Skill(object):
 		self.text = font.render(name, True, WHITE)
 		self.desc = ""
 		self.uses = 1
+		self.damageImg = "null"
 		
 		
 	def use(self, user, target, battlers1, battlers2, thesebattlers):
 		global theMessage
 		global messages
+		global damageImg
+		damage = 0
+		
 		theMessage = ""
 		targetmultiplier = 1 + ((target.lvl - 1) / 10)
 		usermultiplier = 1 + ((user.lvl - 1) / 10)
 		message = ""
+		effective = 0
+		critical = False
+		damageImg = getDamageImage("norm", damage, critical)
 		
-			
 		hit = (self.hitChance + user.modHitChance) - ((target.dodgeChance + target.equipDodgeChance) * targetmultiplier)
 		
 		if guarded in target.effects:
@@ -740,7 +767,7 @@ class Skill(object):
 					hit *= 0.6
 
 		if random.randint(1,100) < hit or "trueHit" in self.spec:
-			critical, effective = False, False
+			critical, effective = False, 0
 
 			if self.phys:
 				damage = (user.str + user.equipStr + self.atk+ random.randint(0, self.var)) * usermultiplier - (target.con + target.equipCon) * targetmultiplier
@@ -750,12 +777,12 @@ class Skill(object):
 			for i in target.types:
 				if self.type.name in i.weks:
 					message = " It's super effective!"
-					effective = True
+					effective = 1
 			for i in target.types:
 				if self.type.name in i.strs:
 					damage /= 2
 					message = " It's not very effective!"
-					effective = False
+					effective = -1
 			
 			#apply lock-on boost
 			if user.name in ["Battle Drone"]:
@@ -766,7 +793,7 @@ class Skill(object):
 						user.crit *= 0.6
 					
 			if random.randint(1,30) + (user.crit * usermultiplier) + user.equipCrit > 30:
-				if effective:
+				if effective == 1:
 					message += " CRITICAL HIT!"
 				else:
 					message = "CRITICAL HIT!"
@@ -992,7 +1019,7 @@ class Skill(object):
 				if target.ability == "3 worlds":
 					damage /= 3
 				
-				if effective:
+				if effective == 1:
 					damage *= 2
 				if critical:
 					damage *= 2
@@ -1023,7 +1050,18 @@ class Skill(object):
 		else:
 			damage = 0
 			theMessage += user.name + " missed!"
+			
 		messages.append(theMessage)
+		if effective == 1:
+			damageImg = getDamageImage("wek", damage, critical)
+		elif effective == 0:
+			damageImg = getDamageImage("norm", damage, critical)
+		elif effective == -1:
+			damageImg = getDamageImage("resist", damage, critical)
+		else:
+			damageImg = getDamageImage("norm", damage, critical)
+		self.damageImg = damageImg
+		print damageImg
 				
 #Skill("", normal, True, 0, 0, 0, 0, 100, 0, [], [""])
 #def __init__(self, name, type, phys, atk, var, spd, crit, hitChance, cost, effects, spec):
@@ -1829,6 +1867,7 @@ class Battle(object):
 						
 					else:
 						skill.use(p, targets[0], self.battlers1, self.battlers2, thesebattlers)
+						agillist[x].append(skill.damageImg)
 						p.power -= skill.cost
 				
 					for i in thesebattlers:
@@ -1839,6 +1878,7 @@ class Battle(object):
 							if i in self.battlers2:
 								self.battlers2.remove(i)
 					x += 1
+				
 
 				skillPrinting = True
 				effectPrinting = False
@@ -1959,6 +1999,9 @@ class Battle(object):
 						gScreen.blit(font.render(messages[loop], True, WHITE), [10, size[1] - 140])
 					except:
 						print "Loop: " + str(loop) + " > messages: " + str(len(messages))
+						
+					print agillist[currentBattler][3]
+					gScreen.blit(agillist[currentBattler][3], [aniBattler.target[0].basex, aniBattler.target[0].basey + 10])
 					#gScreen.blit(disptext, [10, 320 + size[1] - 500])
 					pygame.display.flip()	
 					clock.tick(60)
@@ -2122,7 +2165,7 @@ class Stage(object):
 st8 = Stage("", "", [], [359,516], [])
 st7 = Stage("", "", [], [523,431], [st8])
 st6 = Stage("", "", [], [720,360], [st7])
-st5 = Stage("", "", [], [675,240], [st6])
+st5 = Stage("", "", [NouFight], [675,240], [st6])
 st4 = Stage("", "", [KnowingEyeFight], [540,313], [st5])
 st3 = Stage("", "", [theeCoosomeFight], [393,292], [st4])
 st2 = Stage("", "", [ForFight1], [280, 221], [st3])
@@ -2131,7 +2174,7 @@ st1 = Stage("", "", [MousFight, CatsomeFight, MiecFight], [317,48], [st2])
 st1.locked = False
 st3.locked = False
 st4.locked = False
-
+st5.locked = False
 
 class World(object):
 	def __init__(self, stages):
