@@ -76,6 +76,39 @@ def convertVel(input):
 	y_vel = math.sin(radians)
 	velocity = (x_vel, y_vel)
 	return velocity
+	
+class SpreetSheet(object):
+	def __init__(self, img, row, colm):
+		self.img = img
+		self.image = pygame.image.load(self.img)
+		self.row = row
+		self.colm = colm
+		self.animation = pyganim.PygAnimation(list(zip(pyganim.getImagesFromSpriteSheet(self.img, rows = self.row, cols = self.colm, rects = []),[100] * self.row * self.colm)))
+		self.animation.play()
+	def image_at(self, rectangle):
+		rect = pygame.Rect(rectangle)
+		
+		image = pygame.Surface(rect.size, pygame.SRCALPHA, 32).convert_alpha()
+		image.blit(self.image, (0, 0), rect)
+		return image
+		
+critNums = SpreetSheet("Assets/ui/numbers/critNum.png", 1, 10)
+normNums = SpreetSheet("Assets/ui/numbers/normNum.png", 1, 10)
+resistNums = SpreetSheet("Assets/ui/numbers/resistNum.png", 1, 10)
+
+def getDamageImage(type, damage):
+	global critNums
+	global normNums
+	global resistNums
+	
+	for i in str(damage):
+		damList.append(i)
+		
+	
+	
+	numbox = pygame.Surface([25, len(damList)])
+	
+
 
 log =[]				
 timer = 0
@@ -1554,15 +1587,15 @@ class Battle(object):
 			thesebattlers[i-1].battlerpos = i
 			
 		for i in self.battlers1:
-			if i.name == "???" or i == 	NO or i == 	NOT:
+			if i.name == "???" or i == NO or i == NOT:
 				self.battlers1.remove(i)
 		for i in self.battlers2:
-			if i.name == "???" or i == 	NO or i == 	NOT:
+			if i.name == "???" or i == NO or i == NOT:
 				self.battlers2.remove(i)
-		thesebattlers = self.battlers1 + self.battlers2
+		
 
 		for i in thesebattlers:
-			if i.name == "???" or i == 	NO or i == 	NOT:
+			if i.name == "???" or i == NO or i == NOT:
 				thesebattlers.remove(i)
 		
 		
@@ -1820,7 +1853,7 @@ class Battle(object):
 				setVel = False
 				print "displaying skills"
 				while skillPrinting and not quitting:
-					aniBattler = thesebattlers[currentBattler]
+					aniBattler = agillist[currentBattler][0]
 					gScreen.blit(self.arena.img, [0,0])
 					
 					
@@ -1902,7 +1935,7 @@ class Battle(object):
 								setVel = False
 				
 
-					gScreen.blit(font.render(messages[loop], True, WHITE), [10, size[1] - 140])
+					
 
 					if timer > 0:
 						timer -= 1
@@ -1911,19 +1944,27 @@ class Battle(object):
 						currentBattler += 1
 						timer = -1
 						print "incrementing loop"
-					if loop >= len(messages) or currentBattler > len(thesebattlers):
+					if loop >= len(messages) or currentBattler >= len(thesebattlers):
 						skillPrinting = False
 						effectPrinting = True
 						loop = 0
+						currentBattler = 0
+						messages = []
+						theMessage = ""
 						timer = 240
 						print "ending loop"
 						
 					pygame.draw.rect(gScreen, BLACK, [0,size[1] - 150,size[0],150])
+					try:
+						gScreen.blit(font.render(messages[loop], True, WHITE), [10, size[1] - 140])
+					except:
+						print "Loop: " + str(loop) + " > messages: " + str(len(messages))
 					#gScreen.blit(disptext, [10, 320 + size[1] - 500])
 					pygame.display.flip()	
 					clock.tick(60)
 					
 				print "printing effects"
+				loop = 0
 				while effectPrinting and not quitting:
 					gScreen.blit(self.arena.img, [0,0])
 					for i in thesebattlers:	
@@ -1938,7 +1979,7 @@ class Battle(object):
 						loop += 1
 					print "loop:", loop
 					print "len message", len(effectMessages)
-					if loop >= len(effectMessages):
+					if loop >= len(effectMessages) - 1:
 						effectPrinting = False
 					
 					pygame.draw.rect(gScreen, BLACK, [0,size[1] - 150,size[0],150])

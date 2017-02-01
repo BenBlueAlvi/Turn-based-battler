@@ -57,20 +57,9 @@ frames = list(zip(test, [200] * 25))
 testAnim = pyganim.PygAnimation(frames)
 testAnim.play()
 
-class SpreetSheet(object):
-	def __init__(self, img, row, colm):
-		self.img = img
-		self.row = row
-		self.colm = colm
-		self.animation = pyganim.PygAnimation(list(zip(pyganim.getImagesFromSpriteSheet(self.img, rows = self.row, cols = self.colm, rects = []),[100] * self.row * self.colm)))
-		self.animation.play()
-	def image_at(self, rectangle):
-		rect = pygame.Rect(rectangle)
-		image = pygame.Surface(rect.size).convert()
-		image.blit(self.sheet, (0, 0), rect)
-		return image
+testNumber = defs.normNums.image_at([0,0,12,25])
 
-testAnim = SpreetSheet("Assets/animations/alpha.png", 1, 16)
+testAnim = defs.SpreetSheet("Assets/animations/alpha.png", 1, 16)
 
 turn = 0		
 aitest = False
@@ -93,7 +82,7 @@ while not done:
 	defs.gScreen.blit(font.render("Story",True,BLACK), [60,35])
 	pygame.draw.rect(gScreen, BLUE, [110,50,16,16])
 	defs.gScreen.blit(font.render("Ai testing",True,BLACK), [110,35])
-	testAnim.animation.blit(gScreen, [500, 500])
+	
 	if defs.hitDetect(mouse_pos, mouse_pos, [10,50], [26, 66]):
 		if mouse_down:
 			mult = True
@@ -117,6 +106,7 @@ while not done:
 	else:
 		defs.gScreen.blit(defs.mouse_pointer,mouse_pos)
 		
+	defs.gScreen.blit(testNumber, [100, 100])
 	defs.cootheme.play()
 	pygame.display.flip()
 	clock.tick(60)
