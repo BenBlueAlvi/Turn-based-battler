@@ -846,6 +846,8 @@ class Skill(object):
 					planAheadf.apply(user)
 				if i == "division":
 					damage = target.maxhp/5
+					if critical:
+						damage += target.maxhp/10
 				if i == "immortal":
 					immortal.apply(user)
 				if i == "heal":
@@ -872,7 +874,7 @@ class Skill(object):
 					damage = user.maxhp - user.hp
 				if i == "recover":
 					damage = 0
-					heal =target.maxhp / 4 
+					heal = target.maxhp / 4 
 					if target.ability == "3 worlds":
 						heal /= 3
 					target.hp += heal
@@ -1007,10 +1009,14 @@ class Skill(object):
 					damage += target.mag
 				if i == "lockOn":
 					user.misc = target
+					theMessage += user.name + " has Locked onto " + target.name + "!"
 				if i == "spur":
 					spurred.apply(user)
 				if i == "overclock":
 					target.actions += 1
+					if critical:
+						target.actions += 1
+					theMessage += target.name + " has been OVERCLOCKED"
 
 			if user.ability == "Frenzy" and user.hp <= user.maxhp/5:
 				damage = math.floor(damage * 1.25)
@@ -1321,6 +1327,18 @@ stunningDisplay = Skill("Stunning Display", light, False, -1, 1, 10, 1, 100, 0, 
 stunningDisplay.desc = "Provide a stunning display to distract your opponents. None can resist the sight."
 overcoup = Skill("Overclock", tech, True, 0, 0, 5, 1, 100, 0, [], ["trueHit", "nodam", "overclock", "coup"])
 overcoup.desc = "Overclock your target to enable more actions per turn!"
+fullcoup = Skill("Full Recovery", light, True, 0, 0, 5, 1, 100, 1, [], ["trueHit", "nodam", "recover", "recover", "recover", "recover", "removeEff", "coup"])
+fullcoup.desc = "Recover a full health pool, and remove negative effects."
+fullerase = Skill("Full Erase", unknown, True, 100, 0, 0, 1, 100, 5, [], ["trueHit", "division", "division", "division", "division", "division", "division", "coup"])
+fullerase.desc = "Remove your target from existance."
+allKnowing = Skill("All Knowing", unknown, False, 10, 1, 0, 2, 100, 6, [], ["trueHit", "coup", "createCreep", "observe", "observe", "observeDefend"])
+allKnowing.desc = "Focus on your target, summoning 2 creeps and observe."
+accessOrb = Skill("Access the Orb", magic, False, 0, 0, 1, 2, 100, 4, [], ["trueHit", "nodam", "powerUp", "powerUp", "powerUp", "powerUp", "powerUp", "coup"])
+accessOrb.desc = "Access a remote orb of power, refilling your reserves."
+singleHit = Skill("Single Hit", fighting, True, 100, 10, 10, 8, 100, 6, [1, passedOut], ["coup"])
+singleHit.desc = "Its all you'll need."
+
+
 
 #Skill("", normal, True, 0, 0, 0, 0, 100, 0, [], [""])
 #def __init__(self, name, type, phys, atk, var, spd, crit, hitChance, cost, effects, spec):
@@ -1420,6 +1438,8 @@ class Char(object):
 	
 punchingBag = Char("Punching Bag", [unknown], 1000, 0, 0, 0, 0, 0, 0, 0, [nothing], "Regen", "Assets/battlers/locked.png", [47, 23], "")
 	
+magicCoo = Char("Majikz Coosome", [fire, ice], 500, 15, 15, 10, 10, 10, 12, 30, [basicAtk, rapidSpray, IceFire, FireIce, meditate, eggon, spurofmoment], "", "Assets/battlers/wip.png", [25, 20], "")
+
 NOT = Char("???", [unknown], 0, 0, 0, 0, 0, 0, 0, 0, [nothing], "", "Assets/battlers/locked.png", [-1,0], "")
 NOT.ableSkills = [nothing]
 
@@ -1452,26 +1472,31 @@ Nou = Char("Nou Furueteru", [physic], 300, 10, 50, 55, 90, 11, 7, 25, [colorfulB
 
 Alpha = Char("Alpha", [normal, earth, fighting], 500, 50, -50, 30, 5, 5, 0, 10, [basicAtk, slash, cleave, bladeFlash, revenge, mend, defend], "", "Assets/battlers/alpha.png", [8,4], "")
 Alpha.ableSkills = [slash, cleave, bladeFlash, revenge, mend, windSlash] 
+Alpha.coups = [singleHit]
 Siv = Char("Siv", [normal, earth, dark, physic, chaos, magic], 250, 0, 50, 0, 38, 5, 7, 10, [basicAtk, chaosBolt, setFire, forceShield, chaosBeam, meditate, lifePact, shroud], "", "Assets/battlers/siv.png", [4,2], "")
 Siv.ableSkills = [chaosBolt, setFire, forceShield, chaosBeam, meditate, lifePact, shroud, confuse] 
 
 Durric = Char("Durric", [earth, light, fighting, physic], 1000, 25, 25, 75, 25, 0, 0, 1, [basicAtk, forceShield, cleave, obsidianBlast, recover, psionicRadiance, mend, takeBlow], "Regen", "Assets/battlers/Durric.png", [4, 4], "")
 Durric.ableSkills = [forceShield, cleave, obsidianBlast, recover, psionicRadiance, mend, takeBlow, rejuvinate, mindSpike]
+Durric.coups = [fullcoup]
 
-Coo33 = Char("Coo33", [dark, blood], 250, 50, 0, 30, 0, 10, 10, 10,[basicAtk, slash, bite, kick, dodge, rip, consumeFlesh, defend], "Blood hunt", "Assets/battlers/Coo33.png", [3,3], "")
+Coo33 = Char("Coo33", [dark, blood], 250, 50, 0, 30, 0, 10, 10, 10, [basicAtk, slash, bite, kick, dodge, rip, consumeFlesh, defend], "Blood hunt", "Assets/battlers/Coo33.png", [3,3], "")
 Coo33.ableSkills = []
 Coo33.coups = [bloodHunt]
 CoosomeJoe = Char("Coosome Joe", [light, tech], 500, 25, 25, 25, 25, 5, 2, 10, [basicAtk, bludgeon, erase, create2, confuse, planAhead, mend, defend], "Frenzy", "Assets/battlers/Coosome.png",  [3, 4], "")
 CoosomeJoe.ableSkills = []
+CoosomeJoe.coups = [fullerase]
 Catsome = Char("Catsome", [light, physic], 1000, 10, 35, 10, 15, 5, 5, 10, [slash, bite, eggon, rebuke, mend, recover], "Cuteness", "Assets/battlers/catsome.png",[6,9], "")
 Catsome.ableSkills = []
 Catsome.coups = [stunningDisplay]
 Cubes = Char("Cubes", [tech], 400, 25, 35, 60, 30, 4, 5, 30, [zap, energiBeam, wellspring, planAhead, create3], "", "Assets/battlers/wip.png", [0,13], "")
+Cubes.coups = [overcoup]
 
 Creep = Char("Creepy Bald Guy", [physic, unknown], 750, 10, 10, 15, 50, 0, 0, 0, [creepyAtk, blink, stare, inhale, exhale, observe], "Creepus", "Assets/battlers/Creepy_Bald_Guy.png", [3, 15], "")
 KnowingEye = Char("Knowing Eye", [physic, unknown, astral], 750, 0, 75, 0, 75, 5, 6, 5, [creepyAtk, observe, meditate, magicMute, forceShield, create], "Creepus", "Assets/battlers/knowingeye.png", [4, 15], "")
+KnowingEye.coups = [allKnowing]
 NotScaryGhost = Char("Not Scary Ghost", [ghost], 1000, 0, 0, 50, 75, 2, 0, 10, [basicAtk, sneeze, forceShield, recover, takeBlow], "tank", "Assets/battlers/Not_Scary_Ghost.png", [2, 15], "")
-
+NotScaryGhost.coups = [fullcoup]
 Noseclops = Char("Noseclops", [water, fire, acid], 400, 25, 15, 15, 10, 5, 7, 10, [basicAtk, sneeze, induceDisgust, stare, inhale, sneezeFire, observeDefend], "Creepus", "Assets/battlers/wip.png", [1, 15], "")
 Mouthstash = Char("Mouthstash", [earth, air, poison], 400, 25, 10, 20, 10, 5, 2, 10, [basicEarth, loudspeaker, onionBreath, mustacheMuscles, gristlyDefend, growBeard, extendWhiskers, inhale], "Creepus", "Assets/battlers/wip.png", [0, 15], "")
 
@@ -1479,7 +1504,7 @@ Mouthstash = Char("Mouthstash", [earth, air, poison], 400, 25, 10, 20, 10, 5, 2,
 hZarol = Char("Zarol", [magic, chaos], 900, 15, 25, 20, 30, 6, 3, 10, [], "", "Assets/battlers/hZarol.png", [20,20], "")
 shyron = Char("Shyron", [ghost], 1200, 25, 50, 20, 45, 14, 6, 25, [soulConsume, soulDraw, soulRage], "Soul Eater", "Assets/battlers/shyron.png", [21,20], "")
 
-theeCoosome = Char("Thee Coosome", [tech], 750, 30, 20, 30, 25, 4, 4, 10, [basicAtk, createdrone], "", "Assets/battlers/theCoosome2.png", [22,20], "")
+theeCoosome = Char("Thee Coosome", [tech], 750, 30, 20, 30, 25, 4, 4, 10, [basicAtk, rapidSpray, planAhead, createdrone], "Frenzy", "Assets/battlers/theCoosome2.png", [22,20], "")
 theeCoosome.coups = [overcoup, overcoup, overcoup]
 battleDrone = Char("Battle Drone", [tech, minion], 500, 10, 10, 10, 10, 7, 4, 20, [basicAtk, rapidSpray, powerShot, energiBeam, lockOn, dodge, charge, takeBlow], "Regen", "Assets/battlers/battleDrone.png", [23, 20], "")
 
@@ -1491,6 +1516,7 @@ Xsion2 = Char("Xsion", [dark, blood, magic], 500, 50, 50, 20, 20, 8, 9, 50, [], 
 Protagonist = Char("Protagonist", [normal], 750, 25, 15, 20, 10, 2, 6, 5, [basicAtk, powerStrike, eggon, mend, instantkill], "Frenzy", "Assets/battlers/wip.png", [1,1], "")
 
 Axeurlegs = Char("Axurlegs", [grass], 10, 30, 0, 0, 1, 2, 3, 0, [axeLegs], "", "Assets/battlers/axeurlegs.png", [10,0], "")
+Axeurlegs.coups = [singleHit]
 Dandylion = Char("Dandy Lion", [grass], 600, 20, 15, 5, 20, 2, 2, 10, [slash, bite, tangle], "Frenzy", "Assets/battlers/wip.png", [11,0], "")
 
 Shroom = Char("Shroom", [grass, poison], 500, 10, 20, 10, 15, 3, 3, 10, [spores, absorb, sneeze], "", "Assets/battlers/shroom.png", [10, 1], "")
@@ -1904,10 +1930,7 @@ class Battle(object):
 					try:
 						if not setVel:
 							yDiff = aniBattler.target[0].basey - aniBattler.basey
-							if aniBattler in self.battlers1:
-								xDiff = (aniBattler.target[0].basex - aniBattler.basex) - 128
-							else:
-								xDiff = (aniBattler.target[0].basex - aniBattler.basex) + 128
+							xDiff = (aniBattler.target[0].basex - aniBattler.basex)
 							hypot = math.hypot(xDiff, yDiff)
 							vel = [xDiff/hypot, yDiff/hypot]
 							print "Length of battlers, messages: ", len(thesebattlers), len(messages)
@@ -1946,36 +1969,17 @@ class Battle(object):
 							aniBattler.y = aniBattler.basey
 								
 					else:
-						if aniBattler in self.battlers1:
-							if aniBattler.x < 625:
-								aniBattler.x += vel[0] * 3
-								aniBattler.y += vel[1] * 3
-							else:
-								#ANIMATION HERE
-								print "Exiting from battler loop"
-								loop += 1
-								currentBattler += 1
-								aniBattler.x = aniBattler.basex
-								aniBattler.y = aniBattler.basey
-								setVel = False
+						if timer == 1:
+							#ANIMATION HERE
+							print "Exiting from battler loop"
+							loop += 1
+							currentBattler += 1
+							aniBattler.x = aniBattler.basex
+							aniBattler.y = aniBattler.basey
+							setVel = False
 						else:
-							
-							#print vel
-							if aniBattler.x > 625:
-								aniBattler.x += vel[0] * 3
-								aniBattler.y += vel[1] * 3
-								
-							else:
-								#ANIMATION HERE
-								print "Exiting from battler loop"
-								loop += 1
-								currentBattler += 1
-								aniBattler.x = aniBattler.basex
-								aniBattler.y = aniBattler.basey
-								setVel = False
-				
-
-					
+							aniBattler.x += vel[0] * 3
+							aniBattler.y += vel[1] * 3
 
 					if timer > 0:
 						timer -= 1
