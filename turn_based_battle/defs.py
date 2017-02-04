@@ -1067,7 +1067,7 @@ class Skill(object):
 		else:
 			damageImg = getDamageImage("norm", damage, critical)
 		self.damageImg = damageImg
-		print damageImg
+		#print damageImg
 				
 #Skill("", normal, True, 0, 0, 0, 0, 100, 0, [], [""])
 #def __init__(self, name, type, phys, atk, var, spd, crit, hitChance, cost, effects, spec):
@@ -2004,7 +2004,7 @@ class Battle(object):
 					except:
 						print "Loop: " + str(loop) + " > messages: " + str(len(messages))
 						
-					print agillist[currentBattler][3]
+					#print agillist[currentBattler][3]
 					gScreen.blit(agillist[currentBattler][3], [aniBattler.target[0].basex, aniBattler.target[0].basey + 10])
 					#gScreen.blit(disptext, [10, 320 + size[1] - 500])
 					pygame.display.flip()	
@@ -2037,7 +2037,7 @@ class Battle(object):
 						effectPrinting = False
 						
 					
-					pygame.display.flip()	
+					pygame.display.update()	
 					clock.tick(60)
 				#------End animations and printing-----
 				print "prepping for next battle"
@@ -2046,7 +2046,7 @@ class Battle(object):
 
 				loss = True
 				for i in self.battlers1:
-					print i.vital
+					#print i.vital
 					if i.vital and i.hp > 0:
 						loss = False
 				if loss:
@@ -2061,7 +2061,7 @@ class Battle(object):
 
 				loss = True
 				for i in self.battlers2:
-					print i.vital
+					#print i.vital
 					if i.vital and i.hp > 0:
 						loss = False
 				if loss:

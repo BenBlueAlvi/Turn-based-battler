@@ -81,7 +81,9 @@ while not done:
 	pygame.draw.rect(gScreen, GREEN, [60,50,16,16])
 	defs.gScreen.blit(font.render("Story",True,BLACK), [60,35])
 	pygame.draw.rect(gScreen, BLUE, [110,50,16,16])
-	defs.gScreen.blit(font.render("Ai testing",True,BLACK), [110,35])
+	defs.gScreen.blit(font.render("Ai test",True,BLACK), [110,35])
+	pygame.draw.rect(gScreen, RED, [160,50,16,16])
+	defs.gScreen.blit(font.render("Preset battle",True,BLACK), [160,35])
 	
 	if defs.hitDetect(mouse_pos, mouse_pos, [10,50], [26, 66]):
 		if mouse_down:
@@ -100,6 +102,11 @@ while not done:
 			aitest = True
 			defs.CharSelect(aitest, mult)
 			mouse_down = False
+			
+	if defs.hitDetect(mouse_pos, mouse_pos, [160, 50], [160+16, 66]):
+		if mouse_down:
+			theBattle = defs.Battle("No name", [defs.Catsome.buildNew(), defs.Coo33.buildNew(), defs.CoosomeJoe.buildNew()], [defs.Durric.buildNew(), defs.Alpha.buildNew(), defs.theeCoosome.buildNew()], defs.defultarena, defs.NoDial, True, defs.defulttheme, "")
+			theBattle.battle()
 	
 	if mouse_down:
 		defs.gScreen.blit(defs.mouse_pointer2,mouse_pos)
