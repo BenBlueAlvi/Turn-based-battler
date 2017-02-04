@@ -107,7 +107,7 @@ def getDamageImage(type, damage, crit):
 		
 	numbox = pygame.Surface([len(damList) * 12, 25], pygame.SRCALPHA, 32).convert_alpha()
 	if type == "wek":
-		for i in range(damList):
+		for i in damList:
 			numbox.blit(wekNums.image_at([12 * int(damList[i-1]),0,12,25]), [damList.index(i) * 12, 0])
 		
 	elif type == "resist":
@@ -1035,6 +1035,8 @@ class Skill(object):
 						damage -= math.floor(damage/5)
 					if i == vulnerable:
 						damage += math.ceil(damage/10)
+				damage = int(round(damage, 0))
+				print damage
 				if damage < 0 or "nodam" in self.spec:
 					damage = 0
 
@@ -1922,7 +1924,6 @@ class Battle(object):
 					aniBattler = agillist[currentBattler][0]
 					gScreen.blit(self.arena.img, [0,0])
 					
-					
 					for i in thesebattlers:	
 						if i.hp > 0:
 							gScreen.blit(i.image,[i.x,i.y])
@@ -1934,12 +1935,14 @@ class Battle(object):
 							hypot = math.hypot(xDiff, yDiff)
 							vel = [xDiff/hypot, yDiff/hypot]
 							print "Length of battlers, messages: ", len(thesebattlers), len(messages)
+							print "Thisbattler, Loop: ", currentBattler, loop
 							print vel
 							setVel = True
+							timer = 90
 							
 					except:
-						vel = [0,0]
-						if timer == -1:
+						if not setVel:
+							vel = [0,0]
 							timer = 90
 					
 					if len(aniBattler.target) > 1:
@@ -1958,7 +1961,7 @@ class Battle(object):
 								aniBattler.x += vel[0] * 3
 								aniBattler.y += vel[1] * 3
 							else:
-								print "incrmenting loop"
+								print "incrmenting loop, multiple targets"
 								loop += 1
 								currentTarget += 1
 								
@@ -1983,11 +1986,6 @@ class Battle(object):
 
 					if timer > 0:
 						timer -= 1
-					if timer <= 0 and not timer == -1:
-						loop += 1
-						currentBattler += 1
-						timer = -1
-						print "incrementing loop"
 					if loop >= len(messages) or currentBattler >= len(thesebattlers):
 						skillPrinting = False
 						effectPrinting = True

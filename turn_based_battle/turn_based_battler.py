@@ -105,7 +105,7 @@ while not done:
 			
 	if defs.hitDetect(mouse_pos, mouse_pos, [160, 50], [160+16, 66]):
 		if mouse_down:
-			theBattle = defs.Battle("No name", [defs.Catsome.buildNew(), defs.Coo33.buildNew(), defs.CoosomeJoe.buildNew()], [defs.Durric.buildNew(), defs.Alpha.buildNew(), defs.theeCoosome.buildNew()], defs.defultarena, defs.NoDial, True, defs.defulttheme, "")
+			theBattle = defs.Battle("No name", [defs.Catsome.buildNew(), defs.Coo33.buildNew(), defs.CoosomeJoe.buildNew()], [defs.Durric.buildNew(), defs.Alpha.buildNew(), defs.theeCoosome.buildNew()], defs.defultarena, defs.NoDial, True, defs.maptheme, "")
 			theBattle.battle()
 	
 	if mouse_down:
